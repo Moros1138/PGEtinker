@@ -1,0 +1,6 @@
+[submodule "olcPixelGameEngine"]
+	path = third_party/olcPixelGameEngine
+	url = https://github.com/OneLoneCoder/olcPixelGameEngine
+[submodule "olcSoundWaveEngine"]
+	path = third_party/olcSoundWaveEngine
+	url = https://github.com/OneLoneCoder/olcSoundWaveEngine
