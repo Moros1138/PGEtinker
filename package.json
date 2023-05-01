@@ -1,0 +1,24 @@
+{
+  "name": "pgetinker",
+  "version": "0.0.1",
+  "description": "Interactively develop an olc::PixelGameEngine program from your Browser!",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node --watch index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Moros1138/PGEtinker.git"
+  },
+  "author": "Moros Smith <moros1138@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Moros1138/PGEtinker/issues"
+  },
+  "homepage": "https://github.com/Moros1138/PGEtinker#readme",
+  "dependencies": {
+    "express": "^4.19.2",
+    "morgan": "^1.10.0"
+  }
+}
