@@ -1,0 +1,11 @@
+a:link, a:visited, a:active {
+    color: #f70;
+}
+
+a:hover {
+    color: #770;
+}
+
+.center {
+    text-align: center;
+}
