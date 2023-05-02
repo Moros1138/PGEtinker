@@ -21,11 +21,7 @@ app.post("/api/compile", async (req: Request, res: Response) =>
         return;
     }
 
-    // TODO: filter source
-
     const result = await compile(req.body.code);
-
-    // TODO: filter result
 
     res.status(200).json(result);
 });
