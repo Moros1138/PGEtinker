@@ -42,4 +42,10 @@ describe('Compiler and Support Functions', () =>
 
         expect(result.compiledSuccessfully).toBe(true);
     }, 10000);
+
+    it("compile \"Hello, World\" C source file with hacking include attempt", async () =>
+    {
+        const result = await compile('#include <stdio.h>\n#include "/etc/hostname"\n#include "/etc/passwd"\nint main(int argc, char* argv[])\n{\nprintf("Hello, World\\n");\nreturn 0;\n}\n');
+        expect(result.stderr).toMatch(/no absolute or relative includes please/);
+    });
 });
