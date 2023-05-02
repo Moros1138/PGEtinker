@@ -47,5 +47,23 @@ describe("PGEtinker API", () =>
 
     });
 
+    it("POST /api/compile - successful test app, with errors", async () =>
+    {
+        let result = await supertest(app)
+                        .post("/api/compile")
+                        .send({code: '#include <stdio.h>\nint main(int argc, char* argv[])\n{\nprinf("Hello, World\\n");\nreturn 0;\n}\n'})
+                        .set("Accept", "application/json")
+                        .expect("Content-Type", /json/)
+                        .expect((res) =>
+                        {
+                            if(res.body.stdout !== "") throw new Error("stdout should be empty");
+                            if(res.body.stderr === "") throw new Error("stderr should NOT be empty");
+                            if(res.body.compiledSuccessfully === true) throw new Error("compilation should have failed");
+                        })
+                        .expect(200);
+    });
+
+
     it.todo("shares a test program");
+
 });
