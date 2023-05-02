@@ -1,12 +1,32 @@
 import express, { Express, Request, Response } from 'express';
 import { __dirname, readFile } from './utils';
 import path from 'path';
+import { compile } from './compiler';
 
 export const app : Express = express();
 
 app.use(express.json());
 
+app.post("/api/compile", async (_: Request, res: Response) =>
 {
+    if(_.body.code === undefined)
+    {
+        res.status(401).json({ success: false, message: "Missing Source Code" });
+        return;
+    }
+
+    if(_.body.code.length > 50000)
+    {
+        res.status(401).json({ success: false, message: "Source Code Too Large" });
+        return;
+    }
+
+    // TODO: filter source
+
+    const result = await compile(_.body.code);
+
+    res.status(200).json(result);
+});
 
 app.get("/api/monaco-model/:filename", (_: Request, res: Response) =>
 {
