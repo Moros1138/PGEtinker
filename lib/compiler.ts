@@ -85,7 +85,7 @@ export async function compile(source: string, options?: any) : Promise<CompileRe
 
     let compiledSuccessfully: boolean = (fileExists(`${tmpName}.js`) && fileExists(`${tmpName}.wasm`));
 
-    results = {...results, tmpName, executionTime, compiledSuccessfully};
+    results = {...results, executionTime, compiledSuccessfully};
 
     // filter results
     ["stderr", "stdout"].forEach((key) =>
