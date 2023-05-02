@@ -29,7 +29,7 @@ describe("PGEtinker API", () =>
             .expect(404);
     });
 
-    it("POST /api/compile - successful test app, no errors", async () =>
+    it("POST /api/compile - hello world, no errors", async () =>
     {
         let result = await supertest(app)
                         .post("/api/compile")
@@ -47,7 +47,7 @@ describe("PGEtinker API", () =>
 
     });
 
-    it("POST /api/compile - successful test app, with errors", async () =>
+    it("POST /api/compile - hello world, with errors", async () =>
     {
         let result = await supertest(app)
                         .post("/api/compile")
