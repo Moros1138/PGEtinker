@@ -6,9 +6,9 @@ describe("PGEtinker API", () =>
 {
     it("GET /api/default-code - gets default code", async () =>
     {
-        await supertest(app).get('/api/default-code')
-            .set('Accept', 'application/json')
-            .expect('Content-Type', /json/)
+        await supertest(app).get("/api/default-code")
+            .set("Accept", "application/json")
+            .expect("Content-Type", /json/)
             .expect(/OLC_PGE_APPLICATION/i)
             .expect(200);
     });
