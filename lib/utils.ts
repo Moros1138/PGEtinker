@@ -1,5 +1,7 @@
 import { exec } from 'child_process';
 import * as fs from 'node:fs';
+import path from 'path';
+import tmp from 'tmp';
 
 export const __dirname: string = process.env.INIT_CWD as string;
 
@@ -43,3 +45,29 @@ export const writeFile = (filePath: string, data: string) : undefined =>
     fs.writeFileSync(filePath, data, { mode: 0o644 });
 }
 
+export const writeSourceFile = (text: string) : Promise<any> =>
+{
+    return new Promise((resolve, reject) =>
+    {
+
+        // create temporary directory
+        try {
+
+            // create a temporary directory
+            const tmpObject = tmp.dirSync({
+                mode: 0o750,
+                template: 'XXXXXX',
+                tmpdir: path.resolve(__dirname, 'tmp'),
+            });
+
+            const tmpName = `${tmpObject.name}/pgetinker`;
+
+            writeFile(`${tmpName}.cpp`, text);
+
+            resolve({ tmpObject, tmpName });
+
+        } catch(e) {
+            reject(e);
+        }
+    });
+}
