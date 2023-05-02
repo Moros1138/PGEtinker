@@ -14,6 +14,14 @@ describe("PGEtinker API", () =>
     });
 
     it.todo("compiles a test program");
+    it("GET /api/monaco-model/olcPixelGameEngine.h - gets header files for monaco model", async () =>
+    {
+        await supertest(app).get("/api/monaco-model/olcPixelGameEngine.h")
+            .set("Accept", "application/json")
+            .expect("Content-Type", /json/)
+            .expect(/olcPixelGameEngine.h/i)
+            .expect(/OLC_PGE_APPLICATION/i)
+            .expect(200);
+    });
     it.todo("shares a test program");
-    it.todo("gets header files for monaco model");
 });
