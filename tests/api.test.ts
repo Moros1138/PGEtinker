@@ -23,5 +23,12 @@ describe("PGEtinker API", () =>
             .expect(/OLC_PGE_APPLICATION/i)
             .expect(200);
     });
+
+    it("GET /api/monaco-model/totally-does-not-exist - responds 404", async () =>
+    {
+        let result = await supertest(app).get("/api/monaco-model/totally-does-not-exist")
+            .expect(404);
+    });
+
     it.todo("shares a test program");
 });
