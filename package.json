@@ -23,6 +23,7 @@
     "golden-layout": "^1.5.9",
     "monaco-editor": "^0.37.1",
     "morgan": "^1.10.0",
+    "puppeteer": "^19.11.1",
     "supertest": "^6.3.3",
     "tmp": "^0.2.1",
     "vite-plugin-monaco-editor": "^1.1.0",
