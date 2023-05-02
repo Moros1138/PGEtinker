@@ -7,15 +7,15 @@ export const app : Express = express();
 
 app.use(express.json());
 
-app.post("/api/compile", async (_: Request, res: Response) =>
+app.post("/api/compile", async (req: Request, res: Response) =>
 {
-    if(_.body.code === undefined)
+    if(req.body.code === undefined)
     {
         res.status(401).json({ success: false, message: "Missing Source Code" });
         return;
     }
 
-    if(_.body.code.length > 50000)
+    if(req.body.code.length > 50000)
     {
         res.status(401).json({ success: false, message: "Source Code Too Large" });
         return;
@@ -23,12 +23,14 @@ app.post("/api/compile", async (_: Request, res: Response) =>
 
     // TODO: filter source
 
-    const result = await compile(_.body.code);
+    const result = await compile(req.body.code);
+
+    // TODO: filter result
 
     res.status(200).json(result);
 });
 
-app.get("/api/monaco-model/:filename", (_: Request, res: Response) =>
+app.get("/api/monaco-model/:filename", (req: Request, res: Response) =>
 {
     // valid files
     let validFileMap = {
@@ -56,9 +58,9 @@ app.get("/api/monaco-model/:filename", (_: Request, res: Response) =>
         "olcSoundWaveEngine.h": "third_party/olcSoundWaveEngine/olcSoundWaveEngine.h",
     };
 
-    if(validFileMap.hasOwnProperty(_.params.filename))
+    if(validFileMap.hasOwnProperty(req.params.filename))
     {
-        let fileContent = readFile(path.resolve(__dirname, validFileMap[_.params.filename]));
+        let fileContent = readFile(path.resolve(__dirname, validFileMap[req.params.filename]));
         res.status(200).json({ success: true, code: fileContent });
         return;
     }
@@ -66,7 +68,7 @@ app.get("/api/monaco-model/:filename", (_: Request, res: Response) =>
     res.status(404).json({ success: false, message: "not found"});
 });
 
-app.get("/api/default-code", (_: Request, res: Response) =>
+app.get("/api/default-code", (req: Request, res: Response) =>
 {
     let defaultCode = readFile(path.resolve(__dirname, "examples", "default.cpp"));
     res.status(200).json({code: defaultCode});
