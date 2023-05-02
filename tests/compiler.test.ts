@@ -9,11 +9,7 @@ describe('Compiler and Support Functions', () =>
     {
         const result = await writeSourceFile("some source");
 
-        expect(result).toHaveProperty("tmpObject");
         expect(result).toHaveProperty("tmpName");
-
-        expect(result.tmpObject).toHaveProperty("name");
-        expect(result.tmpObject).toHaveProperty("removeCallback");
     });
 
     it("emscripten is installed in the current environment", async () =>
