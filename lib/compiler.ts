@@ -1,7 +1,51 @@
 import { __dirname, execute, fileExists, writeSourceFile } from "./utils";
 
-export async function compile(source: string, options?: any) : Promise<any>
+function checkSource(source: string) : string | null
 {
+    const re = /^\s*#\s*i(nclude|mport)(_next)?\s+["<]((\.{1,2}|\/)[^">]*)[">]/;
+    const failed: string[] = [];
+
+    let lines: string[] = source.split("\n");
+    for(let i = 0; i < lines.length; i++)
+    {
+        if(re.test(lines[i]))
+            failed.push(`<stdin>:${i + 1}:1: no absolute or relative includes please`);
+    }
+
+    if (failed.length > 0) return failed.join('\n');
+    return null;
+}
+
+interface CompileResults {
+    killed: boolean;
+    stderr: string;
+    stdout: string;
+    tmpName: string;
+    executionTime: number;
+    compiledSuccessfully: boolean;
+};
+
+export async function compile(source: string, options?: any) : Promise<CompileResults>
+{
+
+    let results: CompileResults = {
+        killed: false,
+        stderr: '',
+        stdout: '',
+        tmpName: '',
+        executionTime: 0,
+        compiledSuccessfully: false
+    };
+
+    // check if the source contains attempts at hacking
+    let check = checkSource(source);
+
+    if(check)
+    {
+        results.stderr = check;
+        return results;
+    }
+
     let { tmpName } = await writeSourceFile(source);
 
     const start: number = new Date().getTime();
@@ -26,15 +70,6 @@ export async function compile(source: string, options?: any) : Promise<any>
         '-sLLD_REPORT_UNDEFINED',
     ].join(' ');
 
-    let results = {
-        killed: false,
-        stderr: null,
-        stdout: null,
-        tmpName: null,
-        executionTime: 0,
-        compiledSuccessfully: false
-    };
-
     try
     {
         results = {...results, ...await execute(command, { timeout: 10000 })};
@@ -52,10 +87,13 @@ export async function compile(source: string, options?: any) : Promise<any>
 
     results = {...results, tmpName, executionTime, compiledSuccessfully};
 
-    // TODO: filter results
+    // filter results
+    ["stderr", "stdout"].forEach((key) =>
+    {
+        results[key] = results[key].replaceAll(__dirname, "");
+        results[key] = results[key].replaceAll(tmpName, "pgetinker");
+        results[key] = results[key].replaceAll("/third_party", "");
+    });
 
     return results;
 }
-
-
-
