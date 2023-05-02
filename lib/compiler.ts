@@ -48,7 +48,7 @@ export async function compile(source: string, options?: any) : Promise<any>
 
     let executionTime = end - start;
 
-    let compiledSuccessfully = (fileExists(`${tmpName}.js`) && fileExists(`${tmpName}.wasm`));
+    let compiledSuccessfully: boolean = (fileExists(`${tmpName}.js`) && fileExists(`${tmpName}.wasm`));
 
     results = {...results, tmpName, executionTime, compiledSuccessfully};
 
