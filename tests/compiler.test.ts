@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { compile } from "../lib/compiler";
 import { __dirname, execute, readFile, writeSourceFile } from "../lib/utils";
+import path from "path";
+
 describe('Compiler and Support Functions', () =>
 {
     it('writeSourceFile creates temporary folder', async () =>
@@ -31,4 +33,13 @@ describe('Compiler and Support Functions', () =>
         expect(result.compiledSuccessfully).toBe(true);
     });
 
+    it('compile olcExampleProgram.cpp', async () =>
+    {
+        // read olcExampleProgram.cpp
+        let source: string = readFile(path.resolve(__dirname, 'third_party', 'olcPixelGameEngine', 'olcExampleProgram.cpp'));
+
+        const result = await compile(source);
+
+        expect(result.compiledSuccessfully).toBe(true);
+    }, 10000);
 });
