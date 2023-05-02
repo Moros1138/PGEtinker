@@ -12,4 +12,15 @@ describe('Compiler and Support Functions', () =>
         expect(result.tmpObject).toHaveProperty('name');
         expect(result.tmpObject).toHaveProperty('removeCallback');
     });
+
+    it('emscripten is installed in the current environment', async () =>
+    {
+        const result = await execute('emcc -v');
+
+        expect(result).toHaveProperty('stdout');
+        expect(result).toHaveProperty('stderr');
+
+        expect(result.stderr).toMatch(/Emscripten/i);
+    });
+
 });
