@@ -35,55 +35,46 @@ export const execute = (command: string, options: any = {}) : Promise<any> =>
     });
 }
 
+/**
+ * creates a temporary directory and returns the full path
+ * @returns string
+ */
+export const createTemporaryDirectory = () : string =>
+{
+    const tempObject = tmp.dirSync({
+        mode: 0o750,
+        template: 'XXXXXX',
+        tmpdir: path.resolve(__dirname, 'tmp'),
+    });
+
+    return tempObject.name;
+};
+
 export const readFile  = (filePath: string) : string =>
 {
     return fs.readFileSync(filePath).toString();
-}
+};
 
-export const writeFile = (filePath: string, data: string) : undefined =>
+export const writeFile = (filePath: string, data: string) =>
 {
     fs.writeFileSync(filePath, data, { mode: 0o644 });
-}
+};
 
 export const writeSourceFile = (text: string) : Promise<any> =>
 {
     return new Promise((resolve, reject) =>
     {
-
-        // transform the source code
-        // text = text.split('\n').filter((item) =>
-        // {
-        //     if(item.includes('#define'))
-        //     {
-        //         if(item.includes('OLC_PGE_APPLICATION'))
-        //             return false;
-
-        //         if(item.includes('OLC_SOUNDWAVE IMPLEMENTATION'))
-        //             return false;
-        //     }
-
-        //     return true;
-        // }).join('\n');
-
-        // create temporary directory
-        try {
-
-            // create a temporary directory
-            const tmpObject = tmp.dirSync({
-                mode: 0o750,
-                template: 'XXXXXX',
-                tmpdir: path.resolve(__dirname, 'tmp'),
-            });
-
-            // console.log(tmpObject);
-
-            const tmpName = `${tmpObject.name}/pgetinker`;
+        try
+        {
+            const tmpName = `${createTemporaryDirectory()}/pgetinker`;
 
             writeFile(`${tmpName}.cpp`, text);
 
-            resolve({ tmpObject, tmpName });
+            resolve({ tmpName });
 
-        } catch(e) {
+        }
+        catch(e)
+        {
             reject(e);
         }
     });
