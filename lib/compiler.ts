@@ -10,6 +10,8 @@ export async function compile(source: string, options?: any) : Promise<any>
         'em++',
         '-O1',
         `${tmpName}.cpp`,
+        // `${__dirname}/cpp/olcPixelGameEngine.cpp.o`,
+        // `${__dirname}/cpp/olcSoundWaveEngine.cpp.o`,
         `-o ${tmpName}.js`,
         `-I${__dirname}/third_party/olcPixelGameEngine`,
         `-I${__dirname}/third_party/olcPixelGameEngine/extensions`,

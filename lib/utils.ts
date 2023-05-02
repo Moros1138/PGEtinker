@@ -50,6 +50,21 @@ export const writeSourceFile = (text: string) : Promise<any> =>
     return new Promise((resolve, reject) =>
     {
 
+        // transform the source code
+        // text = text.split('\n').filter((item) =>
+        // {
+        //     if(item.includes('#define'))
+        //     {
+        //         if(item.includes('OLC_PGE_APPLICATION'))
+        //             return false;
+
+        //         if(item.includes('OLC_SOUNDWAVE IMPLEMENTATION'))
+        //             return false;
+        //     }
+
+        //     return true;
+        // }).join('\n');
+
         // create temporary directory
         try {
 
@@ -59,6 +74,8 @@ export const writeSourceFile = (text: string) : Promise<any> =>
                 template: 'XXXXXX',
                 tmpdir: path.resolve(__dirname, 'tmp'),
             });
+
+            // console.log(tmpObject);
 
             const tmpName = `${tmpObject.name}/pgetinker`;
 
