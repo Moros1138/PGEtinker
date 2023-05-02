@@ -25,42 +25,40 @@ describe("PGEtinker API", () =>
 
     it("GET /api/monaco-model/totally-does-not-exist - responds 404", async () =>
     {
-        let result = await supertest(app).get("/api/monaco-model/totally-does-not-exist")
+        await supertest(app).get("/api/monaco-model/totally-does-not-exist")
             .expect(404);
     });
 
     it("POST /api/compile - hello world, no errors", async () =>
     {
-        let result = await supertest(app)
-                        .post("/api/compile")
-                        .send({code: '#include <stdio.h>\nint main(int argc, char* argv[])\n{\nprintf("Hello, World\\n");\nreturn 0;\n}\n'})
-                        .set("Accept", "application/json")
-                        .expect("Content-Type", /json/)
-                        .expect((res) =>
-                        {
-                            if(res.body.stdout !== "") throw new Error("stdout should be empty");
-                            if(res.body.stderr !== "") throw new Error("stderr should be empty");
-                            if(res.body.compiledSuccessfully !== true) throw new Error("compilation failed");
-                        })
-                        .expect(200);
-
-
+        await supertest(app)
+            .post("/api/compile")
+            .send({code: '#include <stdio.h>\nint main(int argc, char* argv[])\n{\nprintf("Hello, World\\n");\nreturn 0;\n}\n'})
+            .set("Accept", "application/json")
+            .expect("Content-Type", /json/)
+            .expect((res) =>
+            {
+                if(res.body.stdout !== "") throw new Error("stdout should be empty");
+                if(res.body.stderr !== "") throw new Error("stderr should be empty");
+                if(res.body.compiledSuccessfully !== true) throw new Error("compilation failed");
+            })
+            .expect(200);
     });
 
     it("POST /api/compile - hello world, with errors", async () =>
     {
-        let result = await supertest(app)
-                        .post("/api/compile")
-                        .send({code: '#include <stdio.h>\nint main(int argc, char* argv[])\n{\nprinf("Hello, World\\n");\nreturn 0;\n}\n'})
-                        .set("Accept", "application/json")
-                        .expect("Content-Type", /json/)
-                        .expect((res) =>
-                        {
-                            if(res.body.stdout !== "") throw new Error("stdout should be empty");
-                            if(res.body.stderr === "") throw new Error("stderr should NOT be empty");
-                            if(res.body.compiledSuccessfully === true) throw new Error("compilation should have failed");
-                        })
-                        .expect(200);
+        await supertest(app)
+            .post("/api/compile")
+            .send({code: '#include <stdio.h>\nint main(int argc, char* argv[])\n{\nprinf("Hello, World\\n");\nreturn 0;\n}\n'})
+            .set("Accept", "application/json")
+            .expect("Content-Type", /json/)
+            .expect((res) =>
+            {
+                if(res.body.stdout !== "") throw new Error("stdout should be empty");
+                if(res.body.stderr === "") throw new Error("stderr should NOT be empty");
+                if(res.body.compiledSuccessfully === true) throw new Error("compilation should have failed");
+            })
+            .expect(200);
     });
 
 
