@@ -55,7 +55,7 @@ export const readFile  = (filePath: string) : string =>
     return fs.readFileSync(filePath).toString();
 };
 
-export const writeFile = (filePath: string, data: string) =>
+export const writeFile = (filePath: string, data: string | Buffer) =>
 {
     fs.writeFileSync(filePath, data, { mode: 0o644 });
 };
