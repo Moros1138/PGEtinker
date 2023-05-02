@@ -13,7 +13,6 @@ describe("PGEtinker API", () =>
             .expect(200);
     });
 
-    it.todo("compiles a test program");
     it("GET /api/monaco-model/olcPixelGameEngine.h - gets header files for monaco model", async () =>
     {
         await supertest(app).get("/api/monaco-model/olcPixelGameEngine.h")
@@ -28,6 +27,24 @@ describe("PGEtinker API", () =>
     {
         let result = await supertest(app).get("/api/monaco-model/totally-does-not-exist")
             .expect(404);
+    });
+
+    it("POST /api/compile - successful test app, no errors", async () =>
+    {
+        let result = await supertest(app)
+                        .post("/api/compile")
+                        .send({code: '#include <stdio.h>\nint main(int argc, char* argv[])\n{\nprintf("Hello, World\\n");\nreturn 0;\n}\n'})
+                        .set("Accept", "application/json")
+                        .expect("Content-Type", /json/)
+                        .expect((res) =>
+                        {
+                            if(res.body.stdout !== "") throw new Error("stdout should be empty");
+                            if(res.body.stderr !== "") throw new Error("stderr should be empty");
+                            if(res.body.compiledSuccessfully !== true) throw new Error("compilation failed");
+                        })
+                        .expect(200);
+
+
     });
 
     it.todo("shares a test program");
