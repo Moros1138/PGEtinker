@@ -32,3 +32,9 @@ export const execute = (command: string, options: any = {}) : Promise<any> =>
         }
     });
 }
+
+export const readFile  = (filePath: string) : string =>
+{
+    return fs.readFileSync(filePath).toString();
+}
+
