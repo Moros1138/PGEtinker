@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { compile } from "../lib/compiler";
-import { __dirname, execute, readFile, writeSourceFile } from "../lib/utils";
+import { __dirname, execute, fileExists, readFile, writeSourceFile } from "../lib/utils";
 import path from "path";
 
 describe('Compiler and Support Functions', () =>
@@ -8,8 +8,7 @@ describe('Compiler and Support Functions', () =>
     it('writeSourceFile creates temporary folder', async () =>
     {
         const result = await writeSourceFile("some source");
-
-        expect(result).toHaveProperty("tmpName");
+        expect(fileExists(`${result}.cpp`)).toBe(true);
     });
 
     it("emscripten is installed in the current environment", async () =>

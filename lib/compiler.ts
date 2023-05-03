@@ -46,7 +46,7 @@ export async function compile(source: string, options?: any) : Promise<CompileRe
         return results;
     }
 
-    let { tmpName } = await writeSourceFile(source);
+    let tmpName = await writeSourceFile(source);
 
     const start: number = new Date().getTime();
 

@@ -60,7 +60,7 @@ export const writeFile = (filePath: string, data: string | Buffer) =>
     fs.writeFileSync(filePath, data, { mode: 0o644 });
 };
 
-export const writeSourceFile = (text: string) : Promise<any> =>
+export const writeSourceFile = (text: string) : Promise<string> =>
 {
     return new Promise((resolve, reject) =>
     {
@@ -70,12 +70,12 @@ export const writeSourceFile = (text: string) : Promise<any> =>
 
             writeFile(`${tmpName}.cpp`, text);
 
-            resolve({ tmpName });
+            resolve(tmpName);
 
         }
         catch(e)
         {
-            reject(e);
+            reject(e.message);
         }
     });
 }
