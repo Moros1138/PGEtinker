@@ -1,11 +1,11 @@
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { createTemporaryDirectory, fileExists } from "../lib/utils";
 import express, { Request, Response } from "express";
 import { screenshot } from "../lib/screenshot";
 import path from "path";
 
 // to share the server betwwen the beforeAll and afterAll hooks
-var server;
+let server;
 
 beforeAll(() =>
 {
@@ -19,7 +19,7 @@ afterAll(() =>
     server.close();
 });
 
-describe('Screenshot Function', () =>
+describe('Screenshot Tests', () =>
 {
     it('screenshot - expects an absolute filePath', async () =>
     {
@@ -41,5 +41,4 @@ describe('Screenshot Function', () =>
 
         expect(fileExists(filePath)).toBe(true);
     }, 10000);
-
 });
