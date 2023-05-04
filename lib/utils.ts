@@ -2,10 +2,19 @@ import { exec } from 'child_process';
 import * as fs from 'node:fs';
 import path from 'path';
 import tmp from 'tmp';
+import { createHmac } from "crypto";
 
-export const __dirname: string = process.env.INIT_CWD as string;
+export function objectToHashableString(object: any)
+{
+    return (typeof object === 'string') ? object : JSON.stringify(object);
+}
 
-export const fileExists = fs.existsSync;
+export function getHash(object: any) : string
+{
+    return createHmac('sha256', 'pgetinker')
+                .update(objectToHashableString(object))
+                .digest().toString('base64url');
+}
 
 export const execute = (command: string, options: any = {}) : Promise<any> =>
 {
@@ -35,6 +44,10 @@ export const execute = (command: string, options: any = {}) : Promise<any> =>
     });
 }
 
+export const __dirname: string = process.env.INIT_CWD as string;
+
+export const fileExists = fs.existsSync;
+
 /**
  * creates a temporary directory and returns the full path
  * @returns string
@@ -50,7 +63,7 @@ export const createTemporaryDirectory = () : string =>
     return tempObject.name;
 };
 
-export const readFile  = (filePath: string) : string =>
+export const readFile  = (filePath: fs.PathLike) : string | Buffer =>
 {
     return fs.readFileSync(filePath).toString();
 };
