@@ -7,23 +7,10 @@ export const app : Express = express();
 
 app.use(express.json());
 
-app.post("/api/compile", async (req: Request, res: Response) =>
+app.get("/api/default-code", (req: Request, res: Response) =>
 {
-    if(req.body.code === undefined)
-    {
-        res.status(401).json({ success: false, message: "Missing Source Code" });
-        return;
-    }
-
-    if(req.body.code.length > 50000)
-    {
-        res.status(401).json({ success: false, message: "Source Code Too Large" });
-        return;
-    }
-
-    const result = await compile(req.body.code);
-
-    res.status(200).json(result);
+    let defaultCode = readFile(path.resolve(__dirname, "examples", "default.cpp"));
+    res.status(200).json({code: defaultCode});
 });
 
 app.get("/api/monaco-model/:filename", (req: Request, res: Response) =>
@@ -64,10 +51,23 @@ app.get("/api/monaco-model/:filename", (req: Request, res: Response) =>
     res.status(404).json({ success: false, message: "not found"});
 });
 
-app.get("/api/default-code", (req: Request, res: Response) =>
+app.post("/api/compile", async (req: Request, res: Response) =>
 {
-    let defaultCode = readFile(path.resolve(__dirname, "examples", "default.cpp"));
-    res.status(200).json({code: defaultCode});
+    if(req.body.code === undefined)
+    {
+        res.status(401).json({ success: false, message: "Missing Source Code" });
+        return;
+    }
+
+    if(req.body.code.length > 50000)
+    {
+        res.status(401).json({ success: false, message: "Source Code Too Large" });
+        return;
+    }
+
+    const result = await compile(req.body.code);
+
+    res.status(200).json(result);
 });
 
 export default app;
