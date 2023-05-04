@@ -68,10 +68,7 @@ describe("Storage Tests", () =>
         await storage.storeItem(item);
 
         for(let i = 0; i < 20; i++)
-        {
             await storage.incrementViewCounter(id);
-            await new Promise((resolve) => setTimeout(() => resolve(0), 100));
-        }
 
         const returnedItem = await storage.getItem(id);
 

@@ -69,6 +69,7 @@ export class StorageLocal extends StorageBase
             let item = await this.getItem(id);
             item.viewCounter++;
             this.storeItem(item);
+            await new Promise((resolve) => setTimeout(() => resolve(0), 10));
         }
         catch(err)
         {
