@@ -72,7 +72,7 @@ export class StorageLocal extends StorageBase
         }
         catch(err)
         {
-            logger.error(`Caught exceptions while trying to incremember counter on #{id}`, err);
+            logger.error(`Caught exceptions while trying to incremember counter on ${id}`, err);
             throw err;
         }
     }
