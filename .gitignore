@@ -23,4 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 
+# local temporary and otherwise transient files
+lib/storage/data
 tmp
