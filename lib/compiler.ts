@@ -1,4 +1,8 @@
-import { __dirname, execute, fileExists, writeSourceFile } from "./utils";
+import path from "node:path";
+import { logger } from "./logger";
+import { __dirname, execute } from "./utils";
+import * as fs from 'fs-extra';
+
 
 function checkSource(source: string) : string | null
 {
@@ -25,7 +29,7 @@ interface CompileResults {
     compiledSuccessfully: boolean;
 };
 
-export async function compile(source: string, options?: any) : Promise<CompileResults>
+export async function compile(source: string, outputPath?: string) : Promise<CompileResults>
 {
 
     let results: CompileResults = {
@@ -46,17 +50,33 @@ export async function compile(source: string, options?: any) : Promise<CompileRe
         return results;
     }
 
-    let tmpName = await writeSourceFile(source);
+    let tempPath: string = '';
+
+    if(outputPath !== undefined)
+    {
+        tempPath = outputPath;
+        fs.mkdirSync(tempPath);
+    }
+    else
+    {
+        tempPath = fs.mkdtempSync(path.join(__dirname, 'tmp', './'))
+    }
+
+    const sourcePath   = path.join(tempPath, 'pgetinker.cpp');
+    const jsPath       = path.join(tempPath, 'pgetinker.js');
+    const wasmPath     = path.join(tempPath, 'pgetinker.wasm');
+
+    fs.writeFileSync(sourcePath, source);
 
     const start: number = new Date().getTime();
 
     const command = [
         'em++',
         '-O1',
-        `${tmpName}.cpp`,
+        `${sourcePath}`,
         // `${__dirname}/cpp/olcPixelGameEngine.cpp.o`,
         // `${__dirname}/cpp/olcSoundWaveEngine.cpp.o`,
-        `-o ${tmpName}.js`,
+        `-o ${jsPath}`,
         `-I${__dirname}/third_party/olcPixelGameEngine`,
         `-I${__dirname}/third_party/olcPixelGameEngine/extensions`,
         `-I${__dirname}/third_party/olcPixelGameEngine/utilities`,
@@ -83,15 +103,15 @@ export async function compile(source: string, options?: any) : Promise<CompileRe
 
     let executionTime = end - start;
 
-    let compiledSuccessfully: boolean = (fileExists(`${tmpName}.js`) && fileExists(`${tmpName}.wasm`));
+    let compiledSuccessfully: boolean = (fs.existsSync(jsPath) && fs.existsSync(wasmPath));
 
     results = {...results, executionTime, compiledSuccessfully};
 
     // filter results
     ["stderr", "stdout"].forEach((key) =>
     {
+        results[key] = results[key].replaceAll(tempPath, "");
         results[key] = results[key].replaceAll(__dirname, "");
-        results[key] = results[key].replaceAll(tmpName, "pgetinker");
         results[key] = results[key].replaceAll("/third_party", "");
     });
 

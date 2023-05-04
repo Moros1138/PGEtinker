@@ -1,5 +1,5 @@
 import puppeteer from 'puppeteer';
-import { writeFile } from './utils';
+import * as fs from 'fs-extra';
 
 export const screenshot = async (url: string, delay: number, filePath: string) : Promise<any> =>
 {
@@ -25,5 +25,5 @@ export const screenshot = async (url: string, delay: number, filePath: string) :
     const screenshot = await page.screenshot({encoding: 'binary'});
     browser.close();
 
-    writeFile(filePath, screenshot);
+    fs.writeFileSync(filePath, screenshot);
 };
