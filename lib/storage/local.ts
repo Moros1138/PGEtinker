@@ -41,11 +41,16 @@ export class StorageLocal extends StorageBase
         return item;
     }
 
-    async storeItem(item: any) : Promise<any>
+    async storeItem(item: any, force: boolean = false) : Promise<any>
     {
         let hashCode     : string = getHash(item.code);
         const filePath   : string = path.join(this.storagePath, hashCode);
 
+        // short circuit, if hash exists.
+        if(fs.existsSync(filePath) && !force)
+            return item;
+
+        // ensure viewCounter is set to 0
         if(item.viewCounter === undefined)
             item.viewCounter = 0;
 
@@ -68,7 +73,7 @@ export class StorageLocal extends StorageBase
         {
             let item = await this.getItem(id);
             item.viewCounter++;
-            this.storeItem(item);
+            this.storeItem(item, true);
             await new Promise((resolve) => setTimeout(() => resolve(0), 10));
         }
         catch(err)
