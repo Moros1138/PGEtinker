@@ -7,61 +7,75 @@ import { StorageLocal } from "../lib/storage/local";
 var storage: StorageLocal;
 let storagePath: string = path.resolve("./tests", "data");
 
-const testItem = {
-    code: `this is a code file`,
-    jsPath: '',
-    wasmPath: '',
-    screenPath: '',
-    viewCounter: 0,
+// we create unique entires to be used for each test to avoid
+// filesystem issues.
+const TestItem = (code: string) : any =>
+{
+    return {
+        id: getHash(code),
+        item: {
+            code: code,
+            jsPath: '',
+            wasmPath: '',
+            screenPath: '',
+            viewCounter: 0,
+        }
+    };
 };
 
-const testId = getHash(testItem.code);
+beforeAll(() =>
+{
+    storage = new StorageLocal(storagePath);
+});
+
+afterAll(() =>
+{
+    fs.rmSync(storagePath, { recursive: true, force: true} as any);
+});
 
 describe("Storage Tests", () =>
 {
-    describe("StorageLocal", () =>
+    it("data directory exists", () =>
     {
-        beforeEach(() =>
+        const dataDirectoryExists: boolean = fs.existsSync(storagePath);
+
+        expect(dataDirectoryExists).toBe(true);
+    });
+
+    it("stores an item", async () =>
+    {
+        const { id, item } = TestItem("stores an item");
+
+        const returnedItem = await storage.storeItem(item);
+
+        expect(item).toStrictEqual(returnedItem);
+    });
+
+    it("gets an item", async () =>
+    {
+        const { id, item } = TestItem("gets an item");
+
+        await storage.storeItem(item);
+
+        const returnedItem = await storage.getItem(id);
+
+        expect(item).toStrictEqual(returnedItem);
+    });
+
+    it("increments view counter", async () =>
+    {
+        const { id, item } = TestItem("increments view counter");
+        await storage.storeItem(item);
+
+        for(let i = 0; i < 20; i++)
         {
-            storage = new StorageLocal(storagePath);
-        });
+            await storage.incrementViewCounter(id);
+            await new Promise((resolve) => setTimeout(() => resolve(0), 100));
+        }
 
-        afterEach(() =>
-        {
-            fs.rmSync(storagePath, { recursive: true, force: true} as any);
-        });
+        const returnedItem = await storage.getItem(id);
 
-        it("data directory exists", () =>
-        {
-            const dataDirectoryExists: boolean = fs.existsSync(storagePath);
-            expect(dataDirectoryExists).toBe(true);
-        });
-
-        it("stores an item", async () =>
-        {
-            const returnedItem = await storage.storeItem(testItem);
-            expect(testItem).toStrictEqual(returnedItem);
-
-        });
-
-        it("gets an item", async () =>
-        {
-            await storage.storeItem(testItem);
-            const returnedItem = await storage.getItem(testId);
-            expect(testItem).toStrictEqual(returnedItem);
-        });
-
-        it("increments view counter", async () =>
-        {
-            await storage.storeItem(testItem);
-
-            for(let i = 0; i < 20; i++)
-                await storage.incrementViewCounter(testId);
-
-            const returnedItem = await storage.getItem(testId);
-
-            expect(returnedItem.viewCounter).toBe(20);
-        });
+        expect(returnedItem.viewCounter).toBe(20);
     });
 });
 
