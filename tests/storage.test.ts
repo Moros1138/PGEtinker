@@ -1,4 +1,4 @@
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 import { __dirname, getHash } from "../lib/utils";
 import * as fs from 'fs-extra';
 import path from "node:path";
@@ -33,46 +33,55 @@ afterAll(() =>
     fs.rmSync(storagePath, { recursive: true, force: true} as any);
 });
 
-describe("Storage Tests", () =>
+test("data directory exists", () =>
 {
-    it("data directory exists", () =>
-    {
-        const dataDirectoryExists: boolean = fs.existsSync(storagePath);
+    const dataDirectoryExists: boolean = fs.existsSync(storagePath);
 
-        expect(dataDirectoryExists).toBe(true);
-    });
+    expect(dataDirectoryExists).toBe(true);
+});
 
-    it("stores an item", async () =>
-    {
-        const { id, item } = TestItem("stores an item");
+test("stores an item", async () =>
+{
+    const { id, item } = TestItem("stores an item");
 
-        const returnedItem = await storage.storeItem(item);
+    const returnedItem = await storage.storeItem(item);
 
-        expect(item).toStrictEqual(returnedItem);
-    });
+    expect(item).toStrictEqual(returnedItem);
+});
 
-    it("gets an item", async () =>
-    {
-        const { id, item } = TestItem("gets an item");
+test("storing a duplicate code doesn't overwrite an existing entry", async () =>
+{
+    let item = TestItem("storing a duplicate code doesn't overwrite an existing entry").item;
+    item.viewCounter = 1234;
+    await storage.storeItem(item)
 
-        await storage.storeItem(item);
+    item = TestItem("storing a duplicate code doesn't overwrite an existing entry").item;
+    const returnedItem = await storage.storeItem(item);
 
-        const returnedItem = await storage.getItem(id);
+    expect(item).toStrictEqual(returnedItem);
+});
 
-        expect(item).toStrictEqual(returnedItem);
-    });
+test("gets an item", async () =>
+{
+    const { id, item } = TestItem("gets an item");
 
-    it("increments view counter", async () =>
-    {
-        const { id, item } = TestItem("increments view counter");
-        await storage.storeItem(item);
+    await storage.storeItem(item);
 
-        for(let i = 0; i < 20; i++)
-            await storage.incrementViewCounter(id);
+    const returnedItem = await storage.getItem(id);
 
-        const returnedItem = await storage.getItem(id);
+    expect(item).toStrictEqual(returnedItem);
+});
 
-        expect(returnedItem.viewCounter).toBe(20);
-    });
+test("increments view counter", async () =>
+{
+    const { id, item } = TestItem("increments view counter");
+    await storage.storeItem(item);
+
+    for(let i = 0; i < 20; i++)
+        await storage.incrementViewCounter(id);
+
+    const returnedItem = await storage.getItem(id);
+
+    expect(returnedItem.viewCounter).toBe(20);
 });
 

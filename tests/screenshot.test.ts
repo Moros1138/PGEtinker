@@ -1,8 +1,8 @@
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { createTemporaryDirectory, fileExists } from "../lib/utils";
+import { afterAll, beforeAll, test, expect } from "vitest";
 import express, { Request, Response } from "express";
 import { screenshot } from "../lib/screenshot";
-import path from "path";
+import path from "node:path";
+import * as fs from 'fs-extra';
 
 // to share the server betwwen the beforeAll and afterAll hooks
 let server;
@@ -19,26 +19,24 @@ afterAll(() =>
     server.close();
 });
 
-describe('Screenshot Tests', () =>
+test('screenshot - expects an absolute filePath', async () =>
 {
-    it('screenshot - expects an absolute filePath', async () =>
+    try
     {
-        try
-        {
-            await screenshot("http://localhost:3000", 5000, 'screen.png');
-        }
-        catch(err)
-        {
-            expect(err.message).toBe("filePath must be absolute path");
-        }
-    }, 10000);
-
-    it('screenshot - takes a screenshot', async () =>
+        await screenshot("http://localhost:3000", 5000, 'screen.png');
+    }
+    catch(err)
     {
-        const tmpDir = createTemporaryDirectory();
-        const filePath = path.resolve(tmpDir, "screen.png");
-        await screenshot("http://localhost:3000", 5000, filePath);
+        expect(err.message).toBe("filePath must be absolute path");
+    }
+}, 10000);
 
-        expect(fileExists(filePath)).toBe(true);
-    }, 10000);
-});
+test('screenshot - takes a screenshot', async () =>
+{
+    const filePath = path.resolve("./tests", "screen.png");
+    await screenshot("http://localhost:3000", 5000, filePath);
+
+    expect(fs.existsSync(filePath)).toBe(true);
+
+    fs.rmSync(filePath);
+}, 10000);
