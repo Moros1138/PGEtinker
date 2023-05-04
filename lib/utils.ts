@@ -13,7 +13,7 @@ export function getHash(object: any) : string
                 .digest().toString('base64url');
 }
 
-export const execute = (command: string, options: any = {}) : Promise<any> =>
+export const execute = (command: string, options: any = { timeout: 10000 }) : Promise<any> =>
 {
     // i solemnly swear that i am up to no good, promise!
     return new Promise((resolve, reject) =>
