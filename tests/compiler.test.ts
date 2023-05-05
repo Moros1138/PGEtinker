@@ -1,4 +1,4 @@
-import { expect, test } from "vitest";
+import { afterAll, expect, test } from "vitest";
 import { compile } from "../lib/compiler";
 import { exec } from "node:child_process";
 import { __dirname } from "../lib/utils";
@@ -7,6 +7,9 @@ import path from "node:path";
 
 // set our temp path in our tests directory
 const tempPath = path.resolve("./", "tests", "tmp");
+
+// clean up after the tests have completed
+afterAll(() => { fs.rmdirSync(tempPath, {force: true, recursive: true} as any); });
 
 // example (Hello, World), no errors
 const workingSource    = '#include <stdio.h>\nint main(int argc, char* argv[])\n{\nprintf("Hello, World\\n");\nreturn 0;\n}\n';
@@ -33,6 +36,7 @@ test("emscripten is installed in the current environment", async () =>
 
     expect(results.stderr).toMatch(/Emscripten/i);
 });
+
 
 test("success: example (Hello, World), no errors", async () =>
 {
