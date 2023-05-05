@@ -28,26 +28,19 @@ export class StorageLocal extends StorageBase
         const expectedPath : string = path.join(this.storagePath, id);
         let item : any = null;
 
-        try
-        {
+        if(fs.existsSync(expectedPath))
             item = await fs.readJSON(expectedPath);
-        }
-        catch(err)
-        {
-            logger.error(`An error occured trying to load hash: ${id}`, err);
-            throw err;
-        }
 
         return item;
     }
 
-    async storeItem(item: any, force: boolean = false) : Promise<any>
+    async storeItem(item: any, update: boolean = false) : Promise<any>
     {
         let hashCode     : string = getHash(item.code);
         const filePath   : string = path.join(this.storagePath, hashCode);
 
         // short circuit, if hash exists.
-        if(fs.existsSync(filePath) && !force)
+        if(fs.existsSync(filePath) && !update)
             return item;
 
         // ensure viewCounter is set to 0
@@ -56,7 +49,7 @@ export class StorageLocal extends StorageBase
 
         try
         {
-            await fs.writeJson(filePath, item, { encoding: 'utf8' });
+            await fs.writeJson(filePath, item, { spaces: 4, encoding: 'utf8' });
         }
         catch(err)
         {
