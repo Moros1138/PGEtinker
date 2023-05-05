@@ -1,15 +1,33 @@
-import express, { Express, Request, Response } from 'express';
-import { __dirname, readFile } from './utils';
-import path from 'path';
+import express, { Express, NextFunction, Request, Response } from 'express';
+import { __dirname, getHash } from './utils';
+import * as fs from 'fs-extra';
+import path from 'node:path';
 import { compile } from './compiler';
+import { StorageLocal } from './storage/local';
+import { logger } from './logger';
+import { screenshot } from './screenshot';
 
+const storage = new StorageLocal();
 export const app : Express = express();
 
 app.use(express.json());
 
+
+app.use("/s/:id", (req: Request, res: Response, next: NextFunction) =>
+{
+    next();
+});
+
+app.use("/embed/:id", (req: Request, res: Response, next: NextFunction) =>
+{
+    next();
+});
+
+app.use("/data", express.static(path.join(__dirname, "./data")));
+
 app.get("/api/default-code", (req: Request, res: Response) =>
 {
-    let defaultCode = readFile(path.resolve(__dirname, "examples", "default.cpp"));
+    let defaultCode = fs.readFileSync(path.join(__dirname, "examples", "default.cpp")).toString('utf8');
     res.status(200).json({code: defaultCode});
 });
 
@@ -43,7 +61,7 @@ app.get("/api/monaco-model/:filename", (req: Request, res: Response) =>
 
     if(validFileMap.hasOwnProperty(req.params.filename))
     {
-        let fileContent = readFile(path.resolve(__dirname, validFileMap[req.params.filename]));
+        let fileContent = fs.readFileSync(path.resolve(__dirname, validFileMap[req.params.filename])).toString('utf8');
         res.status(200).json({ success: true, code: fileContent });
         return;
     }
@@ -67,7 +85,78 @@ app.post("/api/compile", async (req: Request, res: Response) =>
 
     const result = await compile(req.body.code);
 
+    delete result.tempPath;
+    delete result.jsPath;
+    delete result.wasmPath;
+    delete result.sourcePath;
+
     res.status(200).json(result);
+});
+
+
+app.post("/api/share", async (req: Request, res: Response) =>
+{
+    if(req.body.code === undefined)
+    {
+        res.status(401).json({ success: false, message: "Missing Source Code" });
+        return;
+    }
+
+    if(req.body.code.length > 50000)
+    {
+        res.status(401).json({ success: false, message: "Source Code Too Large" });
+        return;
+    }
+
+    let hashCode = getHash(req.body.code);
+    let item: any = null;
+
+    // check if this code has already been shared
+    item = await storage.getItem(hashCode);
+
+    // if already shared, skip compile and jump right to the result
+    if(item)
+    {
+        res.status(200).json({
+            success: true,
+            message: "",
+            slug: hashCode,
+            "share_url": `http://localhost:3000/s/${hashCode}`,
+            "embed_url": `http://localhost:3000/embed/${hashCode}`,
+            "image_url": item.screenURL,
+        });
+        return;
+    }
+
+    const tempPath = path.resolve("./", "data", hashCode);
+    const result = await compile(req.body.code, tempPath);
+
+    storage.storeItem({
+        code: req.body.code,
+        jsPath: result.jsPath,
+        wasmPath: result.wasmPath,
+        screenPath: path.join(tempPath, "screen.png"),
+        screenURL: `http://localhost:3000/data/${hashCode}/screen.png`,
+        viewCounter: 0,
+    });
+
+    // try
+    // {
+        await screenshot(`http://localhost:3000/embed/${hashCode}`, 5000, path.join(tempPath, "screen.png"));
+    // }
+    // catch(err)
+    // {
+    //     // logger.error(err);
+    // }
+
+    res.status(200).json({
+        success: true,
+        message: "",
+        slug: hashCode,
+        "share_url": `http://localhost:3000/s/${hashCode}`,
+        "embed_url": `http://localhost:3000/embed/${hashCode}`,
+        "image_url": `http://localhost:3000/data/${hashCode}/screen.png`,
+    });
 });
 
 export default app;
