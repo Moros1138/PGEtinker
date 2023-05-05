@@ -1,17 +1,13 @@
 import { app } from "../lib/expressApp";
 
-let teardown = false
+let server: any;
 
-export default async function ()
+export function setup()
 {
-    const server = app.listen(3000);
+    server = app.listen(3000);
+}
 
-    return async () =>
-    {
-        if (teardown)
-            throw new Error('teardown called twice')
-
-        teardown = true;
-        return new Promise<void>(resolve => server.close(() => resolve()))
-    }
+export function teardown()
+{
+    server.close();
 }
