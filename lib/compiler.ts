@@ -13,7 +13,7 @@ function checkSource(source: string) : string | null
     for(let i = 0; i < lines.length; i++)
     {
         if(re.test(lines[i]))
-            failed.push(`<stdin>:${i + 1}:1: no absolute or relative includes please`);
+            failed.push(`/pgetinker.cpp:${i + 1}:1: no absolute or relative includes please`);
     }
 
     if (failed.length > 0) return failed.join('\n');
@@ -27,7 +27,7 @@ function prepareCompilerResults(results: any, tempPath: string)
         stderr: '',
         killed: false,
         success: false,
-        tempPath: '',
+        tempPath: tempPath,
     };
 
     results = {...defaultResults, ...results};
