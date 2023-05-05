@@ -6,6 +6,10 @@ export default defineConfig({
     base: './',
     test: {
         reporters: "verbose",
+        globals: true,
+        globalSetup: [
+            "./tests/globalSetup.ts",
+        ],
     },
     plugins: [
         // dirty hack

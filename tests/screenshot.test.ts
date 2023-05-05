@@ -5,19 +5,6 @@ import path from "node:path";
 import * as fs from 'fs-extra';
 
 // to share the server betwwen the beforeAll and afterAll hooks
-let server;
-
-beforeAll(() =>
-{
-    const app = express();
-    app.get('/', (req: Request, res: Response) => res.send("Look ma! I'm road kill!"));
-    server = app.listen(3000);
-});
-
-afterAll(() =>
-{
-    server.close();
-});
 
 test('screenshot - expects an absolute filePath', async () =>
 {

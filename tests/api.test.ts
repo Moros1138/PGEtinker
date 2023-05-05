@@ -12,16 +12,6 @@ const brokenSource     = '#include <stdio.h>\nint main(int argc, char* argv[])\n
 
 let server: any;
 
-beforeAll(() =>
-{
-    server = app.listen(3000);
-});
-
-afterAll(() =>
-{
-    server.close();
-});
-
 test("success: gets default code", async () =>
 {
     await supertest(app).get("/api/default-code")
