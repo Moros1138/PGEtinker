@@ -1,8 +1,8 @@
 import path from "node:path";
 import { logger } from "./logger";
-import { __dirname, execute } from "./utils";
+import { __dirname } from "./utils";
 import * as fs from 'fs-extra';
-
+import { exec } from "node:child_process";
 
 function checkSource(source: string) : string | null
 {
@@ -20,42 +20,42 @@ function checkSource(source: string) : string | null
     return null;
 }
 
-interface CompileResults {
-    killed: boolean;
-    stderr: string;
-    stdout: string;
-    tmpName: string;
-    executionTime: number;
-    compiledSuccessfully: boolean;
-};
-
-export async function compile(source: string, outputPath?: string) : Promise<CompileResults>
+function prepareCompilerResults(results: any, tempPath: string)
 {
-
-    let results: CompileResults = {
-        killed: false,
-        stderr: '',
+    let defaultResults = {
         stdout: '',
-        tmpName: '',
-        executionTime: 0,
-        compiledSuccessfully: false
+        stderr: '',
+        killed: false,
+        success: false,
+        tempPath: '',
     };
 
-    // check if the source contains attempts at hacking
-    let check = checkSource(source);
+    results = {...defaultResults, ...results};
 
-    if(check)
+    ["stderr", "stdout"].forEach((key) =>
     {
-        results.stderr = check;
-        return results;
-    }
+        results[key] = results[key].replaceAll(tempPath, "");
+        results[key] = results[key].replaceAll(__dirname, "");
+        results[key] = results[key].replaceAll("/third_party", "");
+    });
 
+    return results;
+}
+
+export async function compile(source: string, outputPath?: string)
+{
+    // check the source for hacks and such
+    const checkSourceResults = checkSource(source);
+    if(checkSourceResults != null)
+        return prepareCompilerResults({stderr: checkSourceResults }, '');
+
+    // determine directory
     let tempPath: string = '';
 
     if(outputPath !== undefined)
     {
         tempPath = outputPath;
-        fs.mkdirSync(tempPath);
+        fs.ensureDirSync(tempPath);
     }
     else
     {
@@ -67,8 +67,6 @@ export async function compile(source: string, outputPath?: string) : Promise<Com
     const wasmPath     = path.join(tempPath, 'pgetinker.wasm');
 
     fs.writeFileSync(sourcePath, source);
-
-    const start: number = new Date().getTime();
 
     const command = [
         'em++',
@@ -90,30 +88,22 @@ export async function compile(source: string, outputPath?: string) : Promise<Com
         '-sLLD_REPORT_UNDEFINED',
     ].join(' ');
 
-    try
+    const start: number = new Date().getTime();
+
+    let results = await new Promise((resolve, reject) =>
     {
-        results = {...results, ...await execute(command, { timeout: 10000 })};
-    }
-    catch(error)
-    {
-        results = {...results, ...error};
-    }
-
-    let end : number = new Date().getTime();
-
-    let executionTime = end - start;
-
-    let compiledSuccessfully: boolean = (fs.existsSync(jsPath) && fs.existsSync(wasmPath));
-
-    results = {...results, executionTime, compiledSuccessfully};
-
-    // filter results
-    ["stderr", "stdout"].forEach((key) =>
-    {
-        results[key] = results[key].replaceAll(tempPath, "");
-        results[key] = results[key].replaceAll(__dirname, "");
-        results[key] = results[key].replaceAll("/third_party", "");
+        exec(command, { timeout: 10000 }, (error, stdout, stderr) =>
+        {
+            const killed: boolean = (error?.killed) ? true : false;
+            resolve({ stdout, stderr, killed });
+        });
     });
 
-    return results;
+    let executionTime = (new Date().getTime()) - start;
+
+    let compileSuccess: boolean = (fs.existsSync(jsPath) && fs.existsSync(wasmPath));
+
+    results = { ...results as any, executionTime, success: compileSuccess, sourcePath, jsPath, wasmPath };
+
+    return prepareCompilerResults(results, tempPath);
 }
