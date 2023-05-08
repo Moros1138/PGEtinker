@@ -1,9 +1,7 @@
-import { resolve } from "path";
-import monacoEditorPlugin from "vite-plugin-monaco-editor";
+import path from "node:path";
 import { defineConfig } from "vitest/dist/config";
 
 export default defineConfig({
-    base: './',
     test: {
         reporters: "verbose",
         globals: true,
@@ -11,18 +9,12 @@ export default defineConfig({
             "./tests/globalSetup.ts",
         ],
     },
-    plugins: [
-        // dirty hack
-        (monacoEditorPlugin as any).default({
-            languageWorkers: ['editorWorkerService'],
-            customWorkers: [],
-        }),
-    ],
     build: {
+        manifest: true,
         rollupOptions: {
             input: {
-                main: resolve(__dirname, 'index.html'),
-                player: resolve(__dirname, 'player/index.html'),
+                main: path.resolve(__dirname, "src", "frontend", "index.ts"),
+                jquery: path.resolve(__dirname, "src", "frontend", "jquery.js"),
             }
         }
     }

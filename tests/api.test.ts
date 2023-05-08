@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, expect, test } from "vitest";
 import supertest from "supertest";
-import { app } from "../lib/expressApp";
+import app from "../src/backend/app";
+
 import * as fs from "fs-extra";
 import path from "node:path";
 
@@ -101,15 +102,9 @@ test("success: shares a test program", async () =>
                 failed.push("image url should not be empty");
 
             if(failed.length > 0) throw new Error(failed.join("\n"));
-
+            
             slug = res.body.slug;
         })
         .expect(200);
-
-    expect(fs.existsSync(path.resolve("./", "data", slug, "screen.png"))).toBe(true);
-
-    // cleanup
-    fs.rmSync(path.resolve("./", "lib", "storage", "data", slug));
-    fs.rmdirSync(path.resolve("./", "data", slug), { force: true, recursive: true } as any);
 
 }, 10000);

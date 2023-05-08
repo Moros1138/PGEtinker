@@ -1,7 +1,6 @@
 import { afterAll, expect, test } from "vitest";
-import { compile } from "../lib/compiler";
+import { compile } from "../src/backend/app";
 import { exec } from "node:child_process";
-import { __dirname } from "../lib/utils";
 import * as fs from 'fs-extra';
 import path from "node:path";
 
@@ -18,7 +17,7 @@ const workingSource    = '#include <stdio.h>\nint main(int argc, char* argv[])\n
 const brokenSource     = '#include <stdio.h>\nint main(int argc, char* argv[])\n{\nprinf("Hello, World\\n");\nreturn 0;\n}\n';
 
 // example (olcExampleProgram), no errors
-const pgeExampleSource = fs.readFileSync(path.resolve(__dirname, 'third_party', 'olcPixelGameEngine', 'olcExampleProgram.cpp')).toString('utf8');
+const pgeExampleSource = fs.readFileSync(path.resolve("./", 'third_party', 'olcPixelGameEngine', 'olcExampleProgram.cpp')).toString('utf8');
 
 // example (Hello, World), with hacky #include directives
 const hackSource       = '#include <stdio.h>\n#include "/etc/hostname"\n#include "/etc/passwd"\nint main(int argc, char* argv[])\n{\nprintf("Hello, World\\n");\nreturn 0;\n}\n';

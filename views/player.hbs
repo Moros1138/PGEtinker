@@ -37,24 +37,22 @@
         }
     </style>
 </head>
-
 <body>
-
     <canvas id="canvas" oncontextmenu="event.preventDefault()" tabindex=-1></canvas>
     <script type='text/javascript'>
         var Module = {
             preRun: [],
             postRun: [function() {
-                // window.parent.postMessage({event: 'pgetinker:ready', }, '{{ env('APP_URL') }}');
+                window.parent.postMessage({event: 'pgetinker:ready', }, '{{{ env.APP_URL }}}');
             }, ],
             print: (function () {
                 return function (text) {
                     if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
                     // write to console in top window
-                    // window.parent.postMessage({
-                    //     event: 'pgetinker:console-write',
-                    //     text: text,
-                    // }, '{{ env('APP_URL') }}');
+                    window.parent.postMessage({
+                        event: 'pgetinker:console-write',
+                        text: text,
+                    }, '{{{ env.APP_URL }}}');
                 };
             })(),
             canvas: (function () {
@@ -83,9 +81,10 @@
             };
         };
 
-        // window.parent.postMessage({event: 'pgetinker:not-ready', }, '{{ env('APP_URL') }}');
+        window.parent.postMessage({event: 'pgetinker:not-ready', }, '{{{ env.APP_URL }}}');
 
-        window.addEventListener('message', function(e) {
+        window.addEventListener('message', function(e)
+        {
 
             if(e.data.event === undefined)
                 return;
@@ -103,8 +102,9 @@
         });
     </script>
 
-    <!-- <script async type="text/javascript" src="/data/82sLuv/pgetinker.js"></script> -->
+    {{#if pgetinker}}
+    <script async type="text/javascript" src="{{{ pgetinker }}}"></script>
+    {{/if}}
+
 </body>
-
 </html>
-
