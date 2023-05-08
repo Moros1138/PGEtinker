@@ -7,6 +7,8 @@ import pgeTinkerLogo from './assets/PGEtinker-logo.png';
 import pgeLogo from './assets/pge-logo.png';
 import emscriptenLogo from './assets/emscripten-logo.png';
 
+import "./monacoWorker";
+
 import * as monaco from 'monaco-editor';
 
 document.querySelector('#app')!.innerHTML = `

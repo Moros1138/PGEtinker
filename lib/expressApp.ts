@@ -1,4 +1,4 @@
-import express, { Express, NextFunction, Request, Response } from 'express';
+import express, { Application, Request, Response, NextFunction } from 'express';
 import { __dirname, getHash } from './utils';
 import * as fs from 'fs-extra';
 import path from 'node:path';
@@ -8,22 +8,11 @@ import { logger } from './logger';
 import { screenshot } from './screenshot';
 
 const storage = new StorageLocal();
-export const app : Express = express();
+
+export const app : Application = express();
 
 app.use(express.json());
 
-
-app.use("/s/:id", (req: Request, res: Response, next: NextFunction) =>
-{
-    next();
-});
-
-app.use("/embed/:id", (req: Request, res: Response, next: NextFunction) =>
-{
-    next();
-});
-
-app.use("/data", express.static(path.join(__dirname, "./data")));
 
 app.get("/api/default-code", (req: Request, res: Response) =>
 {
@@ -140,14 +129,7 @@ app.post("/api/share", async (req: Request, res: Response) =>
         viewCounter: 0,
     });
 
-    // try
-    // {
-        await screenshot(`http://localhost:3000/embed/${hashCode}`, 5000, path.join(tempPath, "screen.png"));
-    // }
-    // catch(err)
-    // {
-    //     // logger.error(err);
-    // }
+    await screenshot(`http://localhost:3000/embed/${hashCode}`, 5000, path.join(tempPath, "screen.png"));
 
     res.status(200).json({
         success: true,

@@ -4,31 +4,32 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "NODE_ENV=development vite-node server.ts",
+    "dev": "nodemon -e js,ts,hbs --watch lib --watch views --watch server.ts server.ts",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "start": "npm run build && NODE_ENV=production vite-node server.ts",
     "test": "vitest"
   },
   "devDependencies": {
+    "@types/express": "^4.17.17",
     "@types/fs-extra": "^11.0.1",
-    "@types/tmp": "^0.2.3",
+    "@types/hbs": "^4.0.1",
+    "@types/morgan": "^1.9.4",
+    "@types/node": "^18.16.3",
+    "@types/supertest": "^2.0.12",
     "typescript": "^5.0.2",
     "vite": "^4.3.2"
   },
   "dependencies": {
-    "@types/express": "^4.17.17",
-    "@types/node": "^18.16.3",
-    "@types/supertest": "^2.0.12",
     "express": "^4.18.2",
     "fs-extra": "^11.1.1",
     "golden-layout": "^1.5.9",
+    "hbs": "^4.2.0",
     "monaco-editor": "^0.37.1",
     "morgan": "^1.10.0",
+    "nodemon": "^2.0.22",
     "puppeteer": "^19.11.1",
     "supertest": "^6.3.3",
-    "tmp": "^0.2.1",
-    "vite-plugin-monaco-editor": "^1.1.0",
     "vitest": "^0.30.1"
   }
 }
