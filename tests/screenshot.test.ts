@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, test, expect } from "vitest";
 import express, { Request, Response } from "express";
-import { screenshot } from "../lib/screenshot";
+import { screenshot } from "../src/backend/app";
 import path from "node:path";
 import * as fs from 'fs-extra';
 

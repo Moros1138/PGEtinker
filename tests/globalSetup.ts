@@ -1,13 +1,13 @@
-import { app } from "../lib/expressApp";
+import config from "../src/config";
+const { app, databaseConnect } = await import("../src/backend/app");
 
-let server: any;
-
-export function setup()
+export async function setup()
 {
-    server = app.listen(3000);
+    await databaseConnect();
+    app.listen(config.port);
 }
 
-export function teardown()
+export async function teardown()
 {
-    server.close();
+    
 }
