@@ -7,7 +7,8 @@
     "dev": "nodemon -e js,ts,hbs --watch src/backend --watch views src/backend/index.ts",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "start": "npm run build && NODE_ENV=production vite-node src/backend/index.ts",
+    "build:start": "npm run build && NODE_ENV=production vite-node src/backend/index.ts",
+    "start": "NODE_ENV=production vite-node src/backend/index.ts",
     "test": "vitest"
   },
   "devDependencies": {

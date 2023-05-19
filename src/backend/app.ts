@@ -8,6 +8,7 @@ import path from 'node:path';
 import puppeteer from 'puppeteer';
 import { DataTypes, Model, Sequelize } from "sequelize";
 import Hashids from "hashids";
+import { registerHelper } from "hbs";
 
 export let sequelize : Sequelize;
 
@@ -418,5 +419,105 @@ app.post("/api/share", async (req: Request, res: Response) =>
 });
 
 app.use("/data", express.static(config.dataPath));
+
+app.set("views", "./views");
+
+app.set("view engine", "hbs");
+
+registerHelper("vite-script", (src: string) =>
+{
+    if(config.mode === "development")
+    {
+        return `<script type="module" src="/${src}"></script>`
+    }
+    
+    if(src == "@vite/client")
+    {
+        return "<!-- skipped vite client in production -->";
+    }
+
+    let manifest = fs.readJSONSync("./dist/manifest.json");
+    let output : string[]  = [];
+    
+    if(manifest[src] !== undefined)
+    {
+        // check for stylesheets
+        if(manifest[src].css !== undefined)
+        {
+            output.push(`<link rel="stylesheet" href="/${manifest[src].css}">`);
+        }
+        
+        // check for script file
+        if(manifest[src].file !== undefined)
+        {
+            output.push(`<script type="module" src="/${manifest[src].file}"></script>`);
+        }
+        
+        if(manifest[src].dynamicImports !== undefined)
+        {
+            manifest[src].dynamicImports.forEach((item : string) => 
+            {
+                if(manifest[item].file.includes(".css"))
+                    output.push(`<link rel="stylesheet" href="/${manifest[item].file}">`);
+                
+                if(manifest[item].file.includes(".js"))
+                    output.push(`<script type="module" src="/${manifest[item].file}"></script>`);
+            });
+        }
+    }
+
+    return output.join("");
+});
+
+app.get("/player/:id?", (req: Request, res: Response) => {
+
+    if(!req.params.id)
+    {
+        res.render("player-intro", {
+            env: {
+                APP_URL: config.appUrl,
+            },
+        });
+
+        return;
+    }
+
+    res.render("player", {
+        pgetinker: `/data/${req.params.id}/pgetinker.js`,
+        env: {
+            APP_URL: config.appUrl,
+        },
+    });
+});
+
+app.get("/embed/:id", (req: Request, res: Response) =>
+{
+    res.render("player", {
+        pgetinker: `/data/${req.params.id}/pgetinker.js`,
+        env: {
+            APP_URL: config.appUrl,
+        },
+    });
+});
+
+app.get("/s/:id", (_req: Request, res: Response) =>
+{
+    res.render("index", {
+        title: "PGEtinker",
+        env: {
+            APP_URL: config.appUrl,
+        },
+    });
+});
+
+app.get("/", (_req: Request, res: Response) =>
+{
+    res.render("index", {
+        title: "PGEtinker",
+        env: {
+            APP_URL: config.appUrl,
+        },
+    });
+});
 
 export default app;
