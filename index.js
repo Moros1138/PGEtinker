@@ -62,9 +62,9 @@ app.post("/compile", (req, res) =>
     }
     
     // break the code up into an array
-    let code = req.body.code.split("\n");
-    let libraries = [];
+    let code      = req.body.code.split("\n");
     let errors    = [];
+    let libraries = [];
 
     // line by line code processing and filtering
     for(i = 0; i < code.length; i++)
@@ -99,7 +99,7 @@ app.post("/compile", (req, res) =>
                 continue;
         }
     }
-    
+
     // if we've detected errors at this point, let's bail out here, without invoking the compiler
     if(errors.length > 0)
     {
@@ -145,6 +145,8 @@ app.post("/compile", (req, res) =>
             ...libraries,
             "-o",
             path.join(workspaceDirectory, "pgetinker.html"),
+            "--shell-file",
+            path.join("./", "emscripten_shell.html"),
             "-sASYNCIFY",
             "-sALLOW_MEMORY_GROWTH=1",
             "-sMAX_WEBGL_VERSION=2",
