@@ -41,15 +41,18 @@ const libraryMacroToObject = [
 const { exec,spawn } = require('node:child_process');
 const express = require('express');
 const morgan = require('morgan');
+const mktemp = require('mktemp');
+const fs = require('node:fs');
+const path = require('node:path');
 
 const app = express();
 const port = 3000
 
+app.use(express.json());
 app.use(morgan('tiny'))
 app.use(express.static('public_html'))
-app.use(express.json());
 
-app.post("/compile", async(req, res) =>
+app.post("/compile", (req, res) =>
 {
     // bail out if we haven't been provided some code to process
     if(typeof req.body.code === 'undefined')
@@ -84,7 +87,7 @@ app.post("/compile", async(req, res) =>
                     // blank the line
                     code[i] = "";
                     // indicate that we use this library
-                    libraries.push(libraryMacroToObject[j].objectFiles);
+                    libraries.push(path.join("./", "cache", "third-party", libraryMacroToObject[j].objectFiles));
 
                     foundImplementationMacro = true;
                     break;
@@ -104,19 +107,70 @@ app.post("/compile", async(req, res) =>
         return;
     }
 
-    // we made it here, time to try the compiler
-    const compiler = exec("./scripts/build-local.sh " + libraries.join(" "), (error, stdout, stderr) =>
+    // let's make a workspace
+    let workspaceDirectory = mktemp.createDirSync('./cache/build/XXXXXX');
+
+    // write code to file
+    fs.writeFileSync(path.join(workspaceDirectory, "pgetinker.cpp"), code.join("\n"));
+    
+    // construct the compile command
+    let compileCommand = [
+        "em++",
+        "-c",
+        "-I./third-party/olcPixelGameEngine",
+        "-I./third-party/olcPixelGameEngine/extensions",
+        "-I./third-party/olcPixelGameEngine/utilities",
+        "-I./third-party/olcSoundWaveEngine",
+        path.join(workspaceDirectory, "pgetinker.cpp"),
+        "-o",
+        path.join(workspaceDirectory, "pgetinker.o"),
+    ];
+
+    // invoke the compiler
+    const compiler = exec(compileCommand.join(" "), (error, stdout, stderr) =>
     {
-        res.send({
-            code: 200,
-            stdout: stdout,
-            stderr: stderr
+        // if we have an error, respond with all output of error messages
+        if(error)
+        {
+            res.status(400).send({
+                error,stdout,stderr
+            });
+            return;
+        }
+        
+        // construct linker command
+        let linkCommand = [
+            "em++",
+            path.join(workspaceDirectory, "pgetinker.o"),
+            ...libraries,
+            "-o",
+            path.join(workspaceDirectory, "pgetinker.html"),
+            "-sASYNCIFY",
+            "-sALLOW_MEMORY_GROWTH=1",
+            "-sMAX_WEBGL_VERSION=2",
+            "-sMIN_WEBGL_VERSION=2",
+            "-sUSE_LIBPNG=1",
+            "-sUSE_SDL_MIXER=2",
+            "-sLLD_REPORT_UNDEFINED",
+            "-sSINGLE_FILE",
+        ];
+
+        // invoke the linker
+        const linker = exec(linkCommand.join(" "), (error, stdout, stderr) =>
+        {
+            // if we have an error, respond with all output of error messages
+            if(error)
+            {
+                res.status(400).send({
+                    error,stdout,stderr
+                });
+                return;
+            }
+            
+            // if we made it here, it's time to send back the built result
+            res.send({html: fs.readFileSync(path.join(workspaceDirectory, "pgetinker.html"), { encoding: 'utf8'})});
         });
     });
-    
-    // feed the code to the script, via pipe
-    compiler.stdin.write(code.join("\n"));
-    compiler.stdin.end();
 
 });
 
