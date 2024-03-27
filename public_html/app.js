@@ -14,7 +14,7 @@ require(['vs/editor/editor.main'], async() => {
             headers: {
                 "Content-type": "application/json",
             },
-            body: JSON.stringify({code: editor.getValue() }),
+            body: JSON.stringify({code: monacoEditor.getValue() }),
         });
         
         const result = await response.json();
@@ -108,12 +108,26 @@ require(['vs/editor/editor.main'], async() => {
     monacoModel = monaco.editor.createModel(defaultCode, "cpp", uri);
 
     monacoEditor = monaco.editor.create(document.querySelector('#editor-panel .code-editor'), {
-        model: monacoModel
+        automaticLayout: true,
+        model: monacoModel,
+        theme: 'vs-dark'
     });
 
     monacoModel.onDidChangeContent(() =>
     {
         console.log(monacoEditor.getValue().length)
     });
-    
+
+    // button handling, using this method in order to account for DOM changes
+    unsafeDocument.addEventListener('click', (e) =>
+    {
+        const id = e.target.closest(`button`) && e.target.closest(`button`).getAttribute('id');
+        
+        if(id === "compile")
+        {
+            Compile();
+        }
+        console.log(id);
+    });
+
 });
