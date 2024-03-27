@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "node --watch index.js",
-    "build-cache": "scripts/build-pge-cache.sh",
+    "cache:build": "scripts/build-pge-cache.sh",
+    "cache:clean": "rm -rf cache/build/* cache/data/* cache/third-party/*",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -19,6 +20,7 @@
   },
   "homepage": "https://github.com/Moros1138/PGEtinker#readme",
   "dependencies": {
+    "config": "^3.3.11",
     "express": "^4.19.2",
     "mktemp": "^1.0.1",
     "morgan": "^1.10.0"
