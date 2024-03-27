@@ -44,9 +44,9 @@ const morgan = require('morgan');
 const mktemp = require('mktemp');
 const fs = require('node:fs');
 const path = require('node:path');
+const config = require('./config');
 
 const app = express();
-const port = 3000
 
 app.use(express.json());
 app.use(morgan('tiny'))
@@ -115,7 +115,7 @@ app.post("/compile", (req, res) =>
     fs.writeFileSync(path.join(workspaceDirectory, "pgetinker.cpp"), code.join("\n"));
     
     let compilerCommand = [
-        "scripts/docker-compile.sh",
+        `scripts/${config.buildWith}-compile.sh`,
         workspaceDirectory
     ];
     
@@ -133,7 +133,7 @@ app.post("/compile", (req, res) =>
         
         // construct linker command
         let linkCommand = [
-            "scripts/docker-link.sh",
+            `scripts/${config.buildWith}-link.sh`,
             workspaceDirectory,
             ...libraries,
         ];
@@ -165,8 +165,8 @@ app.post("/compile", (req, res) =>
 
 });
 
-app.listen(port, () =>
+app.listen(config.port, config.hostname, () =>
 {
-    console.log(`PGEtinker Server listening on port ${port}`);
+    console.log(`PGEtinker Server listening on port http://${config.hostname}:${config.port} ... Building with ${config.buildWith} scripts.`);
 });
 
