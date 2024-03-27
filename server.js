@@ -128,6 +128,8 @@ app.post("/compile", (req, res) =>
             res.status(400).send({
                 error,stdout,stderr
             });
+
+            fs.rmdirSync(workspaceDirectory, { recursive: true, force: true });
             return;
         }
         
@@ -147,6 +149,8 @@ app.post("/compile", (req, res) =>
                 res.status(400).send({
                     error,stdout,stderr
                 });
+                
+                fs.rmdirSync(workspaceDirectory, { recursive: true, force: true });
                 return;
             }
 
@@ -154,12 +158,15 @@ app.post("/compile", (req, res) =>
             {
                 // if we made it here, it's time to send back the built result
                 res.send({html: fs.readFileSync(path.join(workspaceDirectory, "pgetinker.html"), { encoding: 'utf8'})});
+                fs.rmdirSync(workspaceDirectory, { recursive: true, force: true });
                 return;
             }
             
             res.status(469).send({
                 message: "unknown error"
             });
+            
+            fs.rmdirSync(workspaceDirectory, { recursive: true, force: true });
         });
     });
 
