@@ -28,9 +28,31 @@
             background: #fff;
             color: #000;
         }
+        #container {
+          position:fixed;
+          display: block;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 80vh;
+        }
+        #output {
+          position:fixed;
+          display: block;
+          width: 80vw;
+          height: 15vh;
+          bottom: 0;
+          padding: 1rem;
+          background: #000;
+          color: #fff;
+          outline: none;
+          border: none;
+        }
         #canvas {
+            display: block;
             border: 0px none;
             background-color: black;
+            margin: 0 auto;
         }
         #canvas:focus {
             outline: none;
@@ -38,7 +60,10 @@
     </style>
   </head>
   <body>
+    <div id="container">
     <canvas id="canvas" oncontextmenu="event.preventDefault()" tabindex=-1></canvas>
+    </div>
+    <textarea id="output" rows="8"></textarea>
     <script type='text/javascript'>
 
       var Module = {
