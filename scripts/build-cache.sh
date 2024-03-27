@@ -1,4 +1,6 @@
 #!/bin/env bash
+export EMSDK_QUIET=1
+source "./third-party/emsdk/emsdk_env.sh"
 
 # create the cache directories, if doesn't exist
 mkdir -p ./cache/{build,data,docker-emscripten,third-party}
