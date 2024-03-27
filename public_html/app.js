@@ -7,6 +7,8 @@ let defaultCode;
 
 async function Compile()
 {
+    monaco.editor.removeAllMarkers("owner");
+
     const response = await fetch("/compile", {
         method: "POST",
         headers: {
@@ -17,9 +19,34 @@ async function Compile()
     
     const result = await response.json();
     
-    if(typeof result.html === 'undefined')
+    if(result.stderr)
     {
-        console.log(result);
+        const regex = new RegExp(':(\\d+):(\\d+): (error|warning): (.*)', 'gm')
+        
+        let markers = [];
+        
+        let matches;
+
+        while((matches = regex.exec(result.stderr)) !== null)
+        {
+            const range = {
+                startLineNumber: parseInt(matches[1]),
+                startColumn: parseInt(matches[2]),
+                endLineNumber: parseInt(matches[1]),
+                endColumn: monacoModel.getLineLength(parseInt(matches[1])),
+            };
+    
+			markers.push({
+				message: matches[4],
+				severity: (matches[3] === "warning") ? monaco.MarkerSeverity.Warning : monaco.MarkerSeverity.Error,
+				startLineNumber: range.startLineNumber,
+				startColumn: range.startColumn,
+				endLineNumber: range.endLineNumber,
+				endColumn: range.endColumn,
+			});            
+        }
+        
+        monaco.editor.setModelMarkers(monacoModel, "owner", markers);
         return;
     }
     
