@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "node --watch index.js",
-    "cache:build": "scripts/build-pge-cache.sh",
-    "cache:clean": "rm -rf cache/build/* cache/data/* cache/third-party/*",
+    "cache:build": "scripts/build-cache.sh",
+    "cache:clean": "rm -rf cache/*",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

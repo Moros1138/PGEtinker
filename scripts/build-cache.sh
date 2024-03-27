@@ -1,9 +1,7 @@
 #!/bin/env bash
 
-# create the cache directory, if it doesn't exist
-if [ ! -e ./cache/third-party ] ; then
-    mkdir -p ./cache/third-party
-fi
+# create the cache directories, if doesn't exist
+mkdir -p ./cache/{build,data,docker-emscripten,third-party}
 
 # build PGE and all pre-buildable extensions/utils
 if [ ! -e ./cache/third-party/olcPixelGameEngine.o ] ; then
@@ -62,3 +60,5 @@ if [ ! -e ./cache/third-party/olcSoundWaveEngine.o ] ; then
     em++ -c -std=c++20 -I./third-party/olcPixelGameEngine -I./third-party/olcPixelGameEngine/extensions -I./third-party/olcPixelGameEngine/utilities -I./third-party/olcSoundWaveEngine ./third-party/olcSoundWaveEngine/olcSoundWaveEngine.cpp -o ./cache/third-party/olcSoundWaveEngine.o
 fi
 
+echo Building pgetinker/builder docker image
+docker build -t pgetinker/builder ./docker/
