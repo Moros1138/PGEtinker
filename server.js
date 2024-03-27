@@ -111,6 +111,33 @@ app.post("/compile", (req, res) =>
     // let's make a workspace
     let workspaceDirectory = mktemp.createDirSync('./cache/build/XXXXXX');
     
+    function FilterOutput(text)
+    {
+        text = text.replaceAll("/src/tmp", "");
+        text = text.replaceAll("/src/third-party/olcPixelGameEngine", "");
+        text = text.replaceAll("/src/third-party/olcPixelGameEngine/extensions", "");
+        text = text.replaceAll("/src/third-party/olcPixelGameEngine/utilities", "");
+        text = text.replaceAll("/src/third-party/olcSoundWaveEngine", "");
+        text = text.replaceAll("/src/cache/third-party", "");
+        
+        text = text.replaceAll(workspaceDirectory, "");
+        text = text.replaceAll("./third-party/olcPixelGameEngine", "");
+        text = text.replaceAll("./third-party/olcPixelGameEngine/extensions", "");
+        text = text.replaceAll("./third-party/olcPixelGameEngine/utilities", "");
+        text = text.replaceAll("./third-party/olcSoundWaveEngine", "");
+        
+        text = text.split("\n");
+        let retval = [];
+        for(let i = 0; i < text.length; i++)
+        {
+            if(text[i].indexOf("/pgetinker.cpp") === 0)
+                retval.push(text[i]);
+        }
+        
+        return retval.join("\n");
+    }
+
+
     // write code to file
     fs.writeFileSync(path.join(workspaceDirectory, "pgetinker.cpp"), code.join("\n"));
     
@@ -126,10 +153,11 @@ app.post("/compile", (req, res) =>
         if(error)
         {
             res.status(400).send({
-                error,stdout,stderr
+                stdout: FilterOutput(stdout),
+                stderr: FilterOutput(stderr)
             });
 
-            fs.rmdirSync(workspaceDirectory, { recursive: true, force: true });
+            fs.rmSync(workspaceDirectory, { recursive: true, force: true });
             return;
         }
         
@@ -147,10 +175,11 @@ app.post("/compile", (req, res) =>
             if(error)
             {
                 res.status(400).send({
-                    error,stdout,stderr
+                    stdout: FilterOutput(stdout),
+                    stderr: FilterOutput(stderr)
                 });
                 
-                fs.rmdirSync(workspaceDirectory, { recursive: true, force: true });
+                fs.rmSync(workspaceDirectory, { recursive: true, force: true });
                 return;
             }
 
@@ -158,7 +187,7 @@ app.post("/compile", (req, res) =>
             {
                 // if we made it here, it's time to send back the built result
                 res.send({html: fs.readFileSync(path.join(workspaceDirectory, "pgetinker.html"), { encoding: 'utf8'})});
-                fs.rmdirSync(workspaceDirectory, { recursive: true, force: true });
+                fs.rmSync(workspaceDirectory, { recursive: true, force: true });
                 return;
             }
             
@@ -166,7 +195,7 @@ app.post("/compile", (req, res) =>
                 message: "unknown error"
             });
             
-            fs.rmdirSync(workspaceDirectory, { recursive: true, force: true });
+            fs.rmSync(workspaceDirectory, { recursive: true, force: true });
         });
     });
 
