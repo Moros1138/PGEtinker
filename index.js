@@ -86,8 +86,9 @@ app.post("/compile", (req, res) =>
                 {
                     // blank the line
                     code[i] = "";
+                    
                     // indicate that we use this library
-                    libraries.push(path.join("./", "cache", "third-party", libraryMacroToObject[j].objectFiles));
+                    libraries.push(libraryMacroToObject[j].objectFiles);
 
                     foundImplementationMacro = true;
                     break;
@@ -109,25 +110,17 @@ app.post("/compile", (req, res) =>
 
     // let's make a workspace
     let workspaceDirectory = mktemp.createDirSync('./cache/build/XXXXXX');
-
+    
     // write code to file
     fs.writeFileSync(path.join(workspaceDirectory, "pgetinker.cpp"), code.join("\n"));
     
-    // construct the compile command
-    let compileCommand = [
-        "em++",
-        "-c",
-        "-I./third-party/olcPixelGameEngine",
-        "-I./third-party/olcPixelGameEngine/extensions",
-        "-I./third-party/olcPixelGameEngine/utilities",
-        "-I./third-party/olcSoundWaveEngine",
-        path.join(workspaceDirectory, "pgetinker.cpp"),
-        "-o",
-        path.join(workspaceDirectory, "pgetinker.o"),
+    let compilerCommand = [
+        "scripts/docker-compile.sh",
+        workspaceDirectory
     ];
-
+    
     // invoke the compiler
-    const compiler = exec(compileCommand.join(" "), (error, stdout, stderr) =>
+    const compiler = exec(compilerCommand.join(" "), (error, stdout, stderr) =>
     {
         // if we have an error, respond with all output of error messages
         if(error)
@@ -140,21 +133,9 @@ app.post("/compile", (req, res) =>
         
         // construct linker command
         let linkCommand = [
-            "em++",
-            path.join(workspaceDirectory, "pgetinker.o"),
+            "scripts/docker-link.sh",
+            workspaceDirectory,
             ...libraries,
-            "-o",
-            path.join(workspaceDirectory, "pgetinker.html"),
-            "--shell-file",
-            path.join("./", "emscripten_shell.html"),
-            "-sASYNCIFY",
-            "-sALLOW_MEMORY_GROWTH=1",
-            "-sMAX_WEBGL_VERSION=2",
-            "-sMIN_WEBGL_VERSION=2",
-            "-sUSE_LIBPNG=1",
-            "-sUSE_SDL_MIXER=2",
-            "-sLLD_REPORT_UNDEFINED",
-            "-sSINGLE_FILE",
         ];
 
         // invoke the linker
@@ -168,9 +149,17 @@ app.post("/compile", (req, res) =>
                 });
                 return;
             }
+
+            if(fs.existsSync(path.join(workspaceDirectory, "pgetinker.html")))
+            {
+                // if we made it here, it's time to send back the built result
+                res.send({html: fs.readFileSync(path.join(workspaceDirectory, "pgetinker.html"), { encoding: 'utf8'})});
+                return;
+            }
             
-            // if we made it here, it's time to send back the built result
-            res.send({html: fs.readFileSync(path.join(workspaceDirectory, "pgetinker.html"), { encoding: 'utf8'})});
+            res.status(469).send({
+                message: "unknown error"
+            });
         });
     });
 
