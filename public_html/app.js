@@ -29,20 +29,13 @@ async function Compile()
 
         while((matches = regex.exec(result.stderr)) !== null)
         {
-            const range = {
-                startLineNumber: parseInt(matches[1]),
-                startColumn: parseInt(matches[2]),
-                endLineNumber: parseInt(matches[1]),
-                endColumn: monacoModel.getLineLength(parseInt(matches[1])),
-            };
-    
 			markers.push({
 				message: matches[4],
 				severity: (matches[3] === "warning") ? monaco.MarkerSeverity.Warning : monaco.MarkerSeverity.Error,
-				startLineNumber: range.startLineNumber,
-				startColumn: range.startColumn,
-				endLineNumber: range.endLineNumber,
-				endColumn: range.endColumn,
+				startLineNumber: parseInt(matches[1]),
+				startColumn: parseInt(matches[2]),
+				endLineNumber: parseInt(matches[1]),
+				endColumn: monacoModel.getLineLength(parseInt(matches[1])),
 			});            
         }
         
