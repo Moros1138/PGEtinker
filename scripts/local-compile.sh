@@ -6,7 +6,6 @@ source "./third-party/emsdk/emsdk_env.sh"
 # $1 = path of the temporary working directory
 # 
 em++ \
-    -O2 \
     -c \
     -I./third-party/olcPixelGameEngine \
     -I./third-party/olcPixelGameEngine/extensions \

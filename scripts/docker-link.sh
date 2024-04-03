@@ -24,7 +24,6 @@ docker run --rm \
     -u $(id -u):$(id -g) \
     pgetinker/builder \
     em++ \
-    -O2 \
     /src/tmp/pgetinker.o \
     $libraries \
     -o /src/tmp/pgetinker.html \

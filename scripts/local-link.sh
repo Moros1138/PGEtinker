@@ -19,7 +19,6 @@ done
 
 # call the linker
 em++ \
-    -O2 \
     $1/pgetinker.o \
     $libraries \
     -o $1/pgetinker.html \

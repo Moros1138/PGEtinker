@@ -11,7 +11,6 @@ docker run --rm \
     -u $(id -u):$(id -g) \
     pgetinker/builder \
     em++ \
-    -O2 \
     -c \
     -I/src/third-party/olcPixelGameEngine \
     -I/src/third-party/olcPixelGameEngine/extensions \
