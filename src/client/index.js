@@ -3,6 +3,8 @@ import "./lib/goldenLayout";
 
 import goldenLayoutDarkTheme from "golden-layout/src/css/goldenlayout-dark-theme.css?raw";
 import goldenLayoutLightTheme from "golden-layout/src/css/goldenlayout-light-theme.css?raw";
+import editorPanelTemplate from "./templates/editor-panel.html?raw";
+import playerPanelTemplate from "./templates/player-panel.html?raw";
 
 class App
 {
@@ -46,51 +48,12 @@ class App
         
         this.layoutConfig = this.layoutConfigDefault;
 
-        this.playerLastHtml = `
-                <!DOCTYPE html>
-                <html lang="en">
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>Player Frame | PGEtinker</title>
-                    <style>
-                html,
-                body {
-                    width: 100%;
-                    height: 100%;
-                    margin: 0;
-                    padding: 0;
-                    background: #333;
-                    color: #fff;
-                }
-                #app {
-                    width: 100%;
-                    height: 100%;
-                    padding: 1rem;
-                }
-                .light {
-                    background: #fff;
-                    color: #000;
-                }
-                    </style>
-                </head>
-                <body>
-                    <div id="app">    
-                        <h1>PGEtinker</h1>
-                        <p>Welcome! Play with the code, push buttons</p>
-                    </div>
-                </body>
-                </html>
-            `;
+
+        this.playerLastHtml = playerPanelTemplate;
 
         this.SetupLayout();
         
         this.SetTheme("dark");
-    }
-    
-    SetupUI()
-    {
-    
     }
 
     SetupLayout()
@@ -109,24 +72,7 @@ class App
         
         this.layout.registerComponent('editorComponent', function (container, state)
         {
-            container.getElement().html(`
-                <div id="editor-panel">
-                    <div class="menu">
-                        <ul class="editor-menu">
-                            <li><button type="button" id="default-code">Default Code</button></li>
-                            <li class="separator"></li>
-                            <li><button type="button" id="toggle-theme">Toggle Theme</button></li>
-                            <li><button type="button" id="default-layout">Default Layout</button></li>
-                        </ul>
-                        <ul class="build-menu">
-                            <li><button type="button" id="share">Share</button></li>
-                            <li><button type="button" id="compile">Build &amp; Run</button></li>
-                        </ul>
-                    </div>
-                    <div class="code-editor"></div>
-                    <div class="status">Loading</div>
-                </div>`
-            );
+            container.getElement().html(editorPanelTemplate);
             
             container.on("resize", () =>
             {
