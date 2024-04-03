@@ -1,6 +1,8 @@
 import fs from "node:fs/promises";
 
 import express from "express";
+import morgan from "morgan";
+
 import dotenv from "dotenv";
 import ApiHandler from "./src/server/lib/ApiHandler.js";
 
@@ -55,6 +57,7 @@ else
     app.use(base, sirv("./dist/client", { extensions: [] }));
 }
 
+app.use(morgan("tiny"));
 app.use("/api", express.json());
 
 ApiHandler(app);
