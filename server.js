@@ -1,208 +1,112 @@
-// regex pattern to detect absolute path in include/import macros
-const absolutePathRegex = /^\s*#\s*i(nclude|mport)(_next)?\s+["<]((\.{1,2}|\/)[^">]*)[">]/;
+import fs from "node:fs/promises";
 
-const libraryMacroToObject = [
-    {
-        define: 'OLC_PGE_APPLICATION',
-        objectFiles: 'olcPixelGameEngine.o',
-    },{
-        define: 'OLC_SOUNDWAVE_ENGINE',
-        objectFiles: 'olcSoundWaveEngine.o',
-    },{
-        define: 'OLC_PGEX_GRAPHICS2D',
-        objectFiles: 'olcPGEX_Graphics2D.o',
-    },{
-        define: 'OLC_PGEX_GRAPHICS3D',
-        objectFiles: 'olcPGEX_Graphics3D.o',
-    },{
-        define: 'OLC_PGEX_POPUPMENU',
-        objectFiles: 'olcPGEX_PopUpMenu.o',
-    },{
-        define: 'OLC_PGEX_QUICKGUI',
-        objectFiles: 'olcPGEX_QuickGUI.o',
-    },{
-        define: 'OLC_PGEX_RAYCASTWORLD',
-        objectFiles: 'olcPGEX_RayCastWorld.o',
-    },{
-        define: 'OLC_PGEX_SOUND',
-        objectFiles: 'olcPGEX_Sound.o',
-    },{
-        define: 'OLC_PGEX_SPLASHSCREEN',
-        objectFiles: 'olcPGEX_SplashScreen.o',
-    },{
-        define: 'OLC_PGEX_TRANSFORMEDVIEW',
-        objectFiles: 'olcPGEX_TransformedView.o',
-    },{
-        define: 'OLC_PGEX_WIREFRAME',
-        objectFiles: 'olcPGEX_Wireframe.o',
-    }
-];
+import express from "express";
+import dotenv from "dotenv";
+import ApiHandler from "./src/server/lib/ApiHandler.js";
 
-const { exec,spawn } = require('node:child_process');
-const express = require('express');
-const morgan = require('morgan');
-const mktemp = require('mktemp');
-const fs = require('node:fs');
-const path = require('node:path');
-const config = require('./config');
+// load configuration from .env files
+dotenv.config();
 
+// constants
+
+/** @type {boolean} - are we in production mode or not */
+const isProduction = process.env.NODE_ENV === "production";
+
+/** @type {number} - port the server will listen on */
+const port         = process.env.PORT || 5173;
+
+/** @type {string} - the base URL for this application */
+const base         = process.env.BASE || "/";
+
+/** @type {string} - the template string used for rendering the final HTML */
+const templateHtml = isProduction
+    ? await fs.readFile("./dist/client/index.html", "utf-8")
+    : "";
+
+/** @type {string} - the manifest file containing the pre-built server-side renderings */
+const ssrManifest = isProduction
+    ? await fs.readFile("./dist/client/.vite/ssr-manifest.json", "utf-8")
+    : undefined;
+
+/** @type {Express} - the express app */
 const app = express();
 
-app.use(express.json());
-app.use(morgan('tiny'))
-app.use(express.static('public_html'))
+/** @type {import("vite").ViteDevServer | undefined} - the instance of the vite development server, if not in production */
+let vite;
 
-app.post("/compile", (req, res) =>
+if(!isProduction)
 {
-    // bail out if we haven't been provided some code to process
-    if(typeof req.body.code === 'undefined')
-    {
-        res.status(400).send({code: 400, message: "missing required parameters"});
-        return;
-    }
+    const { createServer } = await import("vite");
     
-    // break the code up into an array
-    let code      = req.body.code.split("\n");
-    let errors    = [];
-    let libraries = [];
-
-    // line by line code processing and filtering
-    for(i = 0; i < code.length; i++)
-    {
-        // filter include macros with an absolute path, naughty naughty
-        if(absolutePathRegex.test(code[i]))
-        {
-            errors.push(`/pgetinker.cpp:${i + 1}:1: no absolute or relative includes please`);
-            continue;
-        }
-            
-        // filter macros to detect implementation defines.
-        if(code[i].includes('#define'))
-        {
-            let foundImplementationMacro = false;
-            for(j = 0; j < libraryMacroToObject.length; j++)
-            {
-                if(code[i].includes(libraryMacroToObject[j].define))
-                {
-                    // blank the line
-                    code[i] = "";
-                    
-                    // indicate that we use this library
-                    libraries.push(libraryMacroToObject[j].objectFiles);
-
-                    foundImplementationMacro = true;
-                    break;
-                }
-            }
-            
-            // thank you, NEXT!!
-            if(foundImplementationMacro)
-                continue;
-        }
-    }
-
-    // if we've detected errors at this point, let's bail out here, without invoking the compiler
-    if(errors.length > 0)
-    {
-        res.status(400).send({code: 400, message: "missing required parameters", stdout: "", stderr: errors.join("\n")});
-        return;
-    }
-
-    // let's make a workspace
-    let workspaceDirectory = mktemp.createDirSync('./cache/build/XXXXXX');
-    
-    function FilterOutput(text)
-    {
-        text = text.replaceAll("/src/tmp", "");
-        text = text.replaceAll("/src/third-party/olcPixelGameEngine", "");
-        text = text.replaceAll("/src/third-party/olcPixelGameEngine/extensions", "");
-        text = text.replaceAll("/src/third-party/olcPixelGameEngine/utilities", "");
-        text = text.replaceAll("/src/third-party/olcSoundWaveEngine", "");
-        text = text.replaceAll("/src/cache/third-party", "");
-        
-        text = text.replaceAll(workspaceDirectory, "");
-        text = text.replaceAll("./third-party/olcPixelGameEngine", "");
-        text = text.replaceAll("./third-party/olcPixelGameEngine/extensions", "");
-        text = text.replaceAll("./third-party/olcPixelGameEngine/utilities", "");
-        text = text.replaceAll("./third-party/olcSoundWaveEngine", "");
-        
-        text = text.split("\n");
-        let retval = [];
-        for(let i = 0; i < text.length; i++)
-        {
-            if(text[i].indexOf("/pgetinker.cpp") === 0)
-                retval.push(text[i]);
-        }
-        
-        return retval.join("\n");
-    }
-
-
-    // write code to file
-    fs.writeFileSync(path.join(workspaceDirectory, "pgetinker.cpp"), code.join("\n"));
-    
-    let compilerCommand = [
-        `scripts/${config.buildWith}-compile.sh`,
-        workspaceDirectory
-    ];
-    
-    // invoke the compiler
-    const compiler = exec(compilerCommand.join(" "), (error, stdout, stderr) =>
-    {
-        // if we have an error, respond with all output of error messages
-        if(error)
-        {
-            res.status(400).send({
-                stdout: FilterOutput(stdout),
-                stderr: FilterOutput(stderr)
-            });
-
-            fs.rmSync(workspaceDirectory, { recursive: true, force: true });
-            return;
-        }
-        
-        // construct linker command
-        let linkCommand = [
-            `scripts/${config.buildWith}-link.sh`,
-            workspaceDirectory,
-            ...libraries,
-        ];
-
-        // invoke the linker
-        const linker = exec(linkCommand.join(" "), (error, stdout, stderr) =>
-        {
-            // if we have an error, respond with all output of error messages
-            if(error)
-            {
-                res.status(400).send({
-                    stdout: FilterOutput(stdout),
-                    stderr: FilterOutput(stderr)
-                });
-                
-                fs.rmSync(workspaceDirectory, { recursive: true, force: true });
-                return;
-            }
-
-            if(fs.existsSync(path.join(workspaceDirectory, "pgetinker.html")))
-            {
-                // if we made it here, it's time to send back the built result
-                res.send({html: fs.readFileSync(path.join(workspaceDirectory, "pgetinker.html"), { encoding: 'utf8'})});
-                fs.rmSync(workspaceDirectory, { recursive: true, force: true });
-                return;
-            }
-            
-            res.status(469).send({
-                message: "unknown error"
-            });
-            
-            fs.rmSync(workspaceDirectory, { recursive: true, force: true });
-        });
+    vite = await createServer({
+        server: { middlewareMode: true },
+        appType: "custom",
+        base
     });
-
-});
-
-app.listen(config.port, config.hostname, () =>
+    
+    app.use(vite.middlewares);
+}
+else
 {
-    console.log(`PGEtinker Server listening on port http://${config.hostname}:${config.port} ... Building with ${config.buildWith} scripts.`);
+    const compression = (await import("compression")).default;
+    const sirv        = (await import("sirv")).default;
+
+    app.use(compression());
+    app.use(base, sirv("./dist/client", { extensions: [] }));
+}
+
+app.use("/api", express.json());
+
+ApiHandler(app);
+
+app.use("*", async(request, response) =>
+{
+    try
+    {
+        /** @type {string} - url, stripped of the base, for uses in path matching */
+        const url = request.originalUrl.replace(base, '');
+
+        /** @type {string | undefined} - the text template used by the rendering function */
+        let template;
+        /** @type {function | undefined} - placeholder for the rendering function */
+        let render;
+
+        if(!isProduction)
+        {
+            // in development, always load a fresh copy of the html template.
+            template = await fs.readFile("./index.html", "utf-8");
+            template = await vite.transformIndexHtml(url, template);
+            render = (await vite.ssrLoadModule("/src/server/index.js")).render;
+        }
+        else
+        {
+            // in production, always use the cached copy of the html template.
+            template = templateHtml;
+            render = (await import("./dist/server/index.js")).render;
+        }
+
+        // do the actual rendering
+        const rendered = await render(url, ssrManifest);
+        
+        // apply the rendering to the template
+        const html = template
+            .replace(`<!--app-head-->`, rendered.head ?? "")
+            .replace(`<!--app-html-->`, rendered.html ?? "");
+        
+        // I got something to say. it's better to burn out than fade away!
+        response.status(200).set({"Content-Type": "text/html"}).send(html);
+    }
+    catch(e)
+    {
+        if(typeof vite !== "undefined")
+            vite.ssrFixStacktrace(e);
+
+        console.log(e.stack);
+        response.status(500).end(e.stack);
+    }
 });
 
+app.listen(port, () =>
+{
+    console.log(`Server started at http://localhost:${port}`);
+});
