@@ -62,7 +62,6 @@ function Compile(request, response)
     {
         response.status(400)
                 .send({
-                    statusCode: 400,
                     message: "missing required parameters"
                 });
         return;
@@ -83,7 +82,7 @@ function Compile(request, response)
         // filter include macros with an absolute path, naughty naughty
         if(absolutePathRegex.test(linesOfCode[i]))
         {
-            errors.push(`/pgetinker.cpp:${i+1}:1: no absolute or relative includes please.`);
+            errors.push(`/pgetinker.cpp:${i+1}:1: error: absolute and relative includes are not allowed.`);
             
             // no further processing required for this line, NEXT!!
             continue;
@@ -121,7 +120,6 @@ function Compile(request, response)
     {
         response.status(400)
                 .send({
-                    statusCode: 400,
                     stdout: "",
                     stderr: errors.join("\n")
                 });
