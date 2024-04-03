@@ -190,10 +190,16 @@ class App
         document.querySelector("#player-panel iframe").contentWindow.document.body.className = this.theme;
     }
 
-    Compile()
+    CloseMarkers()
     {
         monaco.editor.removeAllMarkers("owner");
+        this.editor.trigger("", "closeMarkersNavigation");
+    }
     
+    Compile()
+    {
+        this.CloseMarkers();
+
         fetch("/api/compile", {
             method: "POST",
             headers: { "Content-type": "application/json" },
@@ -224,7 +230,12 @@ class App
                     });            
                 }
                 
+                // show errors in the editor
                 monaco.editor.setModelMarkers(this.model, "owner", markers);
+                this.editor.setPosition({lineNumber: markers[0].startLineNumber, column: markers[0].startColumn });
+                
+                setTimeout(() => { this.editor.trigger("", "editor.action.marker.next"); }, 50);
+                
                 return;
             }
 
@@ -233,7 +244,7 @@ class App
     
         }).catch((error) =>
         {
-            console.log("Awwww fuck!");
+            console.log("Awwww fuck!", error);
         })
     }
 }
