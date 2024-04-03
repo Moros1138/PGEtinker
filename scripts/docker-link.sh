@@ -20,7 +20,6 @@ docker run --rm \
     -v $1:/src/tmp \
     -v $(pwd)/cache/third-party:/src/cache/third-party \
     -v $(pwd)/emscripten_shell.html:/src/emscripten_shell.html \
-    -v $(pwd)/cache/docker-emscripten:/emsdk/upstream/emscripten/cache \
     -u $(id -u):$(id -g) \
     pgetinker/builder \
     em++ \
