@@ -48,6 +48,47 @@ class App
         
         this.layoutConfig = this.layoutConfigDefault;
 
+        this.ui = [{
+            element: () => { return document.querySelector("#default-code"); },
+            callback: (event) =>
+            {
+                event.preventDefault();
+            
+                fetch("/example.cpp").then((response) => {
+                    return response.text();
+                }).then((text) => {
+                    this.model.setValue(text);
+                });
+            },
+        },{
+            element: () => { return document.querySelector("#toggle-theme"); },
+            callback: (event) =>
+            {
+                event.preventDefault();
+                this.ToggleTheme();
+            }
+        },{
+            element: () => { return document.querySelector("#default-layout"); },
+            callback: (event) =>
+            {
+                event.preventDefault();
+                this.RestoreDefaultLayout();
+            }
+        },{
+            element: () => { return document.querySelector("#share"); },
+            callback: (event) =>
+            {
+                event.preventDefault();
+                alert("TODO: " + event.target.innerHTML);
+            }
+        },{
+            element: () => { return document.querySelector("#compile"); },
+            callback: (event) =>
+            {
+                event.preventDefault();
+                this.Compile();
+            }
+        }];
 
         this.playerLastHtml = playerPanelTemplate;
 
@@ -98,47 +139,11 @@ class App
                 model: this.model,
                 theme: `vs-${this.theme}`
             });
-
-            let elem_DefaultCodeButton = document.querySelector("#default-code");
-            elem_DefaultCodeButton.addEventListener("click", (event) =>
-            {
-                event.preventDefault();
-                
-                fetch("/example.cpp").then((response) => {
-                    return response.text();
-                }).then((text) => {
-                    this.model.setValue(text);
-                });
-            });
-
-            let elem_ToggleThemeButton = document.querySelector("#toggle-theme");
-            elem_ToggleThemeButton.addEventListener("click", (event) =>
-            {
-                event.preventDefault();
-                this.ToggleTheme();
-            });
             
-            let elem_DefaultLayoutButton = document.querySelector("#default-layout");
-            elem_DefaultLayoutButton.addEventListener("click", (event) =>
+            for(let i = 0; i < this.ui.length; i++)
             {
-                event.preventDefault();
-                // alert("TODO: " + event.target.innerHTML);
-                this.RestoreDefaultLayout();
-            });
-            
-            let elem_ShareButton = document.querySelector("#share");
-            elem_ShareButton.addEventListener("click", (event) =>
-            {
-                event.preventDefault();
-                alert("TODO: " + event.target.innerHTML);
-            });
-            
-            let elem_CompileButton = document.querySelector("#compile");
-            elem_CompileButton.addEventListener("click", (event) =>
-            {
-                event.preventDefault();
-                this.Compile();
-            });
+                this.ui[i].element().addEventListener("click", this.ui[i].callback);
+            }
             
             document.querySelector('#player-panel iframe').srcdoc = this.playerLastHtml;
         });
