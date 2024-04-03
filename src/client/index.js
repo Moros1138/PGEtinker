@@ -58,6 +58,7 @@ class App
                     return response.text();
                 }).then((text) => {
                     this.model.setValue(text);
+                    this.CloseMarkers();
                 });
             },
         },{
