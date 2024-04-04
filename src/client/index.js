@@ -72,6 +72,27 @@ class App
         this.layoutConfig = ((window.localStorage.getItem("pgetinkerLayout") !== null) ? JSON.parse(window.localStorage.getItem("pgetinkerLayout")) : this.layoutConfigDefault);
         
         this.buttons = [{
+            element: () => { return document.querySelector("#download"); },
+            callback: (event) =>
+            {
+                // TODO: indicate a requirement for a compiled player.
+                if(!this.playerLastHtml.includes("Emscripten-Generated Code"))
+                {
+                    alert("You have to build before you can download!")
+                    return;
+                }
+                    
+                
+                const a = document.createElement('a');
+                // create the data url
+                a.href = `data:text/html;base64,${btoa(this.playerLastHtml)}`;
+                a.download = "pgetinker.html";
+
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            },
+        },{
             element: () => { return document.querySelector("#default-code"); },
             callback: (event) =>
             {
