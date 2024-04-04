@@ -22,6 +22,25 @@ class App
 
     constructor()
     {
+        // listen for message
+        window.addEventListener("message", (event) =>
+        {
+            if(typeof event.data !== "object")
+                return;
+               
+            if(typeof event.data.message !== "string")
+                return;
+
+            if(event.data.message === "player-ready")
+            {
+                // set the theme of the player
+                event.source.postMessage({
+                    message: "set-theme",
+                    theme: this.theme
+                });
+            }
+        });
+        
         // initialize the default layout configuration
         this.layoutConfigDefault = {
             settings: {
@@ -222,14 +241,11 @@ class App
 
         document.querySelector("body").className = this.theme;
         
-        let interval = setInterval(() =>
-        {
-            if(typeof document.querySelector("#player-panel iframe").contentWindow.document.body.className === "undefined")
-                return;
-            
-            document.querySelector("#player-panel iframe").contentWindow.document.body.className = this.theme;
-            clearInterval(interval);
-        }, 50);
+        // apply the theme to the player's iframe page
+        document.querySelector("#player-panel iframe").contentWindow.postMessage({
+            message: "set-theme",
+            theme: this.theme
+        }, "*");
         
         window.localStorage.setItem("pgetinkerTheme", this.theme);
     }
