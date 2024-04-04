@@ -273,5 +273,31 @@ export default function ApiHandler(app)
             });
     });
 
+    app.post("/api/share", (request, response) =>
+    {
+        // bail out if we haven't been provided some code to process
+        if(typeof request.body.code === "undefined")
+        {
+            response.status(400)
+                    .send({
+                        message: "missing required parameters"
+                    });
+            return;
+        }
 
+        Compile(request.body.code)
+            .then((result) =>
+            {
+                
+                // TODO: actual sharing code
+                response.status(result.code)
+                        .send(result);
+            })
+            .catch((error) =>
+            {
+                response.status(error.code)
+                        .send(error);
+            });
+
+    });
 }
