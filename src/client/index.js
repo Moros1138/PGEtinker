@@ -15,6 +15,7 @@ class App
     layout;
     layoutConfig;
     layoutConfigDefault;
+    maxFileSize;
     playerLastHtml;
     theme;
 
@@ -43,6 +44,8 @@ class App
             }]
         };
         
+        this.maxFileSize = 50000;
+
         // TODO: check for share URL
         this.code         = ((window.localStorage.getItem("pgetinkerCode") !== null)   ? JSON.parse(window.localStorage.getItem("pgetinkerCode"))   : defaultCode);
         
@@ -97,6 +100,23 @@ class App
         theme = (theme === "dark" || theme === "light") ? theme : "dark";
         
         this.SetTheme(theme);
+        
+        this.Status();
+    }
+
+    // Render the status bar
+    Status()
+    {
+        let cursor = `Ln ${this.editor.getPosition().lineNumber}, Col ${this.editor.getPosition().column}`;
+        let fileSize = `${new Intl.NumberFormat().format(this.editor.getValue().length)} / ${new Intl.NumberFormat().format(this.maxFileSize)}`;
+        document.querySelector("#editor-panel .status").innerHTML = `
+            <div class="status-left">
+                <span>${fileSize}</span>
+            </div>
+            <div class="status-right">
+                <span>${cursor}</span>
+            </div>
+        `;
     }
 
     SetupLayout()
@@ -111,7 +131,6 @@ class App
         {
             container.getElement().html(`<div id="player-panel"><iframe src="/player.html"></iframe><div></div></div>`);
         }
-
 
         this.layout = new GoldenLayout(this.layoutConfig, document.querySelector("#content"));
 
@@ -143,9 +162,14 @@ class App
                 theme: `vs-${this.theme}`
             });
             
-            
+            this.editor.onDidChangeCursorPosition(() =>
+            {
+                this.Status();
+            });
+
             this.editor.onDidChangeModelContent(() =>
             {
+                this.Status();
                 window.localStorage.setItem("pgetinkerCode", JSON.stringify(this.editor.getValue()));
             });
 
