@@ -5,6 +5,7 @@ import goldenLayoutDarkTheme from "golden-layout/src/css/goldenlayout-dark-theme
 import goldenLayoutLightTheme from "golden-layout/src/css/goldenlayout-light-theme.css?raw";
 import editorPanelTemplate from "./templates/editor-panel.html?raw";
 import playerPanelTemplate from "./templates/player-panel.html?raw";
+import playerTemplate      from "./templates/player.html?raw";
 import defaultCode from "./templates/example.cpp?raw";
 
 class App
@@ -92,7 +93,7 @@ class App
             }
         }];
 
-        this.playerLastHtml = playerPanelTemplate;
+        this.playerLastHtml = playerTemplate;
 
         this.SetupLayout();
         
@@ -129,7 +130,7 @@ class App
         
         function PlayerComponent(container, state)
         {
-            container.getElement().html(`<div id="player-panel"><iframe src="/player.html"></iframe><div></div></div>`);
+            container.getElement().html(playerPanelTemplate);
         }
 
         this.layout = new GoldenLayout(this.layoutConfig, document.querySelector("#content"));
@@ -238,7 +239,7 @@ class App
         // save the code
         window.localStorage.setItem("pgetinkerCode", JSON.stringify(this.editor.getValue()));
 
-        this.playerLastHtml = playerPanelTemplate;
+        this.playerLastHtml = playerTemplate;
         document.querySelector('#player-panel iframe').srcdoc = this.playerLastHtml;
     
         monaco.editor.removeAllMarkers("owner");
