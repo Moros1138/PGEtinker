@@ -300,7 +300,9 @@ class App
     Share()
     {
         this.BeforeCompile();
-
+        alert("Not Implemented!");
+        return;
+        
         fetch("/api/share", {
             method: "POST",
             headers: { "Content-type": "application/json" },
