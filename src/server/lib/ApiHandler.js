@@ -3,7 +3,9 @@ import mktemp from "mktemp";
 import { rmSync, existsSync, writeFileSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-
+import dotenv from "dotenv";
+// load configuration from .env files
+dotenv.config();
 
 /**
  * @typedef {ObjectDefinition}
@@ -51,6 +53,8 @@ const libraryMacroToObject = [
 
 /** @type {string} - which set of scripts are we building with, "local" or "docker" */
 const compileScript = process.env.COMPILE_SCRIPT || "local";
+
+console.log(compileScript);
 
 /** @type {RegExp} - regex pattern to detect absolute path in include/import macros */
 const absolutePathRegex = /^\s*#\s*i(nclude|mport)(_next)?\s+["<]((\.{1,2}|\/)[^">]*)[">]/;
