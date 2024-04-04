@@ -5,6 +5,7 @@ import goldenLayoutDarkTheme from "golden-layout/src/css/goldenlayout-dark-theme
 import goldenLayoutLightTheme from "golden-layout/src/css/goldenlayout-light-theme.css?raw";
 import editorPanelTemplate from "./templates/editor-panel.html?raw";
 import playerPanelTemplate from "./templates/player-panel.html?raw";
+import defaultCode from "./templates/example.cpp?raw";
 
 class App
 {
@@ -42,6 +43,9 @@ class App
             }]
         };
         
+        // TODO: check for share URL
+        this.code         = ((window.localStorage.getItem("pgetinkerCode") !== null)   ? JSON.parse(window.localStorage.getItem("pgetinkerCode"))   : defaultCode);
+        
         this.layoutConfig = ((window.localStorage.getItem("pgetinkerLayout") !== null) ? JSON.parse(window.localStorage.getItem("pgetinkerLayout")) : this.layoutConfigDefault);
         
         this.buttons = [{
@@ -50,12 +54,10 @@ class App
             {
                 event.preventDefault();
             
-                fetch("/example.cpp").then((response) => {
-                    return response.text();
-                }).then((text) => {
-                    this.model.setValue(text);
-                    this.CloseMarkers();
-                });
+                this.model.setValue(defaultCode);
+                
+                monaco.editor.removeAllMarkers("owner");
+                this.editor.trigger("", "closeMarkersNavigation");
             },
         },{
             element: () => { return document.querySelector("#toggle-theme"); },
@@ -132,7 +134,7 @@ class App
             if(typeof this.model === "undefined")
             {
                 this.model = monaco.editor.createModel("", "cpp", monaco.Uri.parse("inmemory://pgetinker"));
-                this.model.setValue("This is a test");
+                this.model.setValue(this.code);
             }
 
             this.editor = monaco.editor.create(document.querySelector('#editor-panel .code-editor'), {
@@ -209,6 +211,9 @@ class App
 
     BeforeCompile()
     {
+        // save the code
+        window.localStorage.setItem("pgetinkerCode", JSON.stringify(this.editor.getValue()));
+
         this.playerLastHtml = playerPanelTemplate;
         document.querySelector('#player-panel iframe').srcdoc = this.playerLastHtml;
     
