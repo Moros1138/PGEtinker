@@ -1,15 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta name="description" value="Interactively develop an olc::PixelGameEngine program from your Browser!">
+
+    <meta property="og:title" content="PGEtinker">
+    <meta property="og:description" content="Interactively develop an olc::PixelGameEngine program from your Browser!">
+    <meta property="og:type" content="website">
     <title>PGEtinker</title>
-    
+
+    <link rel="stylesheet" type="text/css" href="/goldenlayout-base.css">
+    <link rel="stylesheet" type="text/css" id="goldenlayout-theme">
+    <link rel="stylesheet" type="text/css" href="/style.css">
     <!--app-head-->
-  </head>
-  <body>
-    <div id="app"><!--app-html--></div>
+</head>
+<body>
+    <div id="app">
+        <div id="header">
+            <a href="/">
+                <img src="/images/PGEtinker-logo.png" alt="PGEtinker Logo">
+            </a>
+            <div class="branding">
+                <a href="https://github.com/OneLoneCoder/olcPixelGameEngine" target="_blank">
+                    <img id="olc-brand" src="/images/pge-logo.png" alt="OneLoneCoder PixelGameEngine Logo">
+                </a>
+                <a href="https://emscripten.org/" target="_blank">
+                    <img id="emscripten-brand" src="/images/emscripten-logo.png" alt="Emscripten Logo">
+                </a>
+            </div>
+        </div>
+        <div id="content">
+            <noscript>
+                <p>
+                    It's cute that you think you're going to use a
+                    webapp that relies so heavily on javascript...
+                    ...without javascript.
+                </p>
+                <p>
+                    If your browser is capable of using javascript yet you still
+                    see this message, please consider using a real browser like
+                    Firefox and Chromium (or Chromium forks).
+                </p>
+            </noscript>
+        </div>
+        <dialog>
+            <p>
+                Share URL:
+                <input type="text" id="share-url" value="" readonly>
+                <button>Copy &amp; Close</button>
+            </p>
+        </dialog>
+        <div id="footer">
+            Haven't quite decided what should go here, probably a copyright notice or perhaps a whitty quote.
+        </div>
+        <!--slug-code-->
+        <!--app-html-->
+    </div>
     <script type="module" src="/src/client/index.js"></script>
-  </body>
+</body>
 </html>
