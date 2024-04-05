@@ -5,7 +5,10 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { Sequelize, Model, DataTypes } from "sequelize";
 import { createHash } from "node:crypto";
+import { GenerateSlug } from "./utils.js";
+
 import dotenv from "dotenv";
+
 // load configuration from .env files
 dotenv.config();
 
@@ -318,7 +321,7 @@ export default function ApiHandler(app)
             });
     });
 
-    app.post("/api/share", (request, response) =>
+    app.post("/api/code", (request, response) =>
     {
         // bail out if we haven't been provided some code to process
         if(typeof request.body.code === "undefined")
@@ -329,20 +332,59 @@ export default function ApiHandler(app)
                     });
             return;
         }
+        
+        const hash = createHash("sha256");
+
+        hash.update(request.body.code);
+        
+        let hashedCode = hash.digest("hex");
 
         Compile(request.body.code)
             .then((result) =>
             {
                 
-                // TODO: actual sharing code
-                response.status(result.code)
-                        .send(result);
+                (async() =>
+                {
+                    const [code, created] = await Code.findOrCreate({
+                            where: {
+                                hashedCode,
+                            },
+                            defaults: {
+                                code: request.body.code,
+                                slug: "==not-set==",
+                            }
+                        });
+                        
+                    if(code.slug === "==not-set==")
+                    {
+                        let keepTrying = true;
+                        while(keepTrying)
+                        {
+                            const slug = GenerateSlug();
+                            const slugFinder = await Code.findOne({ where: { slug }});
+                            if(slugFinder === null)
+                            {
+                                keepTrying = false;
+                                code.slug = slug;
+                                code.save();
+                            }
+                        }
+                    }
+                    
+                    response.status(200)
+                            .send({
+                                slug: code.slug,
+                                html: result.html,
+                            });
+                
+                })();
             })
             .catch((error) =>
             {
                 response.status(error.code)
                         .send(error);
             });
+
 
     });
 }
