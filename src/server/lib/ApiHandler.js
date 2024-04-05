@@ -3,9 +3,52 @@ import mktemp from "mktemp";
 import { rmSync, existsSync, writeFileSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { Sequelize, Model, DataTypes } from "sequelize";
+import { createHash } from "node:crypto";
 import dotenv from "dotenv";
 // load configuration from .env files
 dotenv.config();
+
+const sqliteDatabaseFile = process.env.SQLITE_DBFILE || join(process.cwd(), "cache", "data", "database.sqlite");
+
+const sequelize = new Sequelize({
+    dialect: 'sqlite',
+    storage: sqliteDatabaseFile
+});
+
+try
+{
+    await sequelize.authenticate();
+    console.log('Connection has been established successfully.');
+}
+catch (error)
+{
+    console.error('Unable to connect to the database:', error);
+}
+
+class Code extends Model {}
+
+Code.init({
+    id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true
+    },    
+    slug: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    hashedCode: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    code: {
+        type: DataTypes.TEXT,
+        allowNull: false
+    }
+}, { sequelize, tableName: "codes" });
+
+await Code.sync({ alter: true });
 
 /**
  * @typedef {ObjectDefinition}
@@ -53,8 +96,6 @@ const libraryMacroToObject = [
 
 /** @type {string} - which set of scripts are we building with, "local" or "docker" */
 const compileScript = process.env.COMPILE_SCRIPT || "local";
-
-console.log(compileScript);
 
 /** @type {RegExp} - regex pattern to detect absolute path in include/import macros */
 const absolutePathRegex = /^\s*#\s*i(nclude|mport)(_next)?\s+["<]((\.{1,2}|\/)[^">]*)[">]/;
