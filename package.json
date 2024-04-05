@@ -5,7 +5,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "nodemon server.js",
+    "dev": "nodemon --watch .env --watch \"src/server/**\" server.js",
     "build": "npm run build:client && npm run build:server",
     "build:client": "vite build --ssrManifest --outDir dist/client",
     "build:server": "vite build --ssr src/server/index.js --outDir dist/server",
@@ -35,6 +35,8 @@
     "mktemp": "^1.0.1",
     "morgan": "^1.10.0",
     "nodemon": "^3.1.0",
-    "sirv": "^2.0.4"
+    "sequelize": "^6.37.2",
+    "sirv": "^2.0.4",
+    "sqlite3": "^5.1.7"
   }
 }
