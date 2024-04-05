@@ -16,7 +16,8 @@ const sqliteDatabaseFile = process.env.SQLITE_DBFILE || join(process.cwd(), "cac
 
 const sequelize = new Sequelize({
     dialect: 'sqlite',
-    storage: sqliteDatabaseFile
+    storage: sqliteDatabaseFile,
+    logging: false
 });
 
 try
