@@ -1,8 +1,6 @@
 import "./lib/monaco"
 import "./lib/goldenLayout";
 
-import goldenLayoutDarkTheme from "golden-layout/src/css/goldenlayout-dark-theme.css?raw";
-import goldenLayoutLightTheme from "golden-layout/src/css/goldenlayout-light-theme.css?raw";
 import editorPanelTemplate from "./templates/editor-panel.html?raw";
 import playerPanelTemplate from "./templates/player-panel.html?raw";
 import playerTemplate      from "./templates/player.html?raw";
@@ -65,13 +63,30 @@ class App
         };
         
         this.maxFileSize = 50000;
+        this.code = "";
 
-        // TODO: check for share URL
-        this.code         = ((window.localStorage.getItem("pgetinkerCode") !== null)   ? JSON.parse(window.localStorage.getItem("pgetinkerCode"))   : defaultCode);
+        if(typeof slugCode === "string")
+        {
+            this.code = slugCode;
+            window.localStorage.setItem("pgetinkerCode", JSON.stringify(this.code));
+            slugCode = null;
+        }
+        else
+        {
+            this.code = ((window.localStorage.getItem("pgetinkerCode") !== null)   ? JSON.parse(window.localStorage.getItem("pgetinkerCode"))   : defaultCode);
+        }
         
         this.layoutConfig = ((window.localStorage.getItem("pgetinkerLayout") !== null) ? JSON.parse(window.localStorage.getItem("pgetinkerLayout")) : this.layoutConfigDefault);
         
         this.buttons = [{
+            element: () => { return document.querySelector("dialog button"); },
+            callback: async(event) =>
+            {
+                const shareUrl = document.querySelector("#share-url").value;
+                await navigator.clipboard.writeText(shareUrl);
+                document.querySelector("dialog").close();
+            },
+        },{
             element: () => { return document.querySelector("#download"); },
             callback: (event) =>
             {
@@ -193,7 +208,6 @@ class App
         
         this.layout.on("stateChanged", () =>
         {
-            console.log("TESTING 1234");
             window.localStorage.setItem("pgetinkerLayout", JSON.stringify(this.layout.toConfig()));
         });
 
@@ -213,7 +227,7 @@ class App
             this.editor = monaco.editor.create(document.querySelector('#editor-panel .code-editor'), {
                 automaticLayout: true,
                 model: this.model,
-                theme: `vs-${this.theme}`
+                theme: `vs-${this.theme}`,
             });
             
             this.editor.onDidChangeCursorPosition(() =>
@@ -225,6 +239,11 @@ class App
             {
                 this.Status();
                 window.localStorage.setItem("pgetinkerCode", JSON.stringify(this.editor.getValue()));
+                
+                if(window.location.pathname.indexOf("/s/") === 0)
+                {
+                    window.history.pushState({}, "", "/");
+                }
             });
 
             for(let i = 0; i < this.buttons.length; i++)
@@ -232,7 +251,7 @@ class App
                 this.buttons[i].element().addEventListener("click", this.buttons[i].callback);
             }
             
-            document.querySelector('#player-panel iframe').srcdoc = this.playerLastHtml;
+            document.querySelector('#player-panel iframe').setAttribute("srcdoc", this.playerLastHtml);
         });
         
         this.layout.init();
@@ -261,13 +280,13 @@ class App
         if(theme === "dark")
         {
             this.theme = "dark";
-            document.querySelector("#goldenlayout-theme").innerHTML = goldenLayoutDarkTheme;
+            document.querySelector("#goldenlayout-theme").setAttribute("href", "/goldenlayout-dark.css")
         }
             
         if(theme === "light")
         {
             this.theme = "light";
-            document.querySelector("#goldenlayout-theme").innerHTML = goldenLayoutLightTheme;
+            document.querySelector("#goldenlayout-theme").setAttribute("href", "/goldenlayout-light.css")
         }
             
         if(typeof this.editor !== "undefined")
@@ -289,8 +308,8 @@ class App
         // save the code
         window.localStorage.setItem("pgetinkerCode", JSON.stringify(this.editor.getValue()));
 
-        this.playerLastHtml = playerTemplate;
-        document.querySelector('#player-panel iframe').srcdoc = this.playerLastHtml;
+        this.playerLastHtml = "";
+        document.querySelector('#player-panel iframe').setAttribute("srcdoc", this.playerLastHtml);
     
         monaco.editor.removeAllMarkers("owner");
         this.editor.trigger("", "closeMarkersNavigation");
@@ -340,7 +359,7 @@ class App
             }
 
             this.playerLastHtml = result.html;
-            document.querySelector('#player-panel iframe').srcdoc = this.playerLastHtml;
+            document.querySelector('#player-panel iframe').setAttribute("srcdoc", this.playerLastHtml);
     
         }).catch((error) =>
         {
@@ -351,10 +370,8 @@ class App
     Share()
     {
         this.BeforeCompile();
-        alert("Not Implemented!");
-        return;
         
-        fetch("/api/share", {
+        fetch("/api/code", {
             method: "POST",
             headers: { "Content-type": "application/json" },
             body: JSON.stringify({code: this.editor.getValue() }),
@@ -393,10 +410,12 @@ class App
                 return;
             }
             
-            alert("TODO: Share Stuff!");
             this.playerLastHtml = result.html;
-            document.querySelector('#player-panel iframe').srcdoc = this.playerLastHtml;
-    
+            document.querySelector('#player-panel iframe').setAttribute("srcdoc", this.playerLastHtml);
+
+            document.querySelector("#share-url").setAttribute("value", result.slug);
+            document.querySelector("dialog").show();
+            
         }).catch((error) =>
         {
             console.log("Awwww fuck!", error);
