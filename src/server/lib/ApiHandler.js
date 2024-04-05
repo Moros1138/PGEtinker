@@ -320,6 +320,39 @@ export default function ApiHandler(app)
                         .send(error);
             });
     });
+    
+    app.get("/api/code/:codeSlug", (request, response) =>
+    {
+        if(typeof request.params.codeSlug === "undefined")
+        {
+            response.status(400)
+                    .send({
+                        status: 400,
+                        message: "missing required parameters"
+                    });
+            return;
+        }
+        
+        (async() =>
+        {
+            const code = await Code.findOne({ where: { slug: request.params.codeSlug }});
+            if(code === null)
+            {
+                response.status(404)
+                        .send({
+                            status: 404,
+                            message: "not found"
+                        });
+                return;
+            }
+
+            response.status(200)
+                    .send({
+                        status: 200,
+                        code: code.code
+                    });
+        })();
+    });
 
     app.post("/api/code", (request, response) =>
     {
