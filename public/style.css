@@ -359,6 +359,14 @@ a:hover {
     border-bottom: 1px solid #444;
 }
 
+dialog {
+    align-items: center;
+    justify-items: center;
+    width: 40rem;
+    z-index: 9999;
+}
+
+
 /* LIGHT THEME */
 body.light {
     background: #fff;
