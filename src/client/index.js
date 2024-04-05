@@ -75,6 +75,8 @@ class App
             element: () => { return document.querySelector("#download"); },
             callback: (event) =>
             {
+                event.preventDefault();
+
                 // TODO: indicate a requirement for a compiled player.
                 if(!this.playerLastHtml.includes("Emscripten-Generated Code"))
                 {
@@ -92,6 +94,17 @@ class App
                 a.click();
                 document.body.removeChild(a);
             },
+        },{
+            element: () => { return document.querySelector("#toggle-console"); },
+            callback: (event) =>
+            {
+                event.preventDefault();
+
+                document.querySelector("#player-panel iframe").contentWindow.postMessage({
+                    message: "toggle-console",
+                }, "*");                
+
+            }
         },{
             element: () => { return document.querySelector("#default-code"); },
             callback: (event) =>
