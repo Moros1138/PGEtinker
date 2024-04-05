@@ -5,7 +5,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "nodemon --watch .env --watch \"src/server/**\" server.js",
+    "dev": "nodemon --watch server.js --watch .env --watch \"src/server/**\" server.js",
     "build": "npm run build:client && npm run build:server",
     "build:client": "vite build --ssrManifest --outDir dist/client",
     "build:server": "vite build --ssr src/server/index.js --outDir dist/server",
