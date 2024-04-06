@@ -196,7 +196,7 @@ app.post("/api/code", (request, response) =>
                 
                 response.status(200)
                         .send({
-                            slug: `${request.protocol}://${request.headers.host}/s/${code.slug}}`,
+                            shareURL: `${request.protocol}://${request.headers.host}/s/${code.slug}}`,
                             html: result.html,
                         });
             

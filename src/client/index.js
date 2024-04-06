@@ -413,7 +413,7 @@ class App
             this.playerLastHtml = result.html;
             document.querySelector('#player-panel iframe').setAttribute("srcdoc", this.playerLastHtml);
 
-            document.querySelector("#share-url").setAttribute("value", result.slug);
+            document.querySelector("#share-url").setAttribute("value", result.shareURL);
             document.querySelector("dialog").show();
             
         }).catch((error) =>
