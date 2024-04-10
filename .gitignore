@@ -1,7 +1,4 @@
-cache
+var
 dist
 node_modules
 .env
-
-old-public
-old-server.js
