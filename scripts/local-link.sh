@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 export EMSDK_QUIET=1
-source "./third-party/emsdk/emsdk_env.sh"
+source "/opt/emsdk/emsdk_env.sh"
 
 # 
 # $1 = absolute path of the temporary working directory
@@ -12,8 +12,8 @@ source "./third-party/emsdk/emsdk_env.sh"
 libraries=""
 
 for i in ${@:2}; do
-    if [ -e ./cache/third-party/$i ]; then
-        libraries="$libraries ./cache/third-party/$i"
+    if [ -e ./var/third-party/$i ]; then
+        libraries="$libraries ./var/third-party/$i"
     fi
 done
 
@@ -22,7 +22,7 @@ em++ \
     $1/pgetinker.o \
     $libraries \
     -o $1/pgetinker.html \
-    --shell-file ./emscripten_shell.html \
+    --shell-file ./etc/emscripten_shell.html \
     -sASYNCIFY \
     -sALLOW_MEMORY_GROWTH=1 \
     -sMAX_WEBGL_VERSION=2 \

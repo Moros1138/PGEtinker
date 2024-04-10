@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 export EMSDK_QUIET=1
-source "./third-party/emsdk/emsdk_env.sh"
+source "/opt/emsdk/emsdk_env.sh"
 
 # 
 # $1 = path of the temporary working directory
