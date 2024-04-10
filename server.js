@@ -4,9 +4,9 @@ import morgan from "morgan";
 import dotenv from "dotenv";
 import { createHash } from "node:crypto";
 import { Sequelize, Model, DataTypes } from "sequelize";
-import { Compile, GenerateSlug } from "./src/server/lib/utils.js";
+import { Compile, GenerateSlug } from "./lib/utils.js";
 import { join } from "node:path";
-import { Code, SetupCodeDatabase } from "./src/server/lib/Code.js";
+import { Code, SetupCodeDatabase } from "./lib/Code.js";
 import { readFileSync } from "node:fs";
 
 // load configuration from .env files
@@ -15,7 +15,7 @@ dotenv.config();
 // constants
 
 /** @type {string} - the path to the sqlite database file */
-const sqliteDatabaseFile = process.env.SQLITE_DBFILE || join(process.cwd(), "cache", "data", "database.sqlite");
+const sqliteDatabaseFile = process.env.SQLITE_DBFILE || join(process.cwd(), "var", "database.sqlite");
 
 /** @type {boolean} - are we in production mode or not */
 const isProduction = process.env.NODE_ENV === "production";
@@ -244,13 +244,13 @@ app.use("*", async(request, response) =>
             // in development, always load a fresh copy of the html template.
             template = await fs.readFile("./index.html", "utf-8");
             template = await vite.transformIndexHtml(url, template);
-            render = (await vite.ssrLoadModule("/src/server/index.js")).render;
+            render = (await vite.ssrLoadModule("/src/index-ssr.js")).render;
         }
         else
         {
             // in production, always use the cached copy of the html template.
             template = templateHtml;
-            render = (await import("./dist/server/index.js")).render;
+            render = (await import("./dist/server/index-ssr.js")).render;
         }
 
         const shareSlug = (url.indexOf("s/") === 0) ? url.replace("s/", "") : null;

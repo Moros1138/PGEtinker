@@ -1,10 +1,10 @@
-import "./lib/monaco"
-import "./lib/goldenLayout";
+import "../lib/monaco"
+import "../lib/goldenLayout";
 
-import editorPanelTemplate from "./templates/editor-panel.html?raw";
-import playerPanelTemplate from "./templates/player-panel.html?raw";
-import playerTemplate      from "./templates/player.html?raw";
-import defaultCode from "./templates/example.cpp?raw";
+import editorPanelTemplate from "../views/editor-panel.html?raw";
+import playerPanelTemplate from "../views/player-panel.html?raw";
+import playerTemplate      from "../views/player.html?raw";
+import defaultCode from "../views/example.cpp?raw";
 
 class App
 {
