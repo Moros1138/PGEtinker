@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Monolog\Handler\StreamHandler;
+use Monolog\Level;
+use Monolog\Logger;
 
 class CodeController extends Controller
 {
@@ -101,6 +104,7 @@ class CodeController extends Controller
         }
     
         $hashedCode = hash("sha256", $code);
+        
         if(env("COMPILER_CACHING", false))
         {
             if(Storage::directoryMissing("compilerCache"))
@@ -110,7 +114,7 @@ class CodeController extends Controller
         
             if(Storage::fileExists("compilerCache/{$hashedCode}"))
             {
-                Log::debug("Compile: loaded cached result", ["hashedCode" => $hashedCode]);
+                Log::debug("Compile: cache hit", ["hashedCode" => $hashedCode]);
                 
                 $html = Storage::read("compilerCache/{$hashedCode}");
             
@@ -132,7 +136,11 @@ class CodeController extends Controller
         $directoryName = "workspaces/" . Str::uuid();
         Storage::createDirectory($directoryName);
         
-        Log::debug("Compile: working directory create. {directory}", [ "directory" => $directoryName ]);
+        
+        $log = new Logger("compiler");
+        $log->pushHandler(new StreamHandler(Storage::path($directoryName) . "/compiler.log"));
+        
+        Log::debug("Compile: working directory created {$directoryName}");
         
         $libraryMap = [
             'OLC_PGE_APPLICATION'      => 'olcPixelGameEngine.o',
@@ -154,6 +162,8 @@ class CodeController extends Controller
     
         $libraries = [];
         
+        $log->info("begin parsing linesOfCode");
+
         // line by line code processing and filtering
         for($i = 0; $i < count($linesOfCode); $i++)
         {
@@ -169,6 +179,7 @@ class CodeController extends Controller
             if(count($match) > 0)
             {
                 $errors[] = "/pgetinker.cpp:" . $i + 1 . ":1: error: absolute and relative includes are not allowed.";
+                $log->info("found absolute or relative path at line " . $i + 1);
                 continue;
             }
     
@@ -185,7 +196,8 @@ class CodeController extends Controller
                         
                         // indicate that we use this library
                         $libraries[] = "./lib/{$objectFileName}";
-    
+                        
+                        $log->info("Found implementation macro: {$macro}");
                         $foundImplementationMacro = true;
                         break;
                     }
@@ -205,8 +217,7 @@ class CodeController extends Controller
                 "stderr" => implode("\n", $errors),
             ];
             
-            Log::debug("Compile: failed at pre-compile", $response);
-            
+            $log->info("compilation failed");
             return $response;
         }
     
@@ -216,15 +227,17 @@ class CodeController extends Controller
     
         $compilerEnvironment = env("COMPILER_ENVIRONMENT", "local");
 
+        $log->info("writing linesOfCode to {$directoryName}/pgetinker.cpp");
         Storage::put("{$directoryName}/pgetinker.cpp", implode("\n", $linesOfCode));
 
         $environmentVariables = [];
         $compilerCommand = null;
         $linkerCommand = null;
 
-        Log::info("Selecting compiler environment", [$compilerEnvironment]);
         if($compilerEnvironment === "local")
         {
+            $log->info("preparing compiler environment: {$compilerEnvironment}");
+            
             $environmentVariables = array_merge($environmentVariables, [
                 "EMSDK" => "/opt/emsdk",
                 "EMSDK_NODE" => "/opt/emsdk/node/16.20.0_64bit/bin/node",
@@ -241,6 +254,8 @@ class CodeController extends Controller
 
         if($compilerEnvironment === "nsjail")
         {
+            $log->info("preparing compiler environment: {$compilerEnvironment}");
+
             $nsJailCommand = [
                 "nsjail",
                 "--config",
@@ -265,6 +280,7 @@ class CodeController extends Controller
             throw new Exception("unknown compiler environment");
         }
 
+        $log->info("preparing compiler command");
         $compilerCommand = array_merge($compilerCommand, [
             "/opt/emsdk/upstream/emscripten/em++",
             "-c",
@@ -276,7 +292,8 @@ class CodeController extends Controller
             "-o",
             "pgetinker.o",
         ]);
-
+        
+        $log->info("preparing linker command");
         $linkerCommand = array_merge($linkerCommand, [
             "/opt/emsdk/upstream/emscripten/em++",
             "pgetinker.o",
@@ -295,6 +312,7 @@ class CodeController extends Controller
             "-sSINGLE_FILE",
         ]);
     
+        $log->info("invoking the compiler");
         $compilerProcessResult = Process::env($environmentVariables)
             ->path($workspaceDirectory)
             ->timeout(10)
@@ -308,11 +326,15 @@ class CodeController extends Controller
                 "stderr" => $this->filterOutput($compilerProcessResult->errorOutput()),
             ];
             
-            Log::debug("Compile: failed at compile stage", $response);
+            $log->error("compilation failed", [
+                "stdout" => $compilerProcessResult->output(),
+                "stderr" => $compilerProcessResult->errorOutput(),
+            ]);
     
             return $response;
         }
         
+        $log->info("invoking the linker");
         $linkerProcessResult = Process::env($environmentVariables)
             ->path($workspaceDirectory)
             ->timeout(10)
@@ -326,8 +348,11 @@ class CodeController extends Controller
                 "stderr" => $this->filterOutput($linkerProcessResult->errorOutput()),
             ];
     
-            Log::debug("Compile: failed at linker stage", $response);
-    
+            $log->error("linking failed", [
+                "stdout" => $linkerProcessResult->output(),
+                "stderr" => $linkerProcessResult->errorOutput(),
+            ]);
+            
             return $response;
         }
         
@@ -338,17 +363,18 @@ class CodeController extends Controller
                 "message" => "something really bad up happened in order for this to occur. contact the administrator",
             ];
     
-            Log::debug("Compile: failed at linker stage", $response);
+            Log::debug("Compile: failed beyond the linker stage", $response);
             return $response;
         }
     
+        // if we've made it here, SUCCESS!
         $html = Storage::read("{$directoryName}/pgetinker.html");
         
         if(env("COMPILER_CACHING", false))
         {
             Storage::move("{$directoryName}/pgetinker.html", "compilerCache/{$hashedCode}");
         }
-        
+
         Storage::deleteDirectory($directoryName);
         
         return [
