@@ -15,6 +15,10 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         //
+        $middleware->trustProxies(at: [
+            '192.168.0.225',
+        ]);
+
         $middleware->remove([
             // ConvertEmptyStringsToNull::class,
             TrimStrings::class,
