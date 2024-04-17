@@ -47,16 +47,14 @@ class CodeController extends Controller
         
         // if we're here, we got a bonafide, unique, and working code to share with the world
         
-        // TODO: do this more sanely
         // try to make a unique slug
         $tryAgain = true;
         $slug = "";
         do
         {
-            $slug = substr(base64_encode(md5(microtime(), true)), 0, 11);
-            $slug = str_replace("+", "-", $slug);
-            $slug = str_replace("/", "_", $slug);
-    
+            // thanks Bixxy and Ciarán for the feedback in #help-each-other
+            $slug = str_replace(['+','/','='], ['-','',''], substr(base64_encode(sha1(microtime(),true)), 0, 11));
+
             if(Code::where("slug", $slug)->first() == null);
             {
                 $tryAgain = false;
