@@ -290,14 +290,15 @@ class CodeController extends Controller
     
         $compilerProcessResult = Process::env($environmentVariables)
             ->path($workspaceDirectory)
+            ->timeout(10)
             ->command($compilerCommand)->run();
         
         if($compilerProcessResult->exitCode() !== 0)
         {
             $response = [
                 "statusCode" => 400,
-                "stdout" => $compilerProcessResult->output(),
-                "stderr" => $compilerProcessResult->errorOutput(),
+                "stdout" => $this->filterOutput($compilerProcessResult->output()),
+                "stderr" => $this->filterOutput($compilerProcessResult->errorOutput()),
             ];
             
             Log::debug("Compile: failed at compile stage", $response);
@@ -307,14 +308,15 @@ class CodeController extends Controller
         
         $linkerProcessResult = Process::env($environmentVariables)
             ->path($workspaceDirectory)
+            ->timeout(10)
             ->command($linkerCommand)->run();
     
         if($linkerProcessResult->exitCode() !== 0)
         {
             $response = [
                 "statusCode" => 400,
-                "stdout" => $linkerProcessResult->output(),
-                "stderr" => $linkerProcessResult->errorOutput(),
+                "stdout" => $this->filterOutput($linkerProcessResult->output()),
+                "stderr" => $this->filterOutput($linkerProcessResult->errorOutput()),
             ];
     
             Log::debug("Compile: failed at linker stage", $response);
@@ -346,5 +348,14 @@ class CodeController extends Controller
         ];
     }
     
+    function filterOutput($text)
+    {
+        $text = array_filter(explode("\n", $text), function($value)
+        {
+            return (strpos($value, "pgetinker.cpp") === 0);
+        });
+
+        return implode("\n", $text);
+    }
 
 }
