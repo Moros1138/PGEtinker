@@ -101,28 +101,35 @@ class CodeController extends Controller
         }
     
         $hashedCode = hash("sha256", $code);
-    
-        if(Storage::directoryMissing("compilerCache"))
+        if(env("COMPILER_CACHING", false))
         {
-            Storage::createDirectory("compilerCache");
-        }
-    
-        if(Storage::fileExists("compilerCache/{$hashedCode}"))
-        {
-            Log::debug("Compile: loaded cached result", ["hashedCode" => $hashedCode]);
-            
-            $html = Storage::read("compilerCache/{$hashedCode}");
+            if(Storage::directoryMissing("compilerCache"))
+            {
+                Storage::createDirectory("compilerCache");
+            }
         
-            return [
-                "statusCode" => 200,
-                "hash" => $hashedCode,
-                "html" => $html,
-            ];
+            if(Storage::fileExists("compilerCache/{$hashedCode}"))
+            {
+                Log::debug("Compile: loaded cached result", ["hashedCode" => $hashedCode]);
+                
+                $html = Storage::read("compilerCache/{$hashedCode}");
+            
+                return [
+                    "statusCode" => 200,
+                    "hash" => $hashedCode,
+                    "html" => $html,
+                ];
+            }
+        
+            Log::debug("Compile: cache miss", ["hashedCode" => $hashedCode]);
         }
-    
-        Log::debug("Compile: cache miss", ["hashedCode" => $hashedCode]);
-    
-        $directoryName = Str::uuid();
+        
+        if(Storage::directoryMissing("workspaces"))
+        {
+            Storage::createDirectory("workspaces");    
+        }
+            
+        $directoryName = "workspaces/" . Str::uuid();
         Storage::createDirectory($directoryName);
         
         Log::debug("Compile: working directory create. {directory}", [ "directory" => $directoryName ]);
@@ -337,7 +344,10 @@ class CodeController extends Controller
     
         $html = Storage::read("{$directoryName}/pgetinker.html");
         
-        Storage::move("{$directoryName}/pgetinker.html", "compilerCache/{$hashedCode}");
+        if(env("COMPILER_CACHING", false))
+        {
+            Storage::move("{$directoryName}/pgetinker.html", "compilerCache/{$hashedCode}");
+        }
         
         Storage::deleteDirectory($directoryName);
         
