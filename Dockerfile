@@ -23,6 +23,7 @@ RUN apt-get update && \
 
 RUN apt-get -y update && \
     apt-get install -y \
+    micro \
     python3 \
     autoconf \
     bison \
