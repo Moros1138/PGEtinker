@@ -14,7 +14,40 @@ ENV APP_DEBUG=false
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update && \
-    apt-get install git python3 -y
+    apt-get install \
+        git \
+        libprotobuf-dev \
+        libnl-route-3-dev \
+        libtool \
+        -y
+
+RUN apt-get -y update && \
+    apt-get install -y \
+    python3 \
+    autoconf \
+    bison \
+    flex \
+    gcc \
+    g++ \
+    git \
+    libprotobuf-dev \
+    libnl-route-3-dev \
+    libtool \
+    make \
+    pkg-config \
+    protobuf-compiler && \
+    rm -rf /var/lib/apt/lists/*
+    
+WORKDIR /
+
+RUN git clone https://github.com/google/nsjail.git
+
+RUN cd /nsjail && \
+    make && \
+    mv /nsjail/nsjail /bin && \
+    rm -rf -- /nsjail
+
+WORKDIR /var/www/html
 
 RUN docker-php-ext-configure opcache --enable-opcache && \
     docker-php-ext-install pdo pdo_mysql
