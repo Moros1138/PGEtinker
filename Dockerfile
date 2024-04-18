@@ -31,8 +31,8 @@ RUN git clone https://github.com/emscripten-core/emsdk.git && \
 
 WORKDIR /opt/emsdk
 
-RUN su -c "bash emsdk install 3.1.57" -s /bin/bash www-data && \
-    su -c "bash emsdk activate 3.1.57" -s /bin/bash www-data
+RUN su -c "bash emsdk install 3.1.56" -s /bin/bash www-data && \
+    su -c "bash emsdk activate 3.1.56" -s /bin/bash www-data
 
 WORKDIR /var/www/html
 
