@@ -56,6 +56,8 @@ COPY docker/php/conf.d/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
 
 COPY --from=buildNode /usr/src/app /var/www/html
 COPY docker/000-default.conf /etc/apache2/sites-available/000-default.conf
+COPY docker/docker-entrypoint.sh /docker-entrypoint.sh
+
 COPY .env.example /var/www/html/.env
 
 WORKDIR /opt
@@ -73,6 +75,8 @@ WORKDIR /var/www/html
 RUN chmod 777 -R /var/www/html/storage/ && \
     chown -R www-data:www-data /var/www/ && \
     su -c "bash build-libs.sh" -s /bin/bash www-data && \
-    su -c "php artisan config:cache" -s /bin/bash www-data && \
-    su -c "php artisan route:cache" -s /bin/bash www-data && \
     a2enmod rewrite
+
+ENTRYPOINT [ "/bin/bash" ]
+
+CMD [ "/docker-entrypoint.sh" ]
