@@ -422,7 +422,14 @@ window.addEventListener("message", (event) =>
 
 let agreedToTerms = window.localStorage.getItem("pgetinkerAgreedToTerms");
 agreedToTerms = (agreedToTerms == null) ? false : JSON.parse(agreedToTerms);
-if(agreedToTerms == false)
+
+
+
+if(agreedToTerms)
+{
+    SetupLayout();
+}
+else
 {
     let agreeDialog = document.createElement('div');
     agreeDialog.setAttribute("class", "dialog first-time");
