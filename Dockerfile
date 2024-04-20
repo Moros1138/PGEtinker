@@ -11,15 +11,7 @@ FROM php:8.3-apache-bookworm as production
 
 ENV APP_ENV=production
 ENV APP_DEBUG=false
-ENV DEBIAN_FRONTEND noninteractive
-
-RUN apt-get update && \
-    apt-get install \
-        git \
-        libprotobuf-dev \
-        libnl-route-3-dev \
-        libtool \
-        -y
+ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get -y update && \
     apt-get install -y \
