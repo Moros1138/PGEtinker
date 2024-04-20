@@ -88,7 +88,6 @@ function SetupLayout()
     
     layout.on("initialised", () =>
     {
-        
         window.addEventListener("resize", (event) => layout.updateSize());
 
         if(monacoModel === null)
@@ -208,16 +207,6 @@ function SetupLayout()
             document.body.removeChild(a);
         });
         
-        // Dialog Button
-        document.querySelector("dialog button").addEventListener("click", (event) =>
-        {
-            event.preventDefault();
-            
-            const shareURL = document.querySelector("#share-url").value;
-            navigator.clipboard.writeText(shareURL).catch((reason) => console.log(reason));
-            document.querySelector("dialog").close();
-        })
-
         // Share Button
         document.querySelector("#share").addEventListener("click", (event) => 
         {
@@ -236,8 +225,27 @@ function SetupLayout()
                 lastPlayerHtml = response.data.html;
                 document.querySelector("#player-panel iframe").setAttribute("srcdoc", lastPlayerHtml);
 
-                document.querySelector("#share-url").setAttribute("value", response.data.shareURL);
-                document.querySelector("dialog").show();
+                let shareDialog = document.createElement('div');
+                shareDialog.setAttribute("class", "dialog");
+                shareDialog.innerHTML = `
+                    <div class="window">
+                        <div class="header">Share Your Masterpiece!</div>
+                        <div class="content">
+                            <div class="input-group">
+                                <label>Share URL:</label>
+                                <input type="text" id="share-url" value="${response.data.shareURL}" readonly>
+                                <button type="button">Copy</button>
+                        </div>
+                    </div>`;
+                
+                shareDialog.querySelector("button").addEventListener("click", (event) =>
+                {
+                    navigator.clipboard.writeText(response.data.shareURL).catch((reason) => console.log(reason));
+                    shareDialog.remove();
+                });
+
+                document.body.appendChild(shareDialog);
+
             }).catch((error) =>
             {
                 if(error.response)
