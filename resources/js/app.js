@@ -57,7 +57,7 @@ function SetupLayout()
     });        
     
     layout.registerComponent('editorComponent', function(container)
-    {   
+    {
         container.getElement().html(`
             <div id="editor-panel">
                 <div class="menu">
@@ -237,6 +237,7 @@ function SetupLayout()
                                 <label>Share URL:</label>
                                 <input type="text" id="share-url" value="${response.data.shareURL}" readonly>
                                 <button type="button">Copy</button>
+                            </div>
                         </div>
                     </div>`;
                 
@@ -419,4 +420,71 @@ window.addEventListener("message", (event) =>
     }
 });
 
-SetupLayout();
+let agreedToTerms = window.localStorage.getItem("pgetinkerAgreedToTerms");
+agreedToTerms = (agreedToTerms == null) ? false : JSON.parse(agreedToTerms);
+if(agreedToTerms == false)
+{
+    let agreeDialog = document.createElement('div');
+    agreeDialog.setAttribute("class", "dialog first-time");
+    agreeDialog.innerHTML = `
+        <div class="window">
+            <div class="header">Welome to PGEtinker!</div>
+            <div class="content">
+                <h1>Hello and Welcome</h1>
+                <p>
+                    It would appear to be the first time you've
+                    visited this site, at least from this browser.
+                    In order for PGEtinker to function we require
+                    your permission to do some things.
+                </p>
+                <h3>Terms, in Plain English</h3>
+                <p>
+                    You agree that PGEtinker has permission to:
+                </p>
+                <ul>
+                    <li>
+                        Store information in your browser to be used within
+                        the confines of the PGEtinker online application.
+                        It's for stuff like persiting your layout, your
+                        theme, and other options so when you come back
+                        it's the way you left it.
+                    </li>
+                    <li>
+                        Compile and display the code you provide.
+                    </li>    
+                    <li>
+                        Retain and review the code you have provided
+                        for the purposes of diagnosing problems with the
+                        PGEtinker online application.
+                    </li>    
+                    <li>
+                        Share your code worldwide. This only applies if you
+                        use the "Share" functionality.
+                    </li>    
+                </ul>
+            </div>
+            <div class="footer">
+                <button type="button" class="cancel">I Disagree</button>
+                <button type="button" class="ok">I Agree</button>
+            </div>
+        </div>`;
+    
+    agreeDialog.querySelector("button.cancel").addEventListener("click", (event) =>
+    {
+        window.localStorage.removeItem("pgetinkerCode");
+        window.localStorage.removeItem("pgetinkerTheme");
+        window.localStorage.removeItem("pgetinkerLayout");
+        document.querySelectorAll("*").forEach((elem) => elem.remove());
+    });
+
+    agreeDialog.querySelector("button.ok").addEventListener("click", (event) =>
+    {
+        SetupLayout();
+
+        window.localStorage.setItem("pgetinkerAgreedToTerms", JSON.stringify(true));
+        agreeDialog.remove();
+    });
+    
+    document.body.appendChild(agreeDialog);
+}
+
