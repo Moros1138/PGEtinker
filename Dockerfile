@@ -72,7 +72,7 @@ RUN su -c "bash emsdk install 3.1.56" -s /bin/bash www-data && \
 
 WORKDIR /var/www/html
 
-RUN chmod 777 -R /var/www/html/storage/ && \
+RUN chmod 755 -R /var/www/html/storage/ && \
     chown -R www-data:www-data /var/www/ && \
     su -c "bash build-libs.sh" -s /bin/bash www-data && \
     a2enmod rewrite
