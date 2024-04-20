@@ -212,11 +212,18 @@ function SetupLayout()
         document.querySelector("#share").addEventListener("click", (event) => 
         {
             event.preventDefault();
+            if(monacoEditor.getValue().length > maxFileSize)
+            {
+                alert("Maximum size exceeded!");
+                return;
+            }
+
             if(compiling)
                 return;
             
             compiling = true;
 
+            
             document.querySelector('#player-panel div').className = "compiling";
 
             lastPlayerHtml = "";
@@ -298,12 +305,19 @@ function SetupLayout()
         // Compile Button
         document.querySelector("#compile").addEventListener("click", (event) => 
         {
+            event.preventDefault();
+
+            if(monacoEditor.getValue().length > maxFileSize)
+            {
+                alert("Maximum size exceeded!");
+                return;
+            }
+
             if(compiling)
                 return;
             
             compiling = true;
 
-            event.preventDefault();
             lastPlayerHtml = "";
             document.querySelector("#player-panel iframe").setAttribute("srcdoc", lastPlayerHtml);
             
@@ -403,18 +417,29 @@ function UpdateTheme()
 function UpdateStatusBar()
 {
     let statusBar = document.querySelector("#editor-panel .status");
-        
+
     let cursor = `Ln ${monacoEditor.getPosition().lineNumber}, Col ${monacoEditor.getPosition().column}`;
     let fileSize = `${new Intl.NumberFormat().format(monacoEditor.getValue().length)} / ${new Intl.NumberFormat().format(maxFileSize)}`;
     
+    statusBar.classList.toggle('too-fucking-big', false);
+    if(monacoModel.getValueLength() > maxFileSize)
+    {
+        statusBar.classList.toggle('too-fucking-big', true);
+        fileSize += " EXCEEDING MAXIMUM!";
+    }
+        
+
     statusBar.innerHTML = `
         <div class="status-left">
-            <span>${fileSize}</span>
+            Bytes: <span>${fileSize}</span>
         </div>
         <div class="status-right">
             <span>${cursor}</span>
         </div>
     `;
+    
+    
+
 }
 
 window.addEventListener("message", (event) =>
