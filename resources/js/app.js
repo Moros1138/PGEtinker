@@ -3,7 +3,6 @@ import './lib/goldenLayout';
 import './lib/monaco';
 
 let sharedFlag = (window.location.pathname.indexOf("/s/") === 0);
-let sharedSlug = window.location.pathname.replace("/s/", "");
 
 let lastPlayerHtml = "";
 
@@ -212,6 +211,8 @@ function SetupLayout()
         {
             event.preventDefault();
             
+            document.querySelector('#player-panel div').className = "compiling";
+
             lastPlayerHtml = "";
             document.querySelector("#player-panel iframe").setAttribute("srcdoc", lastPlayerHtml);
             
@@ -246,6 +247,8 @@ function SetupLayout()
                 });
 
                 document.body.appendChild(shareDialog);
+
+                document.querySelector('#player-panel div').className = "";
             }).catch((error) =>
             {
                 if(error.response)
@@ -276,6 +279,8 @@ function SetupLayout()
                         monacoEditor.setPosition({lineNumber: markers[0].startLineNumber, column: markers[0].startColumn });
                         
                         setTimeout(() => { monacoEditor.trigger("", "editor.action.marker.next"); }, 50);
+                        
+                        document.querySelector('#player-panel div').className = "fail";
                     }
                 }
             });
@@ -288,6 +293,8 @@ function SetupLayout()
             lastPlayerHtml = "";
             document.querySelector("#player-panel iframe").setAttribute("srcdoc", lastPlayerHtml);
             
+            document.querySelector('#player-panel div').className = "compiling";
+
             monaco.editor.removeAllMarkers("owner");
             monacoEditor.trigger("", "closeMarkersNavigation");
 
@@ -297,6 +304,8 @@ function SetupLayout()
             {
                 lastPlayerHtml = response.data.html;
                 document.querySelector("#player-panel iframe").setAttribute("srcdoc", lastPlayerHtml);
+                
+                document.querySelector('#player-panel div').className = "";
             }).catch((error) =>
             {
                 if(error.response)
@@ -327,6 +336,7 @@ function SetupLayout()
                         monacoEditor.setPosition({lineNumber: markers[0].startLineNumber, column: markers[0].startColumn });
                         
                         setTimeout(() => { monacoEditor.trigger("", "editor.action.marker.next"); }, 50);
+                        document.querySelector('#player-panel div').className = "fail";
                     }
                 }
             });
