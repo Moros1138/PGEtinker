@@ -378,7 +378,6 @@ function SetupLayout()
     layout.init();
 }
 
-
 function UpdateTheme()
 {
     // update overall theme
@@ -428,7 +427,6 @@ function UpdateStatusBar()
         fileSize += " EXCEEDING MAXIMUM!";
     }
         
-
     statusBar.innerHTML = `
         <div class="status-left">
             Bytes: <span>${fileSize}</span>
@@ -437,9 +435,6 @@ function UpdateStatusBar()
             <span>${cursor}</span>
         </div>
     `;
-    
-    
-
 }
 
 window.addEventListener("message", (event) =>
