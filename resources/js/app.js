@@ -223,6 +223,7 @@ function SetupLayout()
             }).then((response) =>
             {
                 lastPlayerHtml = response.data.html;
+                
                 document.querySelector("#player-panel iframe").setAttribute("srcdoc", lastPlayerHtml);
 
                 let shareDialog = document.createElement('div');
@@ -245,7 +246,6 @@ function SetupLayout()
                 });
 
                 document.body.appendChild(shareDialog);
-
             }).catch((error) =>
             {
                 if(error.response)
@@ -408,6 +408,5 @@ window.addEventListener("message", (event) =>
         }, "*");
     }
 });
-
 
 SetupLayout();
