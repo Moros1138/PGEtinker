@@ -41,13 +41,6 @@
                 </p>
             </noscript>
         </div>
-        <dialog>
-            <p>
-                Share URL:
-                <input type="text" id="share-url" value="" readonly>
-                <button>Copy &amp; Close</button>
-            </p>
-        </dialog>
         <div id="footer">
             Haven't quite decided what should go here, probably a copyright notice or perhaps a whitty quote.
         </div>
