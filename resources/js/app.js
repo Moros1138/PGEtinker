@@ -8,6 +8,8 @@ let lastPlayerHtml = "";
 
 let layout = null;
 
+let compiling = false;
+
 let layoutDefaultConfig = {
     settings: {
         showPopoutIcon: false,
@@ -210,7 +212,11 @@ function SetupLayout()
         document.querySelector("#share").addEventListener("click", (event) => 
         {
             event.preventDefault();
+            if(compiling)
+                return;
             
+            compiling = true;
+
             document.querySelector('#player-panel div').className = "compiling";
 
             lastPlayerHtml = "";
@@ -250,6 +256,7 @@ function SetupLayout()
                 document.body.appendChild(shareDialog);
 
                 document.querySelector('#player-panel div').className = "";
+                compiling = false;
             }).catch((error) =>
             {
                 if(error.response)
@@ -282,6 +289,7 @@ function SetupLayout()
                         setTimeout(() => { monacoEditor.trigger("", "editor.action.marker.next"); }, 50);
                         
                         document.querySelector('#player-panel div').className = "fail";
+                        compiling = false;
                     }
                 }
             });
@@ -290,6 +298,11 @@ function SetupLayout()
         // Compile Button
         document.querySelector("#compile").addEventListener("click", (event) => 
         {
+            if(compiling)
+                return;
+            
+            compiling = true;
+
             event.preventDefault();
             lastPlayerHtml = "";
             document.querySelector("#player-panel iframe").setAttribute("srcdoc", lastPlayerHtml);
@@ -307,6 +320,7 @@ function SetupLayout()
                 document.querySelector("#player-panel iframe").setAttribute("srcdoc", lastPlayerHtml);
                 
                 document.querySelector('#player-panel div').className = "";
+                compiling = false;
             }).catch((error) =>
             {
                 if(error.response)
@@ -338,6 +352,7 @@ function SetupLayout()
                         
                         setTimeout(() => { monacoEditor.trigger("", "editor.action.marker.next"); }, 50);
                         document.querySelector('#player-panel div').className = "fail";
+                        compiling = false;
                     }
                 }
             });
