@@ -386,7 +386,7 @@ class CodeController extends Controller
     {
         $text = array_filter(explode("\n", $text), function($value)
         {
-            return (strpos($value, "pgetinker.cpp") === 0);
+            return (strpos($value, "undefined symbol") !== false) || (strpos($value, "pgetinker.cpp") === 0);
         });
 
         return implode("\n", $text);
