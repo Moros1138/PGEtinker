@@ -7,7 +7,7 @@ let sharedFlag = (window.location.pathname.indexOf("/s/") === 0);
 let lastPlayerHtml = "";
 
 let layout = null;
-
+let layoutInitialized = false;
 let compiling = false;
 
 let layoutDefaultConfig = {
@@ -84,11 +84,13 @@ function SetupLayout()
     
     layout.on("stateChanged", () =>
     {
-        window.localStorage.setItem("pgetinkerLayout", JSON.stringify(layout.toConfig()));
+        if(layoutInitialized)
+            window.localStorage.setItem("pgetinkerLayout", JSON.stringify(layout.toConfig()));
     });
     
     layout.on("initialised", () =>
     {
+        layoutInitialized = true;
         window.addEventListener("resize", (event) => layout.updateSize());
 
         if(monacoModel === null)
