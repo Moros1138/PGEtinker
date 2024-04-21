@@ -44,6 +44,89 @@ if(theme !== "dark" && theme !== "light")
 let monacoEditor = null;
 let monacoModel  = null;
 
+
+function preCompile()
+{
+    if(monacoEditor.getValue().length > maxFileSize)
+    {
+        alert("Maximum size exceeded!");
+        return false;
+    }
+    
+    compiling = true;
+
+    lastPlayerHtml = "";
+    document.querySelector("#player-panel iframe").setAttribute("srcdoc", lastPlayerHtml);
+    
+    document.querySelector('#player-panel div').className = "compiling";
+
+    monaco.editor.removeAllMarkers("owner");
+    monacoEditor.trigger("", "closeMarkersNavigation");
+
+    return true;
+}
+
+function compileSuccessHandler(data)
+{
+    lastPlayerHtml = data.html;
+    document.querySelector("#player-panel iframe").setAttribute("srcdoc", lastPlayerHtml);
+    
+    document.querySelector('#player-panel div').className = "";
+    compiling = false;
+}
+
+function compileFailHandler(stderr)
+{
+    const compilerRegex = /:(\d+):(\d+): (fatal error|error|warning): (.*)/gm;
+    const linkerRegex   = /wasm-ld: error: pgetinker.o: (.*): (.*)/gm;
+    
+    let markers = [];
+    
+    let matches;
+
+    while((matches = compilerRegex.exec(stderr)) !== null)
+    {
+        markers.push({
+            message: matches[4],
+            severity: (matches[3] === "warning") ? monaco.MarkerSeverity.Warning : monaco.MarkerSeverity.Error,
+            startLineNumber: parseInt(matches[1]),
+            startColumn: parseInt(matches[2]),
+            endLineNumber: parseInt(matches[1]),
+            endColumn: monacoModel.getLineLength(parseInt(matches[1])),
+            source: "Emscripten Compiler",
+        });            
+    }
+    
+    while((matches = linkerRegex.exec(stderr)) !== null)
+    {
+        markers.push({
+            message: `${matches[1]} ${matches[2]}`,
+            severity: monaco.MarkerSeverity.Error,
+            startLineNumber: 1,
+            startColumn: 1,
+            endLineNumber: 1,
+            endColumn: monacoModel.getLineLength(1),
+            source: "Emscripten Linker",
+        });
+    }
+
+    // show errors in the editor, if they exist
+    if(markers.length > 0)
+    {
+        monaco.editor.setModelMarkers(monacoModel, "owner", markers);
+        monacoEditor.setPosition({lineNumber: markers[0].startLineNumber, column: markers[0].startColumn });
+        setTimeout(() => { monacoEditor.trigger("", "editor.action.marker.next"); }, 50);
+    }
+    
+    document.querySelector('#player-panel div').className = "fail";
+    compiling = false;
+}
+
+
+
+
+
+
 function SetupLayout()
 {
     layout = new GoldenLayout(layoutConfig, document.querySelector("#content"))
@@ -214,35 +297,21 @@ function SetupLayout()
         document.querySelector("#share").addEventListener("click", (event) => 
         {
             event.preventDefault();
-            if(monacoEditor.getValue().length > maxFileSize)
-            {
-                alert("Maximum size exceeded!");
-                return;
-            }
 
             if(compiling)
                 return;
-            
-            compiling = true;
 
-            
-            document.querySelector('#player-panel div').className = "compiling";
-
-            lastPlayerHtml = "";
-            document.querySelector("#player-panel iframe").setAttribute("srcdoc", lastPlayerHtml);
-            
-            monaco.editor.removeAllMarkers("owner");
-            monacoEditor.trigger("", "closeMarkersNavigation");
+            if(!preCompile())
+                return;
 
             axios.post("/api/share", {
                 code: monacoEditor.getValue()
             }).then((response) =>
             {
-                lastPlayerHtml = response.data.html;
-                
-                document.querySelector("#player-panel iframe").setAttribute("srcdoc", lastPlayerHtml);
+                compileSuccessHandler(response.data);
 
                 let shareDialog = document.createElement('div');
+                
                 shareDialog.setAttribute("class", "dialog");
                 shareDialog.innerHTML = `
                     <div class="window">
@@ -264,41 +333,13 @@ function SetupLayout()
 
                 document.body.appendChild(shareDialog);
 
-                document.querySelector('#player-panel div').className = "";
-                compiling = false;
             }).catch((error) =>
             {
                 if(error.response)
                 {
                     if(error.response.data.stderr)
                     {
-                        const regex = new RegExp(':(\\d+):(\\d+): (error|warning): (.*)', 'gm')
-                
-                        let markers = [];
-                        
-                        let matches;
-                
-                        while((matches = regex.exec(error.response.data.stderr)) !== null)
-                        {
-                            markers.push({
-                                message: matches[4],
-                                severity: (matches[3] === "warning") ? monaco.MarkerSeverity.Warning : monaco.MarkerSeverity.Error,
-                                startLineNumber: parseInt(matches[1]),
-                                startColumn: parseInt(matches[2]),
-                                endLineNumber: parseInt(matches[1]),
-                                endColumn: monacoModel.getLineLength(parseInt(matches[1])),
-                                source: "Emscripten",
-                            });            
-                        }
-                        
-                        // show errors in the editor
-                        monaco.editor.setModelMarkers(monacoModel, "owner", markers);
-                        monacoEditor.setPosition({lineNumber: markers[0].startLineNumber, column: markers[0].startColumn });
-                        
-                        setTimeout(() => { monacoEditor.trigger("", "editor.action.marker.next"); }, 50);
-                        
-                        document.querySelector('#player-panel div').className = "fail";
-                        compiling = false;
+                        compileFailHandler(error.response.data.stderr);
                     }
                 }
             });
@@ -309,85 +350,24 @@ function SetupLayout()
         {
             event.preventDefault();
 
-            if(monacoEditor.getValue().length > maxFileSize)
-            {
-                alert("Maximum size exceeded!");
-                return;
-            }
-
             if(compiling)
                 return;
+
+            if(!preCompile())
+                return;
             
-            compiling = true;
-
-            lastPlayerHtml = "";
-            document.querySelector("#player-panel iframe").setAttribute("srcdoc", lastPlayerHtml);
-            
-            document.querySelector('#player-panel div').className = "compiling";
-
-            monaco.editor.removeAllMarkers("owner");
-            monacoEditor.trigger("", "closeMarkersNavigation");
-
             axios.post("/api/compile", {
                 code: monacoEditor.getValue()
             }).then((response) =>
             {
-                lastPlayerHtml = response.data.html;
-                document.querySelector("#player-panel iframe").setAttribute("srcdoc", lastPlayerHtml);
-                
-                document.querySelector('#player-panel div').className = "";
-                compiling = false;
+                compileSuccessHandler(response.data);
             }).catch((error) =>
             {
                 if(error.response)
                 {
                     if(error.response.data.stderr)
                     {
-                        console.log(error.response.data.stderr);
-                        
-                        const compilerRegex = /:(\d+):(\d+): (fatal error|error|warning): (.*)/gm;
-                        const linkerRegex   = /wasm-ld: error: pgetinker.o: (.*): (.*)/gm;
-                        
-                        let markers = [];
-                        
-                        let matches;
-                
-                        while((matches = compilerRegex.exec(error.response.data.stderr)) !== null)
-                        {
-                            markers.push({
-                                message: matches[4],
-                                severity: (matches[3] === "warning") ? monaco.MarkerSeverity.Warning : monaco.MarkerSeverity.Error,
-                                startLineNumber: parseInt(matches[1]),
-                                startColumn: parseInt(matches[2]),
-                                endLineNumber: parseInt(matches[1]),
-                                endColumn: monacoModel.getLineLength(parseInt(matches[1])),
-                                source: "Emscripten Compiler",
-                            });            
-                        }
-                        
-                        while((matches = linkerRegex.exec(error.response.data.stderr)) !== null)
-                        {
-                            markers.push({
-                                message: `${matches[1]} ${matches[2]}`,
-                                severity: monaco.MarkerSeverity.Error,
-                                startLineNumber: 1,
-                                startColumn: 1,
-                                endLineNumber: 1,
-                                endColumn: monacoModel.getLineLength(1),
-                                source: "Emscripten Linker",
-                            });
-                        }
-
-                        // show errors in the editor, if they exist
-                        if(markers.length > 0)
-                        {
-                            monaco.editor.setModelMarkers(monacoModel, "owner", markers);
-                            monacoEditor.setPosition({lineNumber: markers[0].startLineNumber, column: markers[0].startColumn });
-                            setTimeout(() => { monacoEditor.trigger("", "editor.action.marker.next"); }, 50);
-                        }
-                        
-                        document.querySelector('#player-panel div').className = "fail";
-                        compiling = false;
+                        compileFailHandler(error.response.data.stderr);
                     }
                 }
             });
