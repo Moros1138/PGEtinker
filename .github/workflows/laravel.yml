@@ -20,6 +20,14 @@ jobs:
       run: php -r "file_exists('.env') || copy('.env.example', '.env');"
     - name: Install Dependencies
       run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+    - name: Install Dependencies
+      run: npm install
+    - name: Build NodeJS
+      run: npm run build
     - name: Generate key
       run: php artisan key:generate
     - name: Directory Permissions
