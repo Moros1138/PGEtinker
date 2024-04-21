@@ -6,7 +6,7 @@ export default defineConfig({
     server: {
         watch: {
             ignored: [
-                path.join(process.cwd(), "public", "data", "**")
+                path.join(process.cwd(), "storage", "app", "workspaces", "**")
             ]
         }
     },
