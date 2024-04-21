@@ -75,3 +75,6 @@ a:hover {
 @import "./dialog.scss";
 @import "./light.scss";
 
+.lm_header .lm_controls > li {
+    height: 9px;
+}
