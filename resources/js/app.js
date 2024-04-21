@@ -343,13 +343,14 @@ function SetupLayout()
                     {
                         console.log(error.response.data.stderr);
                         
-                        const regex = /:(\d+):(\d+): (fatal error|error|warning): (.*)/gm;
-                
+                        const compilerRegex = /:(\d+):(\d+): (fatal error|error|warning): (.*)/gm;
+                        const linkerRegex   = /wasm-ld: error: pgetinker.o: (.*): (.*)/gm;
+                        
                         let markers = [];
                         
                         let matches;
                 
-                        while((matches = regex.exec(error.response.data.stderr)) !== null)
+                        while((matches = compilerRegex.exec(error.response.data.stderr)) !== null)
                         {
                             markers.push({
                                 message: matches[4],
@@ -358,15 +359,31 @@ function SetupLayout()
                                 startColumn: parseInt(matches[2]),
                                 endLineNumber: parseInt(matches[1]),
                                 endColumn: monacoModel.getLineLength(parseInt(matches[1])),
-                                source: "Emscripten",
+                                source: "Emscripten Compiler",
                             });            
                         }
                         
-                        // show errors in the editor
-                        monaco.editor.setModelMarkers(monacoModel, "owner", markers);
-                        monacoEditor.setPosition({lineNumber: markers[0].startLineNumber, column: markers[0].startColumn });
+                        while((matches = linkerRegex.exec(error.response.data.stderr)) !== null)
+                        {
+                            markers.push({
+                                message: `${matches[1]} ${matches[2]}`,
+                                severity: monaco.MarkerSeverity.Error,
+                                startLineNumber: 1,
+                                startColumn: 1,
+                                endLineNumber: 1,
+                                endColumn: monacoModel.getLineLength(1),
+                                source: "Emscripten Linker",
+                            });
+                        }
+
+                        // show errors in the editor, if they exist
+                        if(markers.length > 0)
+                        {
+                            monaco.editor.setModelMarkers(monacoModel, "owner", markers);
+                            monacoEditor.setPosition({lineNumber: markers[0].startLineNumber, column: markers[0].startColumn });
+                            setTimeout(() => { monacoEditor.trigger("", "editor.action.marker.next"); }, 50);
+                        }
                         
-                        setTimeout(() => { monacoEditor.trigger("", "editor.action.marker.next"); }, 50);
                         document.querySelector('#player-panel div').className = "fail";
                         compiling = false;
                     }
