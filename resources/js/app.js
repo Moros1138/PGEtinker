@@ -341,7 +341,9 @@ function SetupLayout()
                 {
                     if(error.response.data.stderr)
                     {
-                        const regex = new RegExp(':(\\d+):(\\d+): (error|warning): (.*)', 'gm')
+                        console.log(error.response.data.stderr);
+                        
+                        const regex = /:(\d+):(\d+): (fatal error|error|warning): (.*)/gm;
                 
                         let markers = [];
                         
