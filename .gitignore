@@ -18,4 +18,5 @@ yarn-error.log
 /.idea
 /.vscode
 
-third_party/v0.01/lib
+third_party/v*/lib
+third_party/v*/model.h
