@@ -63,3 +63,25 @@ if [ ! -e ./lib/olcSoundWaveEngine.o ] ; then
     echo Building olcSoundWaveEngine.o
     em++ -c -std=c++20 $INCLUDES ./include/olcSoundWaveEngine/olcSoundWaveEngine.cpp -o ./lib/olcSoundWaveEngine.o
 fi
+
+echo Building Monoaco\'s model
+cat include/olcPixelGameEngine/olcPixelGameEngine.h > model.h
+
+cat include/olcPixelGameEngine/extensions/olcPGEX_Graphics2D.h >> model.h
+cat include/olcPixelGameEngine/extensions/olcPGEX_Graphics3D.h >> model.h
+cat include/olcPixelGameEngine/extensions/olcPGEX_Network.h >> model.h
+cat include/olcPixelGameEngine/extensions/olcPGEX_PopUpMenu.h >> model.h
+cat include/olcPixelGameEngine/extensions/olcPGEX_QuickGUI.h >> model.h
+cat include/olcPixelGameEngine/extensions/olcPGEX_RayCastWorld.h >> model.h
+cat include/olcPixelGameEngine/extensions/olcPGEX_Sound.h >> model.h
+cat include/olcPixelGameEngine/extensions/olcPGEX_SplashScreen.h >> model.h
+cat include/olcPixelGameEngine/extensions/olcPGEX_TransformedView.h >> model.h
+cat include/olcPixelGameEngine/extensions/olcPGEX_Wireframe.h >> model.h
+cat include/olcPixelGameEngine/utilities/olcUTIL_Animate2D.h >> model.h
+cat include/olcPixelGameEngine/utilities/olcUTIL_Camera2D.h >> model.h
+cat include/olcPixelGameEngine/utilities/olcUTIL_Container.h >> model.h
+cat include/olcPixelGameEngine/utilities/olcUTIL_DataFile.h >> model.h
+cat include/olcPixelGameEngine/utilities/olcUTIL_Geometry2D.h >> model.h
+cat include/olcPixelGameEngine/utilities/olcUTIL_Palette.h >> model.h
+cat include/olcPixelGameEngine/utilities/olcUTIL_QuadTree.h >> model.h
+cat include/olcSoundWaveEngine/olcSoundWaveEngine.h >> model.h

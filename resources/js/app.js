@@ -47,6 +47,7 @@ consoleShown = (consoleShown === "true") ? true : false;
 
 let monacoEditor = null;
 let monacoModel  = null;
+let monacoModelIntellisense = null;
 
 function preCompile()
 {
@@ -162,7 +163,7 @@ function SetupLayout()
 
         if(monacoModel === null)
         {
-            monacoModel = monaco.editor.createModel("", "cpp", monaco.Uri.parse("inmemory://pgetinker"));
+            monacoModel = monaco.editor.createModel("", "cpp", monaco.Uri.parse("inmemory://pgetinker.cpp"));
 
             let codeBox = document.querySelector("#code");
             if(codeBox.value !== "")
@@ -189,6 +190,15 @@ function SetupLayout()
             }
         }
 
+        if(monacoModelIntellisense === null)
+        {
+            monacoModelIntellisense = monaco.editor.createModel("", "cpp", monaco.Uri.parse("inmemory://pgetinker.h"));
+            axios.get("/api/model/v0.01").then((response) =>
+            {
+                monacoModelIntellisense.setValue(response.data);
+            });
+        }
+        
         monacoEditor = monaco.editor.create(document.querySelector('#editor-panel .code-editor'), {
             automaticLayout: true,
             model: monacoModel,
