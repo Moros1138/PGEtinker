@@ -28,32 +28,71 @@
             </a>
             <div class="navbar-left-menu">
                 <div class="dropdown">
-                    <div class="menu-item">Settings</div>
+                    <div class="menu-item">
+                        <i data-lucide="menu"></i>
+                        Settings
+                    </div>
                     <div class="dropdown-content">
-                        <a href="#" id="default-code">Default Code</a>
-                        <a href="#" id="toggle-theme">Toggle Theme</a>
-                        <a href="#" id="default-layout">Restore Default Layout</a>
-                        <a href="#" id="toggle-console">Show/Hide Console</a>
+                        <a href="#" id="default-code">
+                            <i data-lucide="newspaper"></i>
+                            Default Code
+                        </a>
+                        <a href="#" id="toggle-theme">
+                            <i data-lucide="sun-moon"></i>    
+                            Toggle Theme
+                        </a>
+                        <a href="#" id="default-layout">
+                            <i data-lucide="undo-dot"></i>
+                            Restore Default Layout
+                        </a>
+                        <a href="#" id="toggle-console">
+                            <i data-lucide="square-chevron-right"></i>
+                            Show/Hide Console
+                        </a>
                     </div>
                 </div>
-                <a class="menu-item" href="#" id="compile">Build &amp; Run</a>
+                <a class="menu-item" href="#" id="compile">
+                    <i data-lucide="circle-play"></i>
+                    Build &amp; Run
+                </a>
             </div>
             <div class="navbar-right-menu">
                 <div class="dropdown">
                     <div class="menu-item">Sharing</div>
                     <div class="dropdown-content">
-                        <a href="#" id="share">Share</a>
-                        <a href="#" id="download">Download HTML</a>
+                        <a href="#" id="share">
+                            <i data-lucide="share2"></i>
+                            Share
+                        </a>
+                        <a href="#" id="download">
+                            <i data-lucide="download"></i>
+                            Download HTML
+                        </a>
                     </div>
                 </div>
                 <div class="dropdown">
                     <div class="menu-item">Links</div>
                     <div class="dropdown-content">
-                        <a target="_blank" href="https://github.com/Moros1138/PGEtinker">PGEtinker on Github</a>
-                        <a target="_blank" href="https://github.com/Moros1138/PGEtinker/issues/new?assignees=Moros1138&labels=bug&projects=&template=bug_report.md&title=">Report an issue</a>
-                        <a target="_blank" href="https://github.com/Moros1138/PGEtinker/issues/new?assignees=Moros1138&labels=enhancement&projects=&template=feature_request.md&title=">Request a new feature</a>
-                        <a target="_blank" href="https://github.com/OneLoneCoder/olcPixelGameEngine">olcPixelGameEngine</a>
-                        <a target="_blank" href="https://emscripten.org/">Emscripten</a>
+                        <a target="_blank" href="https://github.com/Moros1138/PGEtinker">
+                            <i data-lucide="github"></i>
+                            PGEtinker on Github
+                        </a>
+                        <a target="_blank" href="https://github.com/Moros1138/PGEtinker/issues/new?assignees=Moros1138&labels=bug&projects=&template=bug_report.md&title=">
+                            <i data-lucide="bug"></i>
+                            Report an issue
+                        </a>
+                        <a target="_blank" href="https://github.com/Moros1138/PGEtinker/issues/new?assignees=Moros1138&labels=enhancement&projects=&template=feature_request.md&title=">
+                            <i data-lucide="pencil-ruler"></i>
+                            Request a new feature
+                        </a>
+                        <a target="_blank" href="https://github.com/OneLoneCoder">
+                            <i data-lucide="github"></i>
+                            OneLoneCoder on Github
+                        </a>
+                        <a target="_blank" href="https://emscripten.org/">
+                            <i data-lucide="external-link"></i>
+                            Emscripten
+                        </a>
                     </div>
                 </div>
             </div>

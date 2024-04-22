@@ -1,6 +1,7 @@
 import './lib/bootstrap';
 import './lib/goldenLayout';
 import './lib/monaco';
+import './lib/lucide';
 
 let sharedFlag = (window.location.pathname.indexOf("/s/") === 0);
 
