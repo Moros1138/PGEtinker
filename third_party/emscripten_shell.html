@@ -158,10 +158,16 @@
 
             if (event.data.message === "set-theme") {
                 document.querySelector("body").className = event.data.theme;
+                return;
             }
 
             if (event.data.message === "toggle-console") {
                 ToggleConsole();
+                return;
+            }
+
+            if (event.data.message === "show-console") {
+                ToggleConsole(event.data.value);
             }
         });
     </script>

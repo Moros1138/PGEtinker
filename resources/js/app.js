@@ -42,6 +42,9 @@ let theme = window.localStorage.getItem("pgetinkerTheme");
 if(theme !== "dark" && theme !== "light")
     theme = "dark";
 
+let consoleShown = window.localStorage.getItem("pgetinkerConsoleShown");
+consoleShown = (consoleShown === "true") ? true : false;
+
 let monacoEditor = null;
 let monacoModel  = null;
 
@@ -247,6 +250,10 @@ function SetupLayout()
         document.querySelector("#toggle-console").addEventListener("click", (event) => 
         {
             event.preventDefault();
+            
+            consoleShown = !consoleShown;
+            window.localStorage.setItem("pgetinkerConsoleShown", consoleShown);
+
             document.querySelector("#player-panel iframe").contentWindow.postMessage({
                 message: "toggle-console",
             }, "*");   
@@ -434,6 +441,14 @@ window.addEventListener("message", (event) =>
             message: "set-theme",
             theme: theme
         }, "*");
+
+        // update player theme
+        document.querySelector("#player-panel iframe").contentWindow.postMessage({
+            message: "show-console",
+            value: consoleShown
+        }, "*");
+
+
     }
 });
 
