@@ -11,22 +11,53 @@
     
     <link rel="stylesheet" type="text/css" href="{{ Vite::asset('resources/css/app.scss')}}">
     @vite('resources/js/app.js')
-
 </head>
+
+
+
+
+
+
+
+
+
     <div id="app">
-        <div id="header">
-            <a href="/">
+        <nav id="header">
+            <a class="brand" href="/">
                 <img src="/images/PGEtinker-logo.png" alt="PGEtinker Logo">
             </a>
-            <div class="branding">
-                <a href="https://github.com/OneLoneCoder/olcPixelGameEngine" target="_blank">
-                    <img id="olc-brand" src="/images/pge-logo.png" alt="OneLoneCoder PixelGameEngine Logo">
-                </a>
-                <a href="https://emscripten.org/" target="_blank">
-                    <img id="emscripten-brand" src="/images/emscripten-logo.png" alt="Emscripten Logo">
-                </a>
+            <div class="navbar-left-menu">
+                <div class="dropdown">
+                    <div class="menu-item">Settings</div>
+                    <div class="dropdown-content">
+                        <a href="#" id="default-code">Default Code</a>
+                        <a href="#" id="toggle-theme">Toggle Theme</a>
+                        <a href="#" id="default-layout">Restore Default Layout</a>
+                        <a href="#" id="toggle-console">Show/Hide Console</a>
+                    </div>
+                </div>
+                <a class="menu-item" href="#" id="compile">Build &amp; Run</a>
             </div>
-        </div>
+            <div class="navbar-right-menu">
+                <div class="dropdown">
+                    <div class="menu-item">Sharing</div>
+                    <div class="dropdown-content">
+                        <a href="#" id="share">Share</a>
+                        <a href="#" id="download">Download HTML</a>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <div class="menu-item">Links</div>
+                    <div class="dropdown-content">
+                        <a target="_blank" href="https://github.com/Moros1138/PGEtinker">PGEtinker on Github</a>
+                        <a target="_blank" href="https://github.com/Moros1138/PGEtinker/issues/new?assignees=Moros1138&labels=bug&projects=&template=bug_report.md&title=">Report an issue</a>
+                        <a target="_blank" href="https://github.com/Moros1138/PGEtinker/issues/new?assignees=Moros1138&labels=enhancement&projects=&template=feature_request.md&title=">Request a new feature</a>
+                        <a target="_blank" href="https://github.com/OneLoneCoder/olcPixelGameEngine">olcPixelGameEngine</a>
+                        <a target="_blank" href="https://emscripten.org/">Emscripten</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
         <div id="content">
             <noscript>
                 <p>
@@ -40,9 +71,6 @@
                     Firefox and Chromium (or Chromium forks).
                 </p>
             </noscript>
-        </div>
-        <div id="footer">
-            Haven't quite decided what should go here, probably a copyright notice or perhaps a whitty quote.
         </div>
     </div>
     <textarea id="code" style="display: none;">{{ $code }}</textarea>

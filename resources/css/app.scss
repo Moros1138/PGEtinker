@@ -6,6 +6,16 @@ body {
     overflow: hidden;
 }
 
+a:link,
+a:visited,
+a:active {
+    color: #f70;
+}
+
+a:hover {
+    color: #770;
+}
+
 #app {
     position: fixed;
     top: 0;
@@ -24,17 +34,79 @@ body {
     left: 0;
     width: 100%;
     height: 48px;
+    z-index: 100;
 }
 
-#header img {
-    display: inline-block;
+nav a.brand,
+nav a.brand img {
+    display: block;
     width: auto;
-    height: 100%;
+    height: 48px;
+    float: left;
 }
 
-#header .branding {
+a:active.menu-item,
+a:link.menu-item,
+a:visited.menu-item,
+.menu-item {
+    display: inline-block;
+    background-color: #ba2be6;
+    color: white;
+    font-size: 16px;
     height: 48px;
+    line-height: 48px;
+    padding: 0 .4rem;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    white-space: nowrap;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {
+    background-color: #ddd;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+a:hover.menu-item,
+.menu-item:hover,
+.dropdown:hover .menu-item {
+    background-color: #8e3e83;
+}
+
+/* differentiate between left menus and right menus */
+nav .navbar-left-menu {
+    float: left;
+}
+
+nav .navbar-right-menu {
     float: right;
+}
+
+nav .navbar-right-menu .dropdown-content {
+    right: 0;
 }
 
 #content {
@@ -48,24 +120,6 @@ body {
     border-bottom: 1px solid rgb(140, 144, 157);
 }
 
-#footer {
-    position: absolute;
-    display: none;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 32px;
-
-}
-
-a:link, a:visited, a:active {
-    color: #f70;
-}
-
-a:hover {
-    color: #770;
-}
-
 .center {
     text-align: center;
 }
@@ -74,7 +128,3 @@ a:hover {
 @import "./player-panel.scss";
 @import "./dialog.scss";
 @import "./light.scss";
-
-.lm_header .lm_controls > li {
-    height: 9px;
-}

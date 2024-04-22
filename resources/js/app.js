@@ -44,7 +44,6 @@ if(theme !== "dark" && theme !== "light")
 let monacoEditor = null;
 let monacoModel  = null;
 
-
 function preCompile()
 {
     if(monacoEditor.getValue().length > maxFileSize)
@@ -122,11 +121,6 @@ function compileFailHandler(stderr)
     compiling = false;
 }
 
-
-
-
-
-
 function SetupLayout()
 {
     layout = new GoldenLayout(layoutConfig, document.querySelector("#content"))
@@ -145,20 +139,6 @@ function SetupLayout()
     {
         container.getElement().html(`
             <div id="editor-panel">
-                <div class="menu">
-                    <ul class="editor-menu">
-                        <li><button type="button" id="default-code">Default Code</button></li>
-                        <li class="separator"></li>
-                        <li><button type="button" id="toggle-theme">Toggle Theme</button></li>
-                        <li><button type="button" id="default-layout">Default Layout</button></li>
-                        <li><button type="button" id="toggle-console">Toggle Console</button></li>
-                    </ul>
-                    <ul class="build-menu">
-                        <li><button type="button" id="download">Download HTML</button></li>
-                        <li><button type="button" id="share">Share</button></li>
-                        <li><button type="button" id="compile">Build &amp; Run</button></li>
-                    </ul>
-                </div>
                 <div class="code-editor"></div>
                 <div class="status">Loading</div>
             </div>
