@@ -35,4 +35,9 @@ self.MonacoEnvironment = {
     }
 };
 
+monaco.languages.typescript.javascriptDefaults.setEagerModelSync(true);
+monaco.languages.typescript.javascriptDefaults.setCompilerOptions({
+    allowNonTsExtensions: true
+});
+
 window.monaco = monaco;
