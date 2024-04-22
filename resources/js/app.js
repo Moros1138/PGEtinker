@@ -1,6 +1,7 @@
 import './lib/bootstrap';
 import './lib/goldenLayout';
 import './lib/monaco';
+import './lib/lucide';
 
 let sharedFlag = (window.location.pathname.indexOf("/s/") === 0);
 
@@ -41,9 +42,11 @@ let theme = window.localStorage.getItem("pgetinkerTheme");
 if(theme !== "dark" && theme !== "light")
     theme = "dark";
 
+let consoleShown = window.localStorage.getItem("pgetinkerConsoleShown");
+consoleShown = (consoleShown === "true") ? true : false;
+
 let monacoEditor = null;
 let monacoModel  = null;
-
 
 function preCompile()
 {
@@ -122,11 +125,6 @@ function compileFailHandler(stderr)
     compiling = false;
 }
 
-
-
-
-
-
 function SetupLayout()
 {
     layout = new GoldenLayout(layoutConfig, document.querySelector("#content"))
@@ -145,20 +143,6 @@ function SetupLayout()
     {
         container.getElement().html(`
             <div id="editor-panel">
-                <div class="menu">
-                    <ul class="editor-menu">
-                        <li><button type="button" id="default-code">Default Code</button></li>
-                        <li class="separator"></li>
-                        <li><button type="button" id="toggle-theme">Toggle Theme</button></li>
-                        <li><button type="button" id="default-layout">Default Layout</button></li>
-                        <li><button type="button" id="toggle-console">Toggle Console</button></li>
-                    </ul>
-                    <ul class="build-menu">
-                        <li><button type="button" id="download">Download HTML</button></li>
-                        <li><button type="button" id="share">Share</button></li>
-                        <li><button type="button" id="compile">Build &amp; Run</button></li>
-                    </ul>
-                </div>
                 <div class="code-editor"></div>
                 <div class="status">Loading</div>
             </div>
@@ -266,6 +250,10 @@ function SetupLayout()
         document.querySelector("#toggle-console").addEventListener("click", (event) => 
         {
             event.preventDefault();
+            
+            consoleShown = !consoleShown;
+            window.localStorage.setItem("pgetinkerConsoleShown", consoleShown);
+
             document.querySelector("#player-panel iframe").contentWindow.postMessage({
                 message: "toggle-console",
             }, "*");   
@@ -453,6 +441,14 @@ window.addEventListener("message", (event) =>
             message: "set-theme",
             theme: theme
         }, "*");
+
+        // update player theme
+        document.querySelector("#player-panel iframe").contentWindow.postMessage({
+            message: "show-console",
+            value: consoleShown
+        }, "*");
+
+
     }
 });
 

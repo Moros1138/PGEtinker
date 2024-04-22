@@ -19,14 +19,14 @@
     width: 80vw;
     max-width: 40rem;
     margin: 10vh auto;
-    background: #222;
-    color: #ded;
-    border: 1px solid #444;
+    background: var(--dialog-background-color);
+    color: var(--dialog-text-color);
+    border: 1px solid var(--dialog-border-color);
     border-radius: 0.4rem;
 }
 
 .dialog .window > .header {
-    border-bottom: 1px solid #444;
+    border-bottom: 1px solid var(--dialog-border-color);
     padding: 0.4rem 1rem;
 }
 
@@ -35,7 +35,7 @@
 }
 
 .dialog .window > .footer {
-    border-top: 1px solid #444;
+    border-top: 1px solid var(--dialog-border-color);
     padding: 0.4rem 1rem;
     text-align: right;
 }
@@ -49,22 +49,22 @@
 
 .ok {
     background: #0D6EFD;
-    color: #ded;
+    color: var(--dialog-text-color);
 }
 
 .ok:hover {
     background: #0B5ED7;
-    color: #ded;
+    color: var(--dialog-text-color);
 }
 
 .cancel {
     background: #DC3545;
-    color: #ded;
+    color: var(--dialog-text-color);
 }
 
 .cancel:hover {
     background: #BB2D3B;
-    color: #ded;
+    color: var(--dialog-text-color);
 }
 
 .input-group {
@@ -76,8 +76,8 @@
 .input-group label {
     border-radius: 0.4rem 0rem 0rem 0.4rem;
     border: 1px solid #000;
-    background: rgb(77, 77, 77);
-    color: rgb(255, 255, 255);
+    background: #4d4d4d;
+    color: #ffffff;
     padding: 0.4rem;
 }
 
@@ -94,10 +94,10 @@
     padding: 0.4rem 1rem;
 }
 
-ul {
+.dialog .window ul {
     padding-left: 1rem;
 }
 
-li {
+.dialog .window li {
     padding-bottom: 1rem;
 }
