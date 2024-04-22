@@ -64,7 +64,7 @@ if [ ! -e ./lib/olcSoundWaveEngine.o ] ; then
     em++ -c -std=c++20 $INCLUDES ./include/olcSoundWaveEngine/olcSoundWaveEngine.cpp -o ./lib/olcSoundWaveEngine.o
 fi
 
-echo Building Monoaco's model
+echo Building Monoaco\'s model
 cat include/olcPixelGameEngine/olcPixelGameEngine.h > model.h
 
 cat include/olcPixelGameEngine/extensions/olcPGEX_Graphics2D.h >> model.h
