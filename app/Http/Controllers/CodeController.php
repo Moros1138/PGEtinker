@@ -9,9 +9,10 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\StreamHandler;
-use Monolog\Level;
 use Monolog\Logger;
+use Illuminate\Support\Facades\Http;
 
 class CodeController extends Controller
 {
@@ -110,6 +111,11 @@ class CodeController extends Controller
                 Storage::createDirectory("compilerCache");
             }
         
+            if(Storage::directoryMissing(("remoteIncludeCache")))
+            {
+                Storage::createDirectory("remoteIncludeCache");
+            }
+
             if(Storage::fileExists("compilerCache/{$hashedCode}"))
             {
                 Log::debug("Compile: cache hit", ["hashedCode" => $hashedCode]);
@@ -134,9 +140,12 @@ class CodeController extends Controller
         $directoryName = "workspaces/" . Str::uuid();
         Storage::createDirectory($directoryName);
         
-        
         $log = new Logger("compiler");
-        $log->pushHandler(new StreamHandler(Storage::path($directoryName) . "/compiler.log"));
+        
+        $logHandler = new StreamHandler(Storage::path($directoryName) . "/compiler.log");
+        $logHandler->setFormatter(new LineFormatter(null, null, true, true));
+        
+        $log->pushHandler($logHandler);
         
         Log::debug("Compile: working directory created {$directoryName}");
         
@@ -159,7 +168,7 @@ class CodeController extends Controller
         $errors = [];
     
         $libraries = [];
-        
+
         $log->info("begin parsing linesOfCode");
 
         // line by line code processing and filtering
@@ -203,6 +212,97 @@ class CodeController extends Controller
     
                 if($foundImplementationMacro)
                     continue;
+            }
+
+            preg_match(
+                '/^\s*#\s*i(nclude|mport)(_next)?\s+["<](https:\/\/(.*)[^">]*)[">]/',
+                $linesOfCode[$i],
+                $match,
+                PREG_OFFSET_CAPTURE,
+                0
+            );
+
+            if(count($match) > 0)
+            {
+                $log->info("found a potential url for remote include");
+                
+                $potentialUrl = $match[3][0];
+                $potentialFilename = basename($match[3][0]);
+                $hashedUrl = hash("sha256", $potentialUrl);
+
+                if(env("COMPILER_CACHING", false))
+                {
+                    // if we have a cached version of the url's contents, don't pull it
+                    if(Storage::fileExists("remoteIncludeCache/{$hashedUrl}"))
+                    {
+                        $log->info("remote include cache hit");
+                        Storage::copy("remoteIncludeCache/{$hashedUrl}", "{$directoryName}/{$potentialFilename}");
+                        $linesOfCode[$i] = '#include "' . $potentialFilename .'"';
+                        continue;
+                    }
+                }
+                
+                $log->info("remote include cache miss");
+                
+                try
+                {
+                    $response = Http::head($potentialUrl);
+                }
+                catch(Exception $e)
+                {
+                    $errors[] = "/pgetinker.cpp:" . $i + 1 . ":1: error: failed to retrieve {$potentialUrl}";
+                    $log->info("failed to include remote file: {$potentialUrl} at line: " . $i + 1);
+                    continue;
+                }
+                
+                if(
+                    !($response->status() >= 200 && $response->status() < 400) ||
+                    !str_contains($response->header("Content-Type"), "text/plain")
+                )
+                {
+                    $errors[] = "/pgetinker.cpp:" . $i + 1 . ":1: error: failed to retrieve {$potentialUrl}";
+                    $log->info("failed to include remote file: {$potentialUrl} at line: " . $i + 1);
+                    continue;                    
+                }
+
+                if(intval($response->header("Content-Length")) > 1048576)
+                {
+                    $errors[] = "/pgetinker.cpp:" . $i + 1 . ":1: error: exceeds 1MB maximum file size";
+                    $log->info("remote file: {$potentialUrl} exceeds 1MB file size limitation");
+                    continue;
+                }
+
+                $log->info("retrieving the body content");
+
+                $response = Http::get($potentialUrl);
+                
+                // check included source for bad things
+                preg_match_all(
+                    '/\s*#\s*i(nclude|mport)(_next)?\s+["<]((\.{1,2}|\/)[^">]*)[">]/m',
+                    $response->body(),
+                    $match,
+                    PREG_SET_ORDER,
+                    0
+                );
+                
+                if(count($match) > 0)
+                {
+                    $errors[] = "/pgetinker.cpp:" . $i + 1 . ":1: error: found absolute or relative paths in remote file: {$potentialUrl}";
+                    $log->info("found absolute or relative paths in remote file: {$potentialUrl}");
+                    continue;
+                }
+                
+                $log->info("writing remote file to: {$directoryName}/{$potentialFilename}");
+                Storage::put("{$directoryName}/{$potentialFilename}", $response->body());
+                
+                if(env("COMPILER_CACHING", false))
+                {
+                    $log->info("copying remote file to cache");
+                    Storage::copy("{$directoryName}/{$potentialFilename}", "remoteIncludeCache/{$hashedUrl}");
+                }
+
+                $linesOfCode[$i] = '#include "' . $potentialFilename .'"';
+                continue;
             }
         }
         
@@ -386,10 +486,14 @@ class CodeController extends Controller
     {
         $text = array_filter(explode("\n", $text), function($value)
         {
-            return (strpos($value, "undefined symbol") !== false) || (strpos($value, "pgetinker.cpp") === 0);
+            return (strpos($value, "undefined symbol") !== false) ||
+                (strpos($value, "duplicate symbol") !== false) ||
+                (strpos($value, "pgetinker.cpp") === 0);
         });
 
         return implode("\n", $text);
     }
 
 }
+
+
