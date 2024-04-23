@@ -213,6 +213,97 @@ class CodeController extends Controller
                 if($foundImplementationMacro)
                     continue;
             }
+
+            preg_match(
+                '/^\s*#\s*i(nclude|mport)(_next)?\s+["<](https:\/\/(.*)[^">]*)[">]/',
+                $linesOfCode[$i],
+                $match,
+                PREG_OFFSET_CAPTURE,
+                0
+            );
+
+            if(count($match) > 0)
+            {
+                $log->info("found a potential url for remote include");
+                
+                $potentialUrl = $match[3][0];
+                $potentialFilename = basename($match[3][0]);
+                $hashedUrl = hash("sha256", $potentialUrl);
+
+                if(env("COMPILER_CACHING", false))
+                {
+                    // if we have a cached version of the url's contents, don't pull it
+                    if(Storage::fileExists("remoteIncludeCache/{$hashedUrl}"))
+                    {
+                        $log->info("remote include cache hit");
+                        Storage::copy("remoteIncludeCache/{$hashedUrl}", "{$directoryName}/{$potentialFilename}");
+                        $linesOfCode[$i] = '#include "' . $potentialFilename .'"';
+                        continue;
+                    }
+                }
+                
+                $log->info("remote include cache miss");
+                
+                try
+                {
+                    $response = Http::head($potentialUrl);
+                }
+                catch(Exception $e)
+                {
+                    $errors[] = "/pgetinker.cpp:" . $i + 1 . ":1: error: failed to retrieve {$potentialUrl}";
+                    $log->info("failed to include remote file: {$potentialUrl} at line: " . $i + 1);
+                    continue;
+                }
+                
+                if(
+                    !($response->status() >= 200 && $response->status() < 400) ||
+                    !str_contains($response->header("Content-Type"), "text/plain")
+                )
+                {
+                    $errors[] = "/pgetinker.cpp:" . $i + 1 . ":1: error: failed to retrieve {$potentialUrl}";
+                    $log->info("failed to include remote file: {$potentialUrl} at line: " . $i + 1);
+                    continue;                    
+                }
+
+                if(intval($response->header("Content-Length")) > 1048576)
+                {
+                    $errors[] = "/pgetinker.cpp:" . $i + 1 . ":1: error: exceeds 1MB maximum file size";
+                    $log->info("remote file: {$potentialUrl} exceeds 1MB file size limitation");
+                    continue;
+                }
+
+                $log->info("retrieving the body content");
+
+                $response = Http::get($potentialUrl);
+                
+                // check included source for bad things
+                preg_match_all(
+                    '/\s*#\s*i(nclude|mport)(_next)?\s+["<]((\.{1,2}|\/)[^">]*)[">]/m',
+                    $response->body(),
+                    $match,
+                    PREG_SET_ORDER,
+                    0
+                );
+                
+                if(count($match) > 0)
+                {
+                    $errors[] = "/pgetinker.cpp:" . $i + 1 . ":1: error: found absolute or relative paths in remote file: {$potentialUrl}";
+                    $log->info("found absolute or relative paths in remote file: {$potentialUrl}");
+                    continue;
+                }
+                
+                $log->info("writing remote file to: {$directoryName}/{$potentialFilename}");
+                Storage::put("{$directoryName}/{$potentialFilename}", $response->body());
+                
+                if(env("COMPILER_CACHING", false))
+                {
+                    $log->info("copying remote file to cache");
+                    Storage::copy("{$directoryName}/{$potentialFilename}", "remoteIncludeCache/{$hashedUrl}");
+                }
+
+                $linesOfCode[$i] = '#include "' . $potentialFilename .'"';
+                continue;
+            }
         }
         
         // bail if we have errors here, no need to invoke the compiler
