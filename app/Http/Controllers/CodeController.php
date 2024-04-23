@@ -9,9 +9,10 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\StreamHandler;
-use Monolog\Level;
 use Monolog\Logger;
+use Illuminate\Support\Facades\Http;
 
 class CodeController extends Controller
 {
@@ -110,6 +111,11 @@ class CodeController extends Controller
                 Storage::createDirectory("compilerCache");
             }
         
+            if(Storage::directoryMissing(("remoteIncludeCache")))
+            {
+                Storage::createDirectory("remoteIncludeCache");
+            }
+
             if(Storage::fileExists("compilerCache/{$hashedCode}"))
             {
                 Log::debug("Compile: cache hit", ["hashedCode" => $hashedCode]);
@@ -134,9 +140,12 @@ class CodeController extends Controller
         $directoryName = "workspaces/" . Str::uuid();
         Storage::createDirectory($directoryName);
         
-        
         $log = new Logger("compiler");
-        $log->pushHandler(new StreamHandler(Storage::path($directoryName) . "/compiler.log"));
+        
+        $logHandler = new StreamHandler(Storage::path($directoryName) . "/compiler.log");
+        $logHandler->setFormatter(new LineFormatter(null, null, true, true));
+        
+        $log->pushHandler($logHandler);
         
         Log::debug("Compile: working directory created {$directoryName}");
         
@@ -159,7 +168,7 @@ class CodeController extends Controller
         $errors = [];
     
         $libraries = [];
-        
+
         $log->info("begin parsing linesOfCode");
 
         // line by line code processing and filtering
@@ -386,10 +395,14 @@ class CodeController extends Controller
     {
         $text = array_filter(explode("\n", $text), function($value)
         {
-            return (strpos($value, "undefined symbol") !== false) || (strpos($value, "pgetinker.cpp") === 0);
+            return (strpos($value, "undefined symbol") !== false) ||
+                (strpos($value, "duplicate symbol") !== false) ||
+                (strpos($value, "pgetinker.cpp") === 0);
         });
 
         return implode("\n", $text);
     }
 
 }
+
+
