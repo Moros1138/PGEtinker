@@ -24,13 +24,13 @@ class CompilerTest extends TestCase
         $b3 = $controller->hashCode("(0,0 ,0)");
         
         $a4 = $controller->hashCode("(0,0,0)");
-        $b4 = $controller->hashCode("(0, 0, 0)");
+        $b4 = $controller->hashCode("(0, 0,0)");
 
         $a5 = $controller->hashCode("(0,0,0)");
         $b5 = $controller->hashCode("(0,0,0 )");
         
         $a6 = $controller->hashCode("(0,0,0)");
-        $b6 = $controller->hashCode("(0,0,0) ");
+        $b6 = $controller->hashCode("(0,0, 0)");
 
         $this->assertTrue($a1 == $b1);
         $this->assertTrue($a2 == $b2);
