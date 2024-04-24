@@ -371,9 +371,15 @@ function SetupLayout()
             });
         });
         
+        document.querySelector("#supporters").addEventListener("click", (event) =>
+        {
+            event.preventDefault();
+            alert("Not Implemented");
+        });
+        
         UpdateTheme();
     });
-    
+
     layout.init();
 }
 

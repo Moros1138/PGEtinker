@@ -12,14 +12,7 @@
     <link rel="stylesheet" type="text/css" href="{{ Vite::asset('resources/css/app.scss')}}">
     @vite('resources/js/app.js')
 </head>
-
-
-
-
-
-
-
-
+<body>
 
     <div id="app">
         <nav id="header">
@@ -63,6 +56,9 @@
                         {{ $navBarSponsorText }}
                     </a>
                 </div>
+                <a class="menu-item" id="supporters" href="#">
+                    Supporters
+                </a>
                 <div class="dropdown">
                     <div class="menu-item">Sharing</div>
                     <div class="dropdown-content">
