@@ -1,6 +1,7 @@
 import {
     createIcons,
     Bug,
+    CircleDollarSign,
     CirclePlay,
     Download,
     ExternalLink,
@@ -17,6 +18,7 @@ createIcons({
     icons: {
         Bug,
         CirclePlay,
+        CircleDollarSign,
         Download,
         ExternalLink,
         Github,
