@@ -1,4 +1,4 @@
-name: BuildAndPushDockerhub
+name: Dockerhub
 on:
   workflow_run:
     workflows: [UnitTests]
