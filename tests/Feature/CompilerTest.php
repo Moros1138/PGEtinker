@@ -3,13 +3,12 @@
 namespace Tests\Feature;
 
 // use Illuminate\Foundation\Testing\RefreshDatabase;
+
+use App\Http\Controllers\CodeController;
 use Tests\TestCase;
 
 class CompilerTest extends TestCase
 {
-    /**
-     * A basic test example.
-     */
     public function test_compiler_compiles_hello_world(): void
     {
         $response = $this->post("/api/compile", [
@@ -18,5 +17,4 @@ class CompilerTest extends TestCase
 
         $response->assertStatus(200);
     }
-    
 }
