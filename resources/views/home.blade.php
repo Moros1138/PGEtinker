@@ -57,6 +57,12 @@
                 </a>
             </div>
             <div class="navbar-right-menu">
+                <div class="dropdown sponsor">
+                    Sponsor:&nbsp;
+                    <a href="{{ $navBarSponsorLink }}" target="_blank" title="{{ $navBarSponsorText }}">
+                        {{ $navBarSponsorText }}
+                    </a>
+                </div>
                 <div class="dropdown">
                     <div class="menu-item">Sharing</div>
                     <div class="dropdown-content">
