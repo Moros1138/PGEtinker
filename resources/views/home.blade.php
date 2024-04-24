@@ -12,14 +12,7 @@
     <link rel="stylesheet" type="text/css" href="{{ Vite::asset('resources/css/app.scss')}}">
     @vite('resources/js/app.js')
 </head>
-
-
-
-
-
-
-
-
+<body>
 
     <div id="app">
         <nav id="header">
@@ -57,6 +50,15 @@
                 </a>
             </div>
             <div class="navbar-right-menu">
+                <div class="dropdown sponsor">
+                    Sponsor:&nbsp;
+                    <a href="{{ $navBarSponsorLink }}" target="_blank" title="{{ $navBarSponsorText }}">
+                        {{ $navBarSponsorText }}
+                    </a>
+                </div>
+                <a class="menu-item" id="supporters" href="#">
+                    Supporters
+                </a>
                 <div class="dropdown">
                     <div class="menu-item">Sharing</div>
                     <div class="dropdown-content">
@@ -73,6 +75,10 @@
                 <div class="dropdown">
                     <div class="menu-item">Links</div>
                     <div class="dropdown-content">
+                        <a target="_blank" href="https://patreon.com/PGEtinker">
+                            <i data-lucide="circle-dollar-sign"></i>
+                            Become a Supporter
+                        </a>
                         <a target="_blank" href="https://github.com/Moros1138/PGEtinker">
                             <i data-lucide="github"></i>
                             PGEtinker on Github
