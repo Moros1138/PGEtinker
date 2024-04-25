@@ -234,6 +234,16 @@ function SetupLayout()
             theme: `vs-${theme}`,
         });
 
+        monacoEditor.addAction({
+            id: 'build-and-run',
+            label: 'Build and Run',
+            keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter],
+            run: () =>
+            {
+                document.querySelector("#compile").dispatchEvent(new Event("click"));
+            }
+        });
+
         monacoEditor.onDidChangeCursorPosition(() => UpdateStatusBar());
         
         monacoEditor.onDidChangeModelContent(() =>
@@ -526,8 +536,6 @@ window.addEventListener("message", (event) =>
             message: "show-console",
             value: consoleShown
         }, "*");
-
-
     }
 });
 
