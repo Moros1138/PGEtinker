@@ -17,6 +17,7 @@ export default defineConfig({
                 'resources/css/goldenlayout-dark-theme.scss',
                 'resources/css/goldenlayout-light-theme.scss',
                 'resources/css/disagreed.scss',
+                'resources/js/disagreed.js',
                 'resources/css/app.scss',
                 'resources/js/app.js'
             ],
