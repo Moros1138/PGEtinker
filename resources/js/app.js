@@ -529,7 +529,6 @@ else
         window.localStorage.removeItem("pgetinkerCode");
         window.localStorage.removeItem("pgetinkerTheme");
         window.localStorage.removeItem("pgetinkerLayout");
-        document.querySelectorAll("*").forEach((elem) => elem.remove());
         window.location.pathname = "/disagree";
     });
 
