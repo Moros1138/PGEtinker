@@ -60,10 +60,14 @@ function preCompile()
     compiling = true;
 
     lastPlayerHtml = "";
-    document.querySelector("#player-panel iframe").setAttribute("srcdoc", lastPlayerHtml);
+    let playerFrame = document.querySelector("#player-panel iframe");
     
-    document.querySelector('#player-panel div').className = "compiling";
-
+    if(playerFrame != null)
+        playerFrame.remove();
+    
+    document.querySelector("#player-panel .compiling").classList.toggle("display-flex", true);
+    document.querySelector("#player-panel .compiling-failed").classList.toggle("display-flex", false);
+    
     monaco.editor.removeAllMarkers("owner");
     monacoEditor.trigger("", "closeMarkersNavigation");
 
@@ -73,9 +77,15 @@ function preCompile()
 function compileSuccessHandler(data)
 {
     lastPlayerHtml = data.html;
-    document.querySelector("#player-panel iframe").setAttribute("srcdoc", lastPlayerHtml);
     
-    document.querySelector('#player-panel div').className = "";
+    let playerFrame = document.createElement('iframe');
+    playerFrame.setAttribute("srcdoc", lastPlayerHtml);
+    document.querySelector("#player-panel .iframe-container").append(playerFrame);
+    
+    playerFrame.classList.toggle("display-block", true);
+    document.querySelector("#player-panel .compiling").classList.toggle("display-flex", false);
+    document.querySelector("#player-panel .compiling-failed").classList.toggle("display-flex", false);
+    
     compiling = false;
 }
 
@@ -98,7 +108,7 @@ function compileFailHandler(stderr)
             endLineNumber: parseInt(matches[1]),
             endColumn: monacoModel.getLineLength(parseInt(matches[1])),
             source: "Emscripten Compiler",
-        });            
+        });
     }
     
     while((matches = linkerRegex.exec(stderr)) !== null)
@@ -121,8 +131,9 @@ function compileFailHandler(stderr)
         monacoEditor.setPosition({lineNumber: markers[0].startLineNumber, column: markers[0].startColumn });
         setTimeout(() => { monacoEditor.trigger("", "editor.action.marker.next"); }, 50);
     }
-    
-    document.querySelector('#player-panel div').className = "fail";
+
+    document.querySelector("#player-panel .compiling").classList.toggle("display-flex", false);
+    document.querySelector("#player-panel .compiling-failed").classList.toggle("display-flex", true);
     compiling = false;
 }
 
@@ -134,8 +145,26 @@ function SetupLayout()
     {   
         container.getElement().html(`
             <div id="player-panel">
-                <iframe sandbox="allow-scripts" srcdoc=""></iframe>
-                <div></div>
+                <div class="iframe-container">
+                    <iframe sandbox="allow-scripts" srcdoc=""></iframe>
+                </div>
+                <div class="compiling">
+                    <div class="lds-ring">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+                    <p>
+                        Compiling
+                    </p>
+                </div>
+                <div class="compiling-failed">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-frown"><circle cx="12" cy="12" r="10"/><path d="M16 16s-1.5-2-4-2-4 2-4 2"/><line x1="9" x2="9.01" y1="9" y2="9"/><line x1="15" x2="15.01" y1="9" y2="9"/></svg>
+                    <p>
+                        Compile Failed.
+                    </p>
+                </div>
             </div>
         `);
     });        
@@ -306,8 +335,6 @@ function SetupLayout()
                 code: monacoEditor.getValue()
             }).then((response) =>
             {
-                compileSuccessHandler(response.data);
-
                 let shareDialog = document.createElement('div');
                 
                 shareDialog.setAttribute("class", "dialog");
@@ -331,6 +358,8 @@ function SetupLayout()
 
                 document.body.appendChild(shareDialog);
 
+                compileSuccessHandler(response.data);
+
             }).catch((error) =>
             {
                 if(error.response)
@@ -338,8 +367,10 @@ function SetupLayout()
                     if(error.response.data.stderr)
                     {
                         compileFailHandler(error.response.data.stderr);
+                        return;
                     }
                 }
+                compileFailHandler("/pgetinker.cpp:1:1 fatal error: compilation failed in a way that's not being handled. please make a bug report");
             });
         });
 
@@ -366,8 +397,10 @@ function SetupLayout()
                     if(error.response.data.stderr)
                     {
                         compileFailHandler(error.response.data.stderr);
+                        return;
                     }
                 }
+                compileFailHandler("/pgetinker.cpp:1:1 fatal error: compilation failed in a way that's not being handled. please make a bug report");
             });
         });
         
@@ -471,8 +504,6 @@ window.addEventListener("message", (event) =>
 let agreedToTerms = window.localStorage.getItem("pgetinkerAgreedToTerms");
 agreedToTerms = (agreedToTerms == null) ? false : JSON.parse(agreedToTerms);
 
-
-
 if(agreedToTerms)
 {
     SetupLayout();
@@ -529,7 +560,6 @@ else
         window.localStorage.removeItem("pgetinkerCode");
         window.localStorage.removeItem("pgetinkerTheme");
         window.localStorage.removeItem("pgetinkerLayout");
-        document.querySelectorAll("*").forEach((elem) => elem.remove());
         window.location.pathname = "/disagree";
     });
 
