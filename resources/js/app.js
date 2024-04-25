@@ -338,8 +338,10 @@ function SetupLayout()
                     if(error.response.data.stderr)
                     {
                         compileFailHandler(error.response.data.stderr);
+                        return;
                     }
                 }
+                compileFailHandler("/pgetinker.cpp:1:1 fatal error: compilation failed in a way that's not being handled. please make a bug report");
             });
         });
 
@@ -366,8 +368,10 @@ function SetupLayout()
                     if(error.response.data.stderr)
                     {
                         compileFailHandler(error.response.data.stderr);
+                        return;
                     }
                 }
+                compileFailHandler("/pgetinker.cpp:1:1 fatal error: compilation failed in a way that's not being handled. please make a bug report");
             });
         });
         
@@ -470,8 +474,6 @@ window.addEventListener("message", (event) =>
 
 let agreedToTerms = window.localStorage.getItem("pgetinkerAgreedToTerms");
 agreedToTerms = (agreedToTerms == null) ? false : JSON.parse(agreedToTerms);
-
-
 
 if(agreedToTerms)
 {
