@@ -17,9 +17,9 @@
             I get it! You don't want to share any data with us and
             I respect that. Unfortunately that also means that you
             won't be able to use PGEtinker. This is sad, for me, but
-            if you're still interested in the PixelGameEngine, or
+            if you're still interested in the olcPixelGameEngine, or
             programming in C++, then this doesn't have to be the end
-            of your journey, merely the beginning.
+            of your journey.
         </p>
         <h2>Moving Forward.</h2>
         <p>
