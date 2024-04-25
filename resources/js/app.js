@@ -365,13 +365,22 @@ function SetupLayout()
             {
                 if(error.response)
                 {
+                    if(error.response.status)
+                    {
+                        if(error.response.status == 503)
+                        {
+                            compileFailHandler("pgetinker.cpp:1:1: error: PGEtinker service has gone offline. try again later.\n");
+                            return;
+                        }
+                    }
+
                     if(error.response.data.stderr)
                     {
                         compileFailHandler(error.response.data.stderr);
                         return;
                     }
                 }
-                compileFailHandler("/pgetinker.cpp:1:1 fatal error: compilation failed in a way that's not being handled. please make a bug report");
+                compileFailHandler("pgetinker.cpp:1:1: error: compilation failed in a way that's not being handled. please make a bug report.\n");
             });
         });
 
@@ -393,15 +402,25 @@ function SetupLayout()
                 compileSuccessHandler(response.data);
             }).catch((error) =>
             {
+                
                 if(error.response)
                 {
+                    if(error.response.status)
+                    {
+                        if(error.response.status == 503)
+                        {
+                            compileFailHandler("pgetinker.cpp:1:1: error: PGEtinker service has gone offline. try again later.\n");
+                            return;
+                        }
+                    }
+                    
                     if(error.response.data.stderr)
                     {
                         compileFailHandler(error.response.data.stderr);
                         return;
                     }
                 }
-                compileFailHandler("/pgetinker.cpp:1:1 fatal error: compilation failed in a way that's not being handled. please make a bug report");
+                compileFailHandler("pgetinker.cpp:1:1: error: compilation failed in a way that's not being handled. please make a bug report.\n");
             });
         });
         
