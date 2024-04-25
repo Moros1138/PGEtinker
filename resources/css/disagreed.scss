@@ -1,0 +1,83 @@
+body {
+    --link-color: #f70;
+    --link-hover-color: #ffab62;
+
+    --background-color: #3e3c44;
+    --text-color:#ded;
+
+    --menu-text-color: #ded;
+    --menu-background: #f1f1f1;
+    --menu-hover-background:#a86326;
+    --menu-hover-text-color: #ded;
+
+    --submenu-text-color: #ded;
+    --submenu-background: #43454b;
+    --submenu-hover-background:#909da7;
+    --submenu-hover-text-color: black;
+
+    --content-border-color: #8c909d;
+
+    --dialog-background-color:#222;
+    --dialog-text-color:#ded;
+    --dialog-border-color: #444;
+}
+
+body.light {
+    --link-color: #f70;
+    --link-hover-color: #7a4c23;
+
+    --background-color: #fff;
+    --text-color:#000;
+
+    --menu-background: #f1f1f1;
+    --menu-hover-background:#f70;
+    --menu-text-color: #424242;
+    --menu-hover-text-color: #ded;
+
+    --submenu-background: #f1f1f1;
+    --submenu-hover-background:#ddd;
+    --submenu-text-color: black;
+    --submenu-hover-text-color: black;
+
+    --content-border-color: #8c909d;
+
+    --dialog-background-color:#dee4ff;
+    --dialog-text-color:rgb(56, 56, 56);
+    --dialog-border-color: #444;
+}
+html {
+    font-size: 24px;
+}
+
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    font-size: 0.6rem;
+}
+
+
+a:active,
+a:link,
+a:visited {
+    color: var(--link-color);
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--link-hover-color);
+    text-decoration: underline;
+}
+
+.container {
+    width: 100%;
+    max-width: 32rem;
+    margin: 0 auto;
+}
+
+iframe {
+    display: block;
+    width: 100%;
+    max-width: 32rem;
+    height: 18rem;
+    margin: 0 auto 4rem auto;
+}

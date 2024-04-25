@@ -26,6 +26,12 @@ Route::get('/s/{slug}', function(Request $request, string $slug)
     ]);
 });
 
-Route::get('/player', function () {
-    return view('player');
+Route::get("/disagree", function()
+{
+    return view("disagree");
+});
+
+Route::get("/player", function ()
+{
+    return view("player");
 });
