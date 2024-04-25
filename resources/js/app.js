@@ -337,7 +337,8 @@ function SetupLayout()
             {
                 let shareDialog = document.createElement('div');
                 
-                shareDialog.setAttribute("class", "dialog");
+                shareDialog.classList.toggle("dialog", "true");
+                shareDialog.classList.toggle("share-dialog", "true");
                 shareDialog.innerHTML = `
                     <div class="window">
                         <div class="header">Share Your Masterpiece!</div>
@@ -474,6 +475,16 @@ function UpdateStatusBar()
         </div>
     `;
 }
+
+// you're welcome dandistine
+window.addEventListener("click", (event) =>
+{
+    let shareDialog = document.querySelector(".share-dialog");
+    if(shareDialog == null)
+        return;
+    
+    shareDialog.querySelector("button").dispatchEvent(new Event("click"));
+});
 
 window.addEventListener("message", (event) =>
 {
