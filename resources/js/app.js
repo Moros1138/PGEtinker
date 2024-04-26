@@ -4,7 +4,7 @@ import './lib/monaco';
 import './lib/lucide';
 import version from "./lib/version";
 import agreeDialog from './lib/agreeDialog';
-agreeDialog
+import shareDialog from './lib/shareDialog';
 
 let sharedFlag = (window.location.pathname.indexOf("/s/") === 0);
 
@@ -348,32 +348,12 @@ function SetupLayout()
                 code: monacoEditor.getValue()
             }).then((response) =>
             {
-                let shareDialog = document.createElement('div');
-                
-                shareDialog.classList.toggle("dialog", "true");
-                shareDialog.classList.toggle("share-dialog", "true");
-                shareDialog.innerHTML = `
-                    <div class="window">
-                        <div class="header">Share Your Masterpiece!</div>
-                        <div class="content">
-                            <div class="input-group">
-                                <label>Share URL:</label>
-                                <input type="text" id="share-url" value="${response.data.shareURL}" readonly>
-                                <button type="button">Copy</button>
-                            </div>
-                        </div>
-                    </div>`;
-                
-                shareDialog.querySelector("button").addEventListener("click", (event) =>
-                {
-                    navigator.clipboard.writeText(response.data.shareURL).catch((reason) => console.log(reason));
-                    shareDialog.remove();
-                });
-
-                document.body.appendChild(shareDialog);
-
-                compileSuccessHandler(response.data);
-
+                shareDialog(response.data.shareURL)
+                    .finally(() =>
+                    {
+                        compileSuccessHandler(response.data);
+                    });
+            
             }).catch((error) =>
             {
                 if(error.response)
@@ -507,16 +487,6 @@ function UpdateStatusBar()
         </div>
     `;
 }
-
-// you're welcome dandistine
-window.addEventListener("click", (event) =>
-{
-    let shareDialog = document.querySelector(".share-dialog");
-    if(shareDialog == null)
-        return;
-    
-    shareDialog.querySelector("button").dispatchEvent(new Event("click"));
-});
 
 window.addEventListener("message", (event) =>
 {
