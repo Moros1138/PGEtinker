@@ -3,6 +3,8 @@ import './lib/goldenLayout';
 import './lib/monaco';
 import './lib/lucide';
 import version from "./lib/version";
+import agreeDialog from './lib/agreeDialog';
+agreeDialog
 
 let sharedFlag = (window.location.pathname.indexOf("/s/") === 0);
 
@@ -548,73 +550,25 @@ console.log((version != pgetinkerVersion));
 let agreedToTerms = window.localStorage.getItem("pgetinkerAgreedToTerms");
 agreedToTerms = (agreedToTerms == null) ? false : JSON.parse(agreedToTerms);
 
-if(agreedToTerms)
+if(!agreedToTerms)
 {
-    SetupLayout();
+    agreeDialog()
+        .then(() =>
+        {
+            SetupLayout();
+            window.localStorage.setItem("pgetinkerAgreedToTerms", JSON.stringify(true));
+        })
+        .catch(() =>
+        {
+            window.localStorage.removeItem("pgetinkerCode");
+            window.localStorage.removeItem("pgetinkerTheme");
+            window.localStorage.removeItem("pgetinkerLayout");
+            window.localStorage.removeItem("pgetinkerVersion");
+            window.location.pathname = "/disagree";
+        });
 }
 else
 {
-    let agreeDialog = document.createElement('div');
-    agreeDialog.setAttribute("class", "dialog first-time");
-    agreeDialog.innerHTML = `
-        <div class="window">
-            <div class="header">Welome to PGEtinker!</div>
-            <div class="content">
-                <h1>Hello and Welcome</h1>
-                <p>
-                    It would appear to be the first time you've
-                    visited this site, at least from this browser.
-                    In order for PGEtinker to function we require
-                    your permission to do some things.
-                </p>
-                <h3>Terms, in Plain English</h3>
-                <p>
-                    You agree that PGEtinker has permission to:
-                </p>
-                <ul>
-                    <li>
-                        Store information in your browser to be used within
-                        the confines of the PGEtinker online application.
-                        It's for stuff like persiting your layout, your
-                        theme, and other options so when you come back
-                        it's the way you left it.
-                    </li>
-                    <li>
-                        Compile and display the code you provide.
-                    </li>    
-                    <li>
-                        Retain and review the code you have provided
-                        for the purposes of diagnosing problems with the
-                        PGEtinker online application.
-                    </li>    
-                    <li>
-                        Share your code worldwide. This only applies if you
-                        use the "Share" functionality.
-                    </li>    
-                </ul>
-            </div>
-            <div class="footer">
-                <button type="button" class="cancel">I Disagree</button>
-                <button type="button" class="ok">I Agree</button>
-            </div>
-        </div>`;
-    
-    agreeDialog.querySelector("button.cancel").addEventListener("click", (event) =>
-    {
-        window.localStorage.removeItem("pgetinkerCode");
-        window.localStorage.removeItem("pgetinkerTheme");
-        window.localStorage.removeItem("pgetinkerLayout");
-        window.location.pathname = "/disagree";
-    });
-
-    agreeDialog.querySelector("button.ok").addEventListener("click", (event) =>
-    {
-        SetupLayout();
-
-        window.localStorage.setItem("pgetinkerAgreedToTerms", JSON.stringify(true));
-        agreeDialog.remove();
-    });
-    
-    document.body.appendChild(agreeDialog);
+    SetupLayout();
 }
-
+    
