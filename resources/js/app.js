@@ -2,6 +2,7 @@ import './lib/bootstrap';
 import './lib/goldenLayout';
 import './lib/monaco';
 import './lib/lucide';
+import version from "./lib/version";
 
 let sharedFlag = (window.location.pathname.indexOf("/s/") === 0);
 
@@ -538,6 +539,11 @@ window.addEventListener("message", (event) =>
         }, "*");
     }
 });
+
+let pgetinkerVersion = window.localStorage.getItem("pgetinkerVersion");
+pgetinkerVersion = (pgetinkerVersion != "string") ? pgetinkerVersion : "";
+
+console.log((version != pgetinkerVersion));
 
 let agreedToTerms = window.localStorage.getItem("pgetinkerAgreedToTerms");
 agreedToTerms = (agreedToTerms == null) ? false : JSON.parse(agreedToTerms);
