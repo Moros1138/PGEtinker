@@ -21,7 +21,7 @@
             </a>
             <div class="navbar-left-menu">
                 <div class="dropdown">
-                    <div class="menu-item">
+                    <div dusk="settings-menu" class="menu-item">
                         <i data-lucide="menu"></i>
                         Settings
                     </div>
@@ -60,7 +60,7 @@
                     Supporters
                 </a>
                 <div class="dropdown">
-                    <div class="menu-item">Sharing</div>
+                    <div class="menu-item" dusk="sharing-menu">Sharing</div>
                     <div class="dropdown-content">
                         <a href="#" id="share">
                             <i data-lucide="share2"></i>
