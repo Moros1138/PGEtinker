@@ -33,6 +33,9 @@ jobs:
         
       - name: Execute Unit Tests
         run: php artisan test
+
+      - name: Run Server
+        run: php artisan serve &
       
       - name: Execute Browser Tests
         run: php artisan dusk
