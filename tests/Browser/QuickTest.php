@@ -2,12 +2,12 @@
 
 namespace Tests\Browser;
 
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Laravel\Dusk\Browser;
 use Tests\DuskTestCase;
 
 class QuickTest extends DuskTestCase
 {
+    
     public function testFirstLoadShowsTermsOfUseDisclosure(): void
     {
         $this->browse(function(Browser $browser)
