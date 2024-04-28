@@ -30,6 +30,14 @@ return [
     */
 
     'connections' => [
+        
+        'development' => [
+            'driver' => 'sqlite',
+            'url' => "",
+            'database' => database_path('database.sqlite'),
+            'prefix' => '',
+            'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
+        ],
 
         'sqlite' => [
             'driver' => 'sqlite',
