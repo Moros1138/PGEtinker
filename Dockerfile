@@ -16,6 +16,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get -y update && \
     apt-get install -y \
     micro \
+    libpq-dev \
     python3 \
     autoconf \
     bison \
@@ -43,7 +44,9 @@ RUN cd /nsjail && \
 WORKDIR /var/www/html
 
 RUN docker-php-ext-configure opcache --enable-opcache && \
-    docker-php-ext-install pdo pdo_mysql
+    docker-php-ext-install pdo pdo_mysql && \
+    docker-php-ext-install pdo pdo_pgsql
+    
 COPY docker/php/conf.d/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
 
 COPY --from=buildNode /usr/src/app /var/www/html
