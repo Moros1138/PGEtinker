@@ -1,13 +1,10 @@
 name: Dockerhub
-on:
-  workflow_run:
-    workflows: [UnitTests]
-    types: [completed]
+on: workflow_dispatch
 
 jobs:
-  on-success:
-    runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+  dockerhub-build:
+    runs-on: self-hosted
+    
     steps:
       -
         name: Checkout
@@ -30,9 +27,3 @@ jobs:
         with:
           push: true
           tags: moros1138/pgetinker:latest
-      
-  on-failure:
-    runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
-    steps:
-      - run: echo 'The triggering workflow failed'
