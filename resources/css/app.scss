@@ -1,9 +1,13 @@
+@import "./pixel-code.scss";
+
+
 body {
-    --link-color: #f70;
+    --link-color: #ff6500;
     --link-hover-color: #ffab62;
 
     --background-color: #3e3c44;
     --text-color:#ded;
+    --text-shadow-color: #000;
 
     --menu-text-color: #ded;
     --menu-background: #f1f1f1;
@@ -28,6 +32,7 @@ body.light {
 
     --background-color: #fff;
     --text-color:#000;
+    --text-shadow-color: #fff;
 
     --menu-background: #f1f1f1;
     --menu-hover-background:#f70;
@@ -51,6 +56,8 @@ body {
     width: 100%;
     height: 100%;
     overflow: hidden;
+    font-family: 'Pixel Code', monospace;
+    font-size: 12px;
 }
 
 a:link,
@@ -91,6 +98,20 @@ nav a.brand img {
     float: left;
 }
 
+nav a.brand:hover,
+nav a.brand:link,
+nav a.brand:active,
+nav a.brand:visited {
+    display: inline-block;
+    line-height: 47px;
+    padding: 0 .8rem;
+    text-decoration: none;
+    font-size: 3rem;
+    color: var(--link-color);
+    text-shadow: .2rem .2rem .2rem #000;
+}
+
+
 a:active.menu-item,
 a:link.menu-item,
 a:visited.menu-item,
@@ -98,7 +119,9 @@ a:visited.menu-item,
     display: inline-block;
     background-color: var(--background-color);
     color: var(--menu-text-color);
-    font-size: 16px;
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+    text-shadow: .2rem .2rem .5rem var(--text-shadow-color);
     height: 48px;
     line-height: 48px;
     vertical-align: middle;
@@ -108,8 +131,10 @@ a:visited.menu-item,
     text-decoration: none;
 }
 
+
 .lucide {
     vertical-align: middle;
+    filter: drop-shadow(.2rem .2rem .1rem var(--text-shadow-color));
 }
 
 nav .sponsor {
@@ -117,10 +142,19 @@ nav .sponsor {
     padding: 0;
     margin-right: .5rem;
     font-size: 0.8rem;
+    text-shadow: .1rem .1rem .2rem var(--text-shadow-color);
     white-space: nowrap;
 }
 
-@media (width <= 1100px) {
+.sponsor a {
+    text-decoration: none;
+}
+
+.sponsor a:hover {
+    text-decoration: underline;
+}
+
+@media (width <= 1320px) {
     nav .sponsor {
         display: none;
     }
@@ -142,6 +176,8 @@ nav .sponsor {
 }
 
 .dropdown-content a {
+    font-size: 1.2rem;
+    text-shadow: .2rem .2rem .5rem var(--text-shadow-color);
     color: var(--submenu-text-color);
     padding: 12px 16px;
     text-decoration: none;
@@ -174,6 +210,11 @@ nav .navbar-right-menu {
 nav .navbar-right-menu .dropdown-content {
     right: 0;
 }
+nav .navbar-right-menu .menu-item {
+    margin-top: -3px;
+}
+
+
 
 #content {
     position: absolute;

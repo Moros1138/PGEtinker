@@ -17,7 +17,7 @@
     <div id="app">
         <nav id="header">
             <a class="brand" href="/">
-                <img src="/images/PGEtinker-logo.png" alt="PGEtinker Logo">
+                PGEtinker
             </a>
             <div class="navbar-left-menu">
                 <div class="dropdown">
