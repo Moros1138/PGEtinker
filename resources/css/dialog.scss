@@ -16,8 +16,8 @@
 }
 
 .dialog .window {
-    width: 80vw;
-    max-width: 40rem;
+    width: 90vw;
+    max-width: 80rem;
     margin: 10vh auto;
     background: var(--dialog-background-color);
     font-size: 1.2rem;
@@ -29,6 +29,8 @@
 .dialog .window > .header {
     border-bottom: 1px solid var(--dialog-border-color);
     padding: 0.4rem 1rem;
+    font-weight: bold;
+    font-size: 2rem;
 }
 
 .dialog .window > .content {
@@ -103,4 +105,30 @@
 
 .dialog .window li {
     padding-bottom: 1rem;
+}
+
+.dialog.news .entries {
+    margin: 1rem 0 3rem 0;
+}
+
+.dialog.news .entries div {
+    margin-bottom: 1rem;
+}
+
+.dialog.news .added:before {
+    content: "+ Added: ";
+    display: block;
+    color: rgb(92, 250, 255);
+}
+
+.dialog.news .removed:before {
+    content: "‐ Removed: ";
+    display: block;
+    color: rgb(248, 102, 102);
+}
+
+.dialog.news .fixed:before {
+    content: "✔ Fixed: ";
+    display: block;
+    color: rgb(252, 252, 170);
 }
