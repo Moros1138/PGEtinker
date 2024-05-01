@@ -1,5 +1,6 @@
 import {
     createIcons,
+    BadgePlus,
     Bug,
     CircleDollarSign,
     CirclePlay,
@@ -16,6 +17,7 @@ import {
 
 createIcons({
     icons: {
+        BadgePlus,
         Bug,
         CirclePlay,
         CircleDollarSign,

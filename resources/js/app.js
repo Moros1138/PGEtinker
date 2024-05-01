@@ -5,6 +5,7 @@ import './lib/lucide';
 import version from "./lib/version";
 import agreeDialog from './lib/agreeDialog';
 import shareDialog from './lib/shareDialog';
+import newsDialog from './lib/newsDialog';
 import defaultLayout from './lib/defaultLayout';
 
 class PGEtinker
@@ -198,6 +199,12 @@ class PGEtinker
         {
             event.preventDefault();
             alert("Not Implemented");
+        });
+
+        document.querySelector("#news-and-updates").addEventListener("click", (event) =>
+        {
+            event.preventDefault();
+            newsDialog();
         });
 
         window.addEventListener("message", (event) =>
@@ -467,6 +474,19 @@ class PGEtinker
         });
     
         this.layout.init();
+
+        let pgetinkerVersion = window.localStorage.getItem("pgetinkerVersion");
+        pgetinkerVersion = (pgetinkerVersion != "string") ? pgetinkerVersion : "";
+        
+        if(version !== pgetinkerVersion)
+        {
+            newsDialog()
+                .finally(() =>
+                {
+                    window.localStorage.setItem("pgetinkerVersion", version);
+                });
+        }
+        
     }
     
     UpdateStatusBar()
@@ -531,14 +551,6 @@ class PGEtinker
         // save theme into localStorage
         window.localStorage.setItem("pgetinkerTheme", this.theme);
     }
-    
 }
 
 new PGEtinker();
-
-// let pgetinkerVersion = window.localStorage.getItem("pgetinkerVersion");
-// pgetinkerVersion = (pgetinkerVersion != "string") ? pgetinkerVersion : "";
-
-// console.log((version != pgetinkerVersion));
-
-    
