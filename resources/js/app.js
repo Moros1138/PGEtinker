@@ -27,6 +27,9 @@ class PGEtinker
     monacoModel  = null;
     monacoModelIntellisense = null;
 
+    consolePanelExist = false;
+    informationPanelExist = false;
+
     constructor()
     {
         this.sharedFlag = (window.location.pathname.indexOf("/s/") === 0);
@@ -223,23 +226,18 @@ class PGEtinker
             
             if(event.data.message === "console-output")
             {
+                if(!this.informationPanelExist)
+                    return;
+
                 let elem = document.querySelector('#console-panel');
                 elem.innerHTML += event.data.data;
                 elem.parentElement.scrollTop = elem.parentElement.scrollHeight;
 
-                let informationStack = this.layout.root.getItemsById('information-stack');
-                if(informationStack.length == 0)
-                    return;
-                
-                informationStack = informationStack[0];
-                
-                let consolePanel = informationStack.getItemsById('console');
-                if(consolePanel.length == 0)
-                    return;
-                
-                consolePanel = consolePanel[0];
-                
-                informationStack.setActiveContentItem(consolePanel);
+                let consolePanel = this.layout.root.getItemsById('console')[0];
+                if(consolePanel.parent.isStack)
+                {
+                    consolePanel.parent.setActiveContentItem(consolePanel);
+                }
             }
 
         });
@@ -278,17 +276,16 @@ class PGEtinker
             return false;
         }
         
-        let informationStack = this.layout.root.getItemsById('information-stack');
-        if(informationStack.length == 0)
-            informationStack = null;
-
-        let infoPanel = this.layout.root.getItemsById('info');
-        if(infoPanel.length == 0)
-            infoPanel = null;
-
-        if(!(informationStack == null || infoPanel == null))
+        if(this.informationPanelExist)
         {
-            informationStack[0].setActiveContentItem(infoPanel[0]);
+            let infoPanel = this.layout.root.getItemsById('info')[0];
+            if(infoPanel.parent.isStack)
+            {
+                infoPanel.parent.setActiveContentItem(infoPanel);
+            }
+            
+            document.querySelector("#info-panel").innerHTML = "";
+            document.querySelector("#console-panel").innerHTML = "";
         }
 
         this.compiling = true;
@@ -301,9 +298,6 @@ class PGEtinker
         
         document.querySelector("#player-panel .compiling").classList.toggle("display-flex", true);
         document.querySelector("#player-panel .compiling-failed").classList.toggle("display-flex", false);
-
-        document.querySelector("#info-panel").innerHTML = "";
-        document.querySelector("#console-panel").innerHTML = "";
 
         monaco.editor.removeAllMarkers("owner");
         this.monacoEditor.trigger("", "closeMarkersNavigation");
@@ -451,6 +445,9 @@ class PGEtinker
         
         this.layout.on("initialised", () =>
         {
+            this.informationPanelExist = (this.layout.root.getItemsById('info').length > 0);
+            this.consolePanelExist     = (this.layout.root.getItemsById('console').length > 0);
+            
             this.layoutInitialized = true;
             window.addEventListener("resize", (event) => this.layout.updateSize());
             
