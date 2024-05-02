@@ -16,12 +16,18 @@ jobs:
       - name: Install Dependencies
         run: npm install && npm run build && composer install --prefer-dist --no-interaction --no-progress && php artisan dusk:chrome-driver --detect
 
-      - name: Get Short Hash
+      - name: Get Commit Hash
         id: vars
         run: echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
 
       - name: Copy environment file and set version
-        run: cp .env.example .env && echo "VERSION=${{ steps.vars.outputs.sha }}" >> .env && echo "VITE_VERSION=${{ steps.vars.outputs.sha }}" >> .env
+        run: cp .env.example .env
+      
+      - name: Add "VERSION" hash to .env
+        run: echo "VERSION=${{ steps.vars.outputs.sha }}" >> .env
+      
+      - name: Add "VITE_VERSION" hash to .env
+        run: echo "VITE_VERSION=${{ steps.vars.outputs.sha }}" >> .env
 
       - name: Build Library Objects
         run: bash build-libs.sh
