@@ -328,22 +328,30 @@ class PGEtinker
     
     compileFailHandler(stderr)
     {
-        const compilerRegex = /:(\d+):(\d+): (fatal error|error|warning): (.*)/gm;
         let infoPanel = document.querySelector("#info-panel");
         infoPanel.innerHTML = stderr;
         infoPanel.parentElement.scrollTop = infoPanel.parentElement.scrollHeight;
 
+        const compilerRegex = /pgetinker.cpp:(\d+):(\d+): (fatal error|error|warning|note): (.*)/gm;
         const linkerRegex   = /wasm-ld: error: pgetinker.o: (.*): (.*)/gm;
         
         let markers = [];
         
         let matches;
-    
+        
         while((matches = compilerRegex.exec(stderr)) !== null)
         {
+            let severity = monaco.MarkerSeverity.Error;
+            
+            if(matches[3] == "warning")
+                severity = monaco.MarkerSeverity.Warning;
+            
+            if(matches[3] == "note")
+                severity = monaco.MarkerSeverity.Info;
+
             markers.push({
                 message: matches[4],
-                severity: (matches[3] === "warning") ? monaco.MarkerSeverity.Warning : monaco.MarkerSeverity.Error,
+                severity: severity,
                 startLineNumber: parseInt(matches[1]),
                 startColumn: parseInt(matches[2]),
                 endLineNumber: parseInt(matches[1]),
