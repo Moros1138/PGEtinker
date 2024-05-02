@@ -70,6 +70,10 @@ WORKDIR /var/www/html
 RUN chmod 755 -R /var/www/html/storage/ && \
     chown -R www-data:www-data /var/www/ && \
     su -c "bash build-libs.sh" -s /bin/bash www-data && \
+    su -c "php artisan config:clear" -s /bin/bash www-data && \
+    su -c "php artisan cache:clear" -s /bin/bash www-data && \
+    su -c "php artisan view:clear" -s /bin/bash www-data && \
+    su -c "php artisan route:clear" -s /bin/bash www-data && \
     a2enmod rewrite
 
 ENTRYPOINT [ "/bin/bash" ]
