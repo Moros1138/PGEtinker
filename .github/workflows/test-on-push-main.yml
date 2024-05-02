@@ -17,7 +17,7 @@ jobs:
         run: npm install && npm run build && composer install --prefer-dist --no-interaction --no-progress && php artisan dusk:chrome-driver --detect
 
       - name: Copy environment file and set version
-        run: cp .env.example .env && echo "VERSION=$(git rev-parse HEAD)" >> .env && echo "VITE_VERSION=$(git rev-parse HEAD)" >> .env && export PGETINKER_VERSION="$(git rev-parse HEAD)"
+        run: cp .env.example .env && echo "VERSION=$(git rev-parse HEAD)" >> .env && echo "VITE_VERSION=$(git rev-parse HEAD)" >> .env && export PGETINKER_VERSION=""
 
       - name: Build Library Objects
         run: bash build-libs.sh
@@ -57,4 +57,4 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: moros1138/pgetinker:latest "moros1138/pgetinker:$PGETINKER_VERSION"
+          tags: moros1138/pgetinker:latest,moros1138/pgetinker:$PGETINKER_VERSION
