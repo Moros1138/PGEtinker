@@ -117,18 +117,15 @@
 
 .dialog.news .added:before {
     content: "+ Added: ";
-    display: block;
     color: rgb(92, 250, 255);
 }
 
 .dialog.news .removed:before {
     content: "‐ Removed: ";
-    display: block;
     color: rgb(248, 102, 102);
 }
 
 .dialog.news .fixed:before {
     content: "✔ Fixed: ";
-    display: block;
     color: rgb(252, 252, 170);
 }
