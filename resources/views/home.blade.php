@@ -38,10 +38,6 @@
                             <i data-lucide="undo-dot"></i>
                             Restore Default Layout
                         </a>
-                        <a href="#" id="toggle-console">
-                            <i data-lucide="square-chevron-right"></i>
-                            Show/Hide Console
-                        </a>
                     </div>
                 </div>
                 <a class="menu-item" href="#" id="compile">
@@ -75,13 +71,13 @@
                 <div class="dropdown">
                     <div class="menu-item">Links</div>
                     <div class="dropdown-content">
-                        <a target="_blank" href="https://patreon.com/PGEtinker">
-                            <i data-lucide="circle-dollar-sign"></i>
-                            Become a Supporter
-                        </a>
                         <a href="#" id="news-and-updates">
                             <i data-lucide="badge-plus"></i>    
                             What's New
+                        </a>
+                        <a target="_blank" href="https://patreon.com/PGEtinker">
+                            <i data-lucide="circle-dollar-sign"></i>
+                            Become a Supporter
                         </a>
                         <a target="_blank" href="https://github.com/Moros1138/PGEtinker">
                             <i data-lucide="github"></i>

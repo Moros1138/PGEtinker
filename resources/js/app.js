@@ -27,6 +27,9 @@ class PGEtinker
     monacoModel  = null;
     monacoModelIntellisense = null;
 
+    consolePanelExist = false;
+    informationPanelExist = false;
+
     constructor()
     {
         this.sharedFlag = (window.location.pathname.indexOf("/s/") === 0);
@@ -49,6 +52,10 @@ class PGEtinker
             axios.get("/api/default-code").then((response) =>
             {
                 this.monacoModel.setValue(response.data.code);
+                this.monacoEditor.revealPositionInCenter({
+                    column: 1,
+                    lineNumber: 1,
+                });
             }).catch((reason) => console.log(reason));
         });
 
@@ -74,19 +81,6 @@ class PGEtinker
             this.layoutConfig = defaultLayout;
             
             this.SetupLayout();
-        });
-
-        // Toggle Console Button
-        document.querySelector("#toggle-console").addEventListener("click", (event) => 
-        {
-            event.preventDefault();
-            
-            this.consoleShown = !this.consoleShown;
-            window.localStorage.setItem("pgetinkerConsoleShown", this.consoleShown);
-
-            document.querySelector("#player-panel iframe").contentWindow.postMessage({
-                message: "toggle-console",
-            }, "*");   
         });
 
         // Download Button
@@ -229,6 +223,25 @@ class PGEtinker
                     value: this.consoleShown
                 }, "*");
             }
+            
+            if(event.data.message === "console-output")
+            {
+                if(!this.informationPanelExist)
+                    return;
+
+                let elem = document.createElement('div');
+                elem.innerHTML = event.data.data;
+                
+                document.querySelector('#console-panel').scrollTop = document.querySelector('#console-panel').scrollHeight;
+                document.querySelector('#console-panel').append(elem);
+
+                let consolePanel = this.layout.root.getItemsById('console')[0];
+                if(consolePanel.parent.isStack)
+                {
+                    consolePanel.parent.setActiveContentItem(consolePanel);
+                }
+            }
+
         });
 
         let agreedToTerms = window.localStorage.getItem("pgetinkerAgreedToTerms");
@@ -265,6 +278,18 @@ class PGEtinker
             return false;
         }
         
+        if(this.informationPanelExist)
+        {
+            let infoPanel = this.layout.root.getItemsById('info')[0];
+            if(infoPanel.parent.isStack)
+            {
+                infoPanel.parent.setActiveContentItem(infoPanel);
+            }
+            
+            document.querySelector("#info-panel").innerHTML = "";
+            document.querySelector("#console-panel").innerHTML = "";
+        }
+
         this.compiling = true;
     
         this.lastPlayerHtml = "";
@@ -275,7 +300,7 @@ class PGEtinker
         
         document.querySelector("#player-panel .compiling").classList.toggle("display-flex", true);
         document.querySelector("#player-panel .compiling-failed").classList.toggle("display-flex", false);
-        
+
         monaco.editor.removeAllMarkers("owner");
         this.monacoEditor.trigger("", "closeMarkersNavigation");
     
@@ -299,18 +324,30 @@ class PGEtinker
     
     compileFailHandler(stderr)
     {
-        const compilerRegex = /:(\d+):(\d+): (fatal error|error|warning): (.*)/gm;
+        let infoPanel = document.querySelector("#info-panel");
+        infoPanel.innerHTML = `<div>${stderr}</div>`;
+        infoPanel.scrollTop = infoPanel.scrollHeight;
+
+        const compilerRegex = /pgetinker.cpp:(\d+):(\d+): (fatal error|error|warning|note): (.*)/gm;
         const linkerRegex   = /wasm-ld: error: pgetinker.o: (.*): (.*)/gm;
         
         let markers = [];
         
         let matches;
-    
+        
         while((matches = compilerRegex.exec(stderr)) !== null)
         {
+            let severity = monaco.MarkerSeverity.Error;
+            
+            if(matches[3] == "warning")
+                severity = monaco.MarkerSeverity.Warning;
+            
+            if(matches[3] == "note")
+                severity = monaco.MarkerSeverity.Info;
+
             markers.push({
                 message: matches[4],
-                severity: (matches[3] === "warning") ? monaco.MarkerSeverity.Warning : monaco.MarkerSeverity.Error,
+                severity: severity,
                 startLineNumber: parseInt(matches[1]),
                 startColumn: parseInt(matches[2]),
                 endLineNumber: parseInt(matches[1]),
@@ -349,6 +386,22 @@ class PGEtinker
     {
         this.layout = new GoldenLayout(this.layoutConfig, document.querySelector("#content"))
     
+        this.layout.registerComponent('consoleComponent', function(container)
+        {
+            container.getElement().html(`
+                <div id="console-panel">
+                </div>
+            `);
+        });
+
+        this.layout.registerComponent('infoComponent', function(container)
+        {
+            container.getElement().html(`
+                <div id="info-panel">
+                </div>
+            `);
+        });
+
         this.layout.registerComponent('playerComponent', function(container)
         {   
             container.getElement().html(`
@@ -394,6 +447,9 @@ class PGEtinker
         
         this.layout.on("initialised", () =>
         {
+            this.informationPanelExist = (this.layout.root.getItemsById('info').length > 0);
+            this.consolePanelExist     = (this.layout.root.getItemsById('console').length > 0);
+            
             this.layoutInitialized = true;
             window.addEventListener("resize", (event) => this.layout.updateSize());
             
@@ -465,8 +521,13 @@ class PGEtinker
             
             if(this.lastPlayerHtml != "")
             {
-                document.querySelector("#player-panel .iframe-container iframe").srcdoc = this.lastPlayerHtml;
-                document.querySelector("#player-panel .iframe-container iframe").classList.toggle("display-block", true);
+                let playerFrame = document.createElement('iframe');
+                playerFrame.setAttribute("srcdoc", this.lastPlayerHtml);
+                document.querySelector("#player-panel .iframe-container").append(playerFrame);
+                
+                playerFrame.classList.toggle("display-block", true);
+                document.querySelector("#player-panel .compiling").classList.toggle("display-flex", false);
+                document.querySelector("#player-panel .compiling-failed").classList.toggle("display-flex", false);
             }
             
             this.UpdateStatusBar();

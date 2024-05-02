@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file. Each batch 
 
 It is a summary of changes that would be pertinent to the end user of the PGEtinker website. For a comprehensive history of changes made to the project, please refer to the repository's commit history.
 
+## 2024-05-02
+
+- Fixed [Issue #50](https://github.com/Moros1138/PGEtinker/issues/50)
+- Added Build Information panel (Requires you to reset to default layout)
+- Added Console panel (Requires you to reset to default layout)
+
 ## 2024-05-01
 
 - Added the changelog

@@ -99,6 +99,12 @@
                 return (...args) => {
                     var text = args.join(' ');
                     console.log(text);
+
+                    window.parent.postMessage({
+                        message: "console-output",
+                        data: text + "\n",
+                    }, "*");
+
                     if (element) {
                         element.value += text + "\n";
                         element.scrollTop = element.scrollHeight; // focus on bottom

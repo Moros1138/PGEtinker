@@ -7,6 +7,9 @@ export default function newsDialog()
         if(newsDialog == null)
             return;
         
+        if(event.target.tagName == 'A')
+            return;
+        
         newsDialog.dispatchEvent(new Event("close-dialog"));
     }
 

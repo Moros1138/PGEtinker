@@ -216,8 +216,6 @@ nav .navbar-right-menu .menu-item {
     margin-top: -3px;
 }
 
-
-
 #content {
     position: absolute;
     top: 49px;
@@ -233,6 +231,8 @@ nav .navbar-right-menu .menu-item {
     text-align: center;
 }
 
+@import "./console-panel.scss";
 @import "./editor-panel.scss";
+@import "./info-panel.scss";
 @import "./player-panel.scss";
 @import "./dialog.scss";
