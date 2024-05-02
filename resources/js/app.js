@@ -49,6 +49,10 @@ class PGEtinker
             axios.get("/api/default-code").then((response) =>
             {
                 this.monacoModel.setValue(response.data.code);
+                this.monacoEditor.revealPositionInCenter({
+                    column: 1,
+                    lineNumber: 1,
+                });
             }).catch((reason) => console.log(reason));
         });
 
