@@ -71,7 +71,8 @@ class QuickTest extends DuskTestCase
             
             $browser->mouseover("@settings-menu");
             $browser->click("#default-code");
-            $browser->assertSee("Hello, PGE");
+            $browser->pause(100);
+            $browser->assertSee("class Example : public olc::PixelGameEngine");
         });
     }
     
