@@ -45,6 +45,23 @@ class QuickTest extends DuskTestCase
         });
     }
 
+    public function testShowsNewsAndUpdates(): void
+    {
+        $this->browse(function(Browser $browser)
+        {
+            $browser->visit("/");
+            $browser->pause(1000);
+            $browser->assertSee("News and Updates");
+            
+            $browser->pause(1000);
+
+            $browser->click(".news");
+
+            $browser->pause(1000);
+            $browser->assertNotPresent(".news");
+        });
+    }
+
 
     public function testLoadsDefaultCodeOnClick(): void
     {
