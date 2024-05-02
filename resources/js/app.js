@@ -353,6 +353,22 @@ class PGEtinker
     {
         this.layout = new GoldenLayout(this.layoutConfig, document.querySelector("#content"))
     
+        this.layout.registerComponent('consoleComponent', function(container)
+        {
+            container.getElement().html(`
+                <div id="console-panel">
+                </div>
+            `);
+        });
+
+        this.layout.registerComponent('infoComponent', function(container)
+        {
+            container.getElement().html(`
+                <div id="info-panel">
+                </div>
+            `);
+        });
+
         this.layout.registerComponent('playerComponent', function(container)
         {   
             container.getElement().html(`

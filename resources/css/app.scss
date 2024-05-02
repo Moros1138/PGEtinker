@@ -233,6 +233,13 @@ nav .navbar-right-menu .menu-item {
     text-align: center;
 }
 
+.lm_stack .lm_content {
+    overflow: hidden;
+    overflow-y: auto;
+}
+
+@import "./console-panel.scss";
 @import "./editor-panel.scss";
+@import "./info-panel.scss";
 @import "./player-panel.scss";
 @import "./dialog.scss";

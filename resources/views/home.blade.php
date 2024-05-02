@@ -38,10 +38,6 @@
                             <i data-lucide="undo-dot"></i>
                             Restore Default Layout
                         </a>
-                        <a href="#" id="toggle-console">
-                            <i data-lucide="square-chevron-right"></i>
-                            Show/Hide Console
-                        </a>
                     </div>
                 </div>
                 <a class="menu-item" href="#" id="compile">
