@@ -80,19 +80,6 @@ class PGEtinker
             this.SetupLayout();
         });
 
-        // Toggle Console Button
-        document.querySelector("#toggle-console").addEventListener("click", (event) => 
-        {
-            event.preventDefault();
-            
-            this.consoleShown = !this.consoleShown;
-            window.localStorage.setItem("pgetinkerConsoleShown", this.consoleShown);
-
-            document.querySelector("#player-panel iframe").contentWindow.postMessage({
-                message: "toggle-console",
-            }, "*");   
-        });
-
         // Download Button
         document.querySelector("#download").addEventListener("click", (event) => 
         {
