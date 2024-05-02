@@ -53,7 +53,7 @@ COPY --from=buildNode /usr/src/app /var/www/html
 COPY docker/000-default.conf /etc/apache2/sites-available/000-default.conf
 COPY docker/docker-entrypoint.sh /docker-entrypoint.sh
 
-COPY .env.example /var/www/html/.env
+RUN mv /var/www/html/.env.example /var/www/html/.env
 
 WORKDIR /opt
 
