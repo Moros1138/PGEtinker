@@ -229,9 +229,11 @@ class PGEtinker
                 if(!this.informationPanelExist)
                     return;
 
-                let elem = document.querySelector('#console-panel');
-                elem.innerHTML += event.data.data;
-                elem.parentElement.scrollTop = elem.parentElement.scrollHeight;
+                let elem = document.createElement('div');
+                elem.innerHTML = event.data.data;
+                
+                document.querySelector('#console-panel').scrollTop = document.querySelector('#console-panel').scrollHeight;
+                document.querySelector('#console-panel').append(elem);
 
                 let consolePanel = this.layout.root.getItemsById('console')[0];
                 if(consolePanel.parent.isStack)
@@ -323,8 +325,8 @@ class PGEtinker
     compileFailHandler(stderr)
     {
         let infoPanel = document.querySelector("#info-panel");
-        infoPanel.innerHTML = stderr;
-        infoPanel.parentElement.scrollTop = infoPanel.parentElement.scrollHeight;
+        infoPanel.innerHTML = `<div>${stderr}</div>`;
+        infoPanel.scrollTop = infoPanel.scrollHeight;
 
         const compilerRegex = /pgetinker.cpp:(\d+):(\d+): (fatal error|error|warning|note): (.*)/gm;
         const linkerRegex   = /wasm-ld: error: pgetinker.o: (.*): (.*)/gm;

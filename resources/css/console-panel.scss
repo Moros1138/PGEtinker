@@ -1,5 +1,14 @@
 #console-panel {
-    white-space: pre;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: auto;
     padding: 1rem 1rem 2rem 1rem;
+}
+
+#console-panel div {
+    white-space: pre;
     font-family: "Droid Sans Mono", "monospace", monospace;
 }
