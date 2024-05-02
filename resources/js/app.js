@@ -220,6 +220,28 @@ class PGEtinker
                     value: this.consoleShown
                 }, "*");
             }
+            
+            if(event.data.message === "console-output")
+            {
+                let elem = document.querySelector('#console-panel');
+                elem.innerHTML += event.data.data;
+                elem.parentElement.scrollTop = elem.parentElement.scrollHeight;
+
+                let informationStack = this.layout.root.getItemsById('information-stack');
+                if(informationStack.length == 0)
+                    return;
+                
+                informationStack = informationStack[0];
+                
+                let consolePanel = informationStack.getItemsById('console');
+                if(consolePanel.length == 0)
+                    return;
+                
+                consolePanel = consolePanel[0];
+                
+                informationStack.setActiveContentItem(consolePanel);
+            }
+
         });
 
         let agreedToTerms = window.localStorage.getItem("pgetinkerAgreedToTerms");
