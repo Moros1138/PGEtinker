@@ -11,4 +11,5 @@ It is a summary of changes that would be pertinent to the end user of the PGEtin
 - Added version indicators in frontend/backend
 - Added versioning to the container image build process
 - Added Pixel Code font
+- Added news and update dialog (you're seeing it right now!)
 - Removed unused assets
