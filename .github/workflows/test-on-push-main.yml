@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        run: git clone https://github.com/Moros1138/PGEtinker && cd PGEtinker
 
       - name: Install Dependencies
         run: npm install && npm run build && composer install --prefer-dist --no-interaction --no-progress && php artisan dusk:chrome-driver --detect
@@ -57,10 +57,10 @@ jobs:
         run: docker buildx build -t ${{ secrets.DOCKERHUB_USERNAME }}/pgetinker:${{ steps.vars.outputs.sha }} -t ${{ secrets.DOCKERHUB_USERNAME }}/pgetinker:latest .
       
       - name: Push Docker Image
-        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/pgetinker:latest -a
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/pgetinker:${{ steps.vars.outputs.sha }} && docker push ${{ secrets.DOCKERHUB_USERNAME }}/pgetinker:latest
 
       - name: Clean up Docker
-        run: docker image rm ${{ secrets.DOCKERHUB_USERNAME }}/pgetinker:latest
+        run: docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/pgetinker:latest && docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/pgetinker:${{ steps.vars.outputs.sha }}
 
       - name: Logout of DockerHub
         run: docker logout
