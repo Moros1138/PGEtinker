@@ -71,13 +71,13 @@
                 <div class="dropdown">
                     <div class="menu-item">Links</div>
                     <div class="dropdown-content">
-                        <a target="_blank" href="https://patreon.com/PGEtinker">
-                            <i data-lucide="circle-dollar-sign"></i>
-                            Become a Supporter
-                        </a>
                         <a href="#" id="news-and-updates">
                             <i data-lucide="badge-plus"></i>    
                             What's New
+                        </a>
+                        <a target="_blank" href="https://patreon.com/PGEtinker">
+                            <i data-lucide="circle-dollar-sign"></i>
+                            Become a Supporter
                         </a>
                         <a target="_blank" href="https://github.com/Moros1138/PGEtinker">
                             <i data-lucide="github"></i>
