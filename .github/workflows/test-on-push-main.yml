@@ -16,8 +16,8 @@ jobs:
       - name: Install Dependencies
         run: npm install && npm run build && composer install --prefer-dist --no-interaction --no-progress && php artisan dusk:chrome-driver --detect
 
-      - name: Copy environment file
-        run: cp .env.example .env
+      - name: Copy environment file and set version
+        run: cp .env.example .env && echo "VERSION=$(git rev-parse HEAD)" >> .env && echo "VITE_VERSION=$(git rev-parse HEAD)" >> .env && EXPORT PGETINKER_VERSION="$(git rev-parse HEAD)"
 
       - name: Build Library Objects
         run: bash build-libs.sh
@@ -57,4 +57,4 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: moros1138/pgetinker:latest
+          tags: moros1138/pgetinker:latest "moros1138/pgetinker:$PGETINKER_VERSION"

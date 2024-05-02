@@ -24,3 +24,49 @@ Route::get("/default-code", function(Request $request)
         "code" => file_get_contents(base_path() . '/resources/example.cpp')
     ];
 });
+
+Route::get("/news", function(Request $request)
+{
+    $changeLog = new stdClass();
+
+    $lines = file(base_path() . "/CHANGELOG.md");
+    
+    $start = 0;
+    
+    for($i = 0; $i < count($lines); $i++)
+    {
+        if($start == 0)
+        {
+            if(strpos($lines[$i], "## ") === 0)
+            {
+                $start = $i;
+                $changeLog->date = trim(str_replace("## ", "", $lines[$i]));
+                $changeLog->entries = [];
+                continue;
+            }
+        }
+    
+        if($start > 0)
+        {
+            if(strpos($lines[$i], "## ") === 0)
+            {
+                break;
+            }
+    
+            $tokens = explode(" ", $lines[$i]);
+            if($tokens[0] == "-")
+            {
+                $entry = new stdClass();
+                $entry->type = strtolower($tokens[1]);
+                
+                unset($tokens[0]);
+                unset($tokens[1]);
+                
+                $entry->message = trim(implode(" ", $tokens));
+                $changeLog->entries[] = $entry;
+            }
+        }
+    }
+    
+    return $changeLog;
+});
