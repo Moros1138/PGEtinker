@@ -87,7 +87,7 @@
                             <i data-lucide="github"></i>
                             PGEtinker on Github
                         </a>
-                        <a target="_blank" href="https://github.com/Moros1138/PGEtinker/issues/new?assignees=Moros1138&labels=bug&projects=&template=bug_report.md&title=Bug in Version: {{ env('VERSION', 'develop') }}">
+                        <a target="_blank" href="https://github.com/Moros1138/PGEtinker/issues/new?assignees=Moros1138&labels=bug&projects=&template=bug_report.md&title=Bug in Version: {{ substr(env('VERSION', 'develop'), 0, 7) }}">
                             <i data-lucide="bug"></i>
                             Report an issue
                         </a>
