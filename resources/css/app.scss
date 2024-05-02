@@ -232,8 +232,7 @@ nav .navbar-right-menu .menu-item {
 }
 
 .lm_stack .lm_content {
-    overflow: hidden;
-    overflow-y: auto;
+    overflow: auto;
 }
 
 @import "./console-panel.scss";
