@@ -53,6 +53,13 @@ Route::get("/news", function(Request $request)
                 break;
             }
     
+            $lines[$i] = preg_replace(
+                '/\[(.*)\]\((.*)\)/',
+                "<a href=\"$2\" target=\"_blank\">$1</a>",
+                $lines[$i],
+                1
+            );
+
             $tokens = explode(" ", $lines[$i]);
             if($tokens[0] == "-")
             {
