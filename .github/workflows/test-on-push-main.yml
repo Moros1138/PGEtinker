@@ -57,7 +57,10 @@ jobs:
         run: docker buildx build -t ${{ secrets.DOCKERHUB_USERNAME }}/pgetinker:${{ steps.vars.outputs.sha }} -t ${{ secrets.DOCKERHUB_USERNAME }}/pgetinker:latest .
       
       - name: Push Docker Image
-        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/pgetinker:latest -a
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/pgetinker:latest
+
+      - name: Push Docker Image
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/pgetinker:${{ steps.vars.outputs.sha }}
 
       - name: Clean up Docker
         run: docker image rm ${{ secrets.DOCKERHUB_USERNAME }}/pgetinker:latest
