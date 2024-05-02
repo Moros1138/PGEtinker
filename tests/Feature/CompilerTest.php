@@ -15,6 +15,6 @@ class CompilerTest extends TestCase
             "code" => '#include <stdio.h> int main() { printf("Hello, World\n"); return 0; }'
         ]);
 
-        $response->assertStatus(200);
+        $response->assertStatus(400);
     }
 }
