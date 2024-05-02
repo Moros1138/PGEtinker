@@ -278,6 +278,19 @@ class PGEtinker
             return false;
         }
         
+        let informationStack = this.layout.root.getItemsById('information-stack');
+        if(informationStack.length == 0)
+            informationStack = null;
+
+        let infoPanel = this.layout.root.getItemsById('info');
+        if(infoPanel.length == 0)
+            infoPanel = null;
+
+        if(!(informationStack == null || infoPanel == null))
+        {
+            informationStack[0].setActiveContentItem(infoPanel[0]);
+        }
+
         this.compiling = true;
     
         this.lastPlayerHtml = "";
@@ -288,7 +301,10 @@ class PGEtinker
         
         document.querySelector("#player-panel .compiling").classList.toggle("display-flex", true);
         document.querySelector("#player-panel .compiling-failed").classList.toggle("display-flex", false);
-        
+
+        document.querySelector("#info-panel").innerHTML = "";
+        document.querySelector("#console-panel").innerHTML = "";
+
         monaco.editor.removeAllMarkers("owner");
         this.monacoEditor.trigger("", "closeMarkersNavigation");
     
@@ -313,6 +329,10 @@ class PGEtinker
     compileFailHandler(stderr)
     {
         const compilerRegex = /:(\d+):(\d+): (fatal error|error|warning): (.*)/gm;
+        let infoPanel = document.querySelector("#info-panel");
+        infoPanel.innerHTML = stderr;
+        infoPanel.parentElement.scrollTop = infoPanel.parentElement.scrollHeight;
+
         const linkerRegex   = /wasm-ld: error: pgetinker.o: (.*): (.*)/gm;
         
         let markers = [];
