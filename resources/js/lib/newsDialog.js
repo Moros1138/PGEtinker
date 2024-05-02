@@ -46,15 +46,13 @@ export default function newsDialog()
 
             newsDialog.addEventListener("close-dialog", (event) =>
             {
-                setTimeout(() => window.removeEventListener("click", newsClickAnywhereHandler), 1000);
+                setTimeout(() => window.removeEventListener("click", newsClickAnywhereHandler), 500);
                 newsDialog.remove();
                 resolve();
             });
             
-            setTimeout(() => window.addEventListener("click", newsClickAnywhereHandler), 1000);
+            setTimeout(() => window.addEventListener("click", newsClickAnywhereHandler), 500);
             document.body.appendChild(newsDialog);
-    
-            // console.log(response.data.date, response.data.entries);
         });
         
     });
