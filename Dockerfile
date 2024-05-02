@@ -1,12 +1,12 @@
 FROM composer:2.7.1 as buildComposer
 COPY . /app/
+RUN mv .env.example .env
 RUN composer install --prefer-dist --no-dev --optimize-autoloader --no-interaction
 
 FROM node:21-bookworm-slim as buildNode
 COPY --from=buildComposer /app /usr/src/app
 
 WORKDIR /usr/src/app
-RUN mv .env.example .env
 RUN npm install && npm run build
 
 FROM php:8.3-apache-bookworm as production
