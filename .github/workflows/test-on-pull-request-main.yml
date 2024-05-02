@@ -1,4 +1,4 @@
-name: UnitTestsOnPullRequest
+name: UnitTests
 
 on:
   pull_request:
@@ -10,14 +10,28 @@ jobs:
     runs-on: self-hosted
 
     steps:
-      - name: Checkout code
+      - name: 'Cleanup build folder'
+        run: |
+          ls -la ./
+          rm -rf ./* || true
+          rm -rf ./.??* || true
+          ls -la ./
+
+      - name: Checkout
         uses: actions/checkout@v4
+        
+      - name: Get Commit Hash
+        id: vars
+        run: echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Add "VERSION" hashes to .env
+        run: echo -e "VERSION=${{ steps.vars.outputs.sha }}\nVITE_VERSION=${{ steps.vars.outputs.sha }}" >> .env.example
+
+      - name: Copy environment file and set version
+        run: cp .env.example .env
 
       - name: Install Dependencies
         run: npm install && npm run build && composer install --prefer-dist --no-interaction --no-progress && php artisan dusk:chrome-driver --detect
-
-      - name: Copy environment file
-        run: cp .env.example .env
 
       - name: Build Library Objects
         run: bash build-libs.sh
@@ -33,9 +47,9 @@ jobs:
         
       - name: Execute Unit Tests
         run: php artisan test
-      
+
       - name: Run Server
         run: php artisan serve &
-    
+      
       - name: Execute Browser Tests
         run: php artisan dusk

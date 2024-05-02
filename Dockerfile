@@ -4,7 +4,9 @@ RUN composer install --prefer-dist --no-dev --optimize-autoloader --no-interacti
 
 FROM node:21-bookworm-slim as buildNode
 COPY --from=buildComposer /app /usr/src/app
+
 WORKDIR /usr/src/app
+RUN mv .env.example .env
 RUN npm install && npm run build
 
 FROM php:8.3-apache-bookworm as production
@@ -52,8 +54,6 @@ COPY docker/php/conf.d/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
 COPY --from=buildNode /usr/src/app /var/www/html
 COPY docker/000-default.conf /etc/apache2/sites-available/000-default.conf
 COPY docker/docker-entrypoint.sh /docker-entrypoint.sh
-
-RUN mv /var/www/html/.env.example /var/www/html/.env
 
 WORKDIR /opt
 
