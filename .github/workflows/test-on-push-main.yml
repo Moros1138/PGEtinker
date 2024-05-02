@@ -57,4 +57,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: moros1138/pgetinker:latest,moros1138/pgetinker:$PGETINKER_VERSION
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/pgetinker:${{ GITHUB_SHA }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/pgetinker:latest
+            
