@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        run: git clone https://github.com/Moros1138/PGEtinker && cd PGEtinker
+        run: git clone https://github.com/Moros1138/PGEtinker && cd PGEtinker/PGEtinker
 
       - name: Install Dependencies
         run: npm install && npm run build && composer install --prefer-dist --no-interaction --no-progress && php artisan dusk:chrome-driver --detect
@@ -66,4 +66,4 @@ jobs:
         run: docker logout
 
       - name: Clean up Git
-        run: cd .. && rm -rf PGEtinker
+        run: cd ../.. && rm -rf PGEtinker
