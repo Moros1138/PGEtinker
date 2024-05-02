@@ -64,3 +64,6 @@ jobs:
 
       - name: Logout of DockerHub
         run: docker logout
+
+      - name: Clean up Git
+        run: cd .. && rm -rf PGEtinker
