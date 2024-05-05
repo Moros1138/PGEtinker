@@ -545,7 +545,7 @@ class CodeController extends Controller
             {
                 $response = [
                     "statusCode" => 42069,
-                    "message" => "something really bad up happened in order for this to occur. contact the administrator",
+                    "stderr" => "something really bad happened in order for this to occur. contact the administrator",
                 ];
         
                 Log::debug("Compile: failed beyond the linker stage", $response);
