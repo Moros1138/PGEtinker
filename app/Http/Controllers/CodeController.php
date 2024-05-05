@@ -172,25 +172,33 @@ class CodeController extends Controller
             ];
         }
         
+        $localDisk = Storage::disk("local");
+        $remoteDisk = (!empty(env("AWS_BUCKET"))) ? Storage::disk("s3") : Storage::disk("local");
+
         $hashedCode = $this->hashCode($code);
         
         if(env("COMPILER_CACHING", false))
         {
-            if(Storage::directoryMissing("compilerCache"))
+            if(!$remoteDisk->exists("compilerCache"))
             {
-                Storage::createDirectory("compilerCache");
+                $remoteDisk->makeDirectory("compilerCache");
             }
         
-            if(Storage::directoryMissing(("remoteIncludeCache")))
+            if(!$remoteDisk->exists("remoteIncludeCache"))
             {
-                Storage::createDirectory("remoteIncludeCache");
+                $remoteDisk->makeDirectory("remoteIncludeCache");
             }
 
-            if(Storage::fileExists("compilerCache/{$hashedCode}"))
+            if(!$remoteDisk->exists("workspaces"))
+            {
+                $remoteDisk->makeDirectory("workspaces");
+            }
+    
+            if($remoteDisk->exists("compilerCache/{$hashedCode}"))
             {
                 Log::debug("Compile: cache hit", ["hashedCode" => $hashedCode]);
                 
-                $html = Storage::read("compilerCache/{$hashedCode}");
+                $html = $remoteDisk->get("compilerCache/{$hashedCode}");
             
                 return [
                     "statusCode" => 200,
@@ -198,21 +206,21 @@ class CodeController extends Controller
                     "html" => $html,
                 ];
             }
-        
+            
             Log::debug("Compile: cache miss", ["hashedCode" => $hashedCode]);
         }
         
-        if(Storage::directoryMissing("workspaces"))
+        if(!$localDisk->exists("workspaces"))
         {
-            Storage::createDirectory("workspaces");    
+            $localDisk->makeDirectory("workspaces");
         }
             
         $directoryName = "workspaces/" . Str::uuid();
-        Storage::createDirectory($directoryName);
+        $localDisk->makeDirectory($directoryName);
         
         $log = new Logger("compiler");
         
-        $logHandler = new StreamHandler(Storage::path($directoryName) . "/compiler.log");
+        $logHandler = new StreamHandler($localDisk->path($directoryName) . "/compiler.log");
         $logHandler->setFormatter(new LineFormatter(null, null, true, true));
         
         $log->pushHandler($logHandler);
@@ -303,10 +311,13 @@ class CodeController extends Controller
                 if(env("COMPILER_CACHING", false))
                 {
                     // if we have a cached version of the url's contents, don't pull it
-                    if(Storage::fileExists("remoteIncludeCache/{$hashedUrl}"))
+                    if($remoteDisk->exists("remoteIncludeCache/{$hashedUrl}"))
                     {
                         $log->info("remote include cache hit");
-                        Storage::copy("remoteIncludeCache/{$hashedUrl}", "{$directoryName}/{$potentialFilename}");
+                        $localDisk->put(
+                            "{$directoryName}/{$potentialFilename}",
+                            $remoteDisk->get("remoteIncludeCache/{$hashedUrl}")
+                        );
                         $linesOfCode[$i] = '#include "' . $potentialFilename .'"';
                         continue;
                     }
@@ -363,12 +374,12 @@ class CodeController extends Controller
                 }
                 
                 $log->info("writing remote file to: {$directoryName}/{$potentialFilename}");
-                Storage::put("{$directoryName}/{$potentialFilename}", $response->body());
+                $localDisk->put("{$directoryName}/{$potentialFilename}", $response->body());
                 
                 if(env("COMPILER_CACHING", false))
                 {
-                    $log->info("copying remote file to cache");
-                    Storage::copy("{$directoryName}/{$potentialFilename}", "remoteIncludeCache/{$hashedUrl}");
+                    $log->info("caching remotely included source file: $potentialFilename");
+                    $remoteDisk->put("remoteIncludeCache/{$hashedUrl}", $response->body());
                 }
 
                 $linesOfCode[$i] = '#include "' . $potentialFilename .'"';
@@ -390,13 +401,13 @@ class CodeController extends Controller
         }
     
         $version = "v0.01";
-        $workspaceDirectory = Storage::path($directoryName);
+        $workspaceDirectory = $localDisk->path($directoryName);
         $thirdPartyDirectory = base_path() . "/third_party";
     
         $compilerEnvironment = env("COMPILER_ENVIRONMENT", "local");
 
         $log->info("writing linesOfCode to {$directoryName}/pgetinker.cpp");
-        Storage::put("{$directoryName}/pgetinker.cpp", implode("\n", $linesOfCode));
+        $localDisk->put("{$directoryName}/pgetinker.cpp", implode("\n", $linesOfCode));
 
         $environmentVariables = [];
         $compilerCommand = null;
@@ -487,6 +498,8 @@ class CodeController extends Controller
             ->command($compilerCommand)->run();
         
         $log->info("compiler exited with code: " . $compilerProcessResult->exitCode());
+        
+        $response = null;
 
         if($compilerProcessResult->exitCode() !== 0)
         {
@@ -500,78 +513,101 @@ class CodeController extends Controller
                 "stdout" => $compilerProcessResult->output(),
                 "stderr" => $compilerProcessResult->errorOutput(),
             ]);
-    
-            return $response;
         }
         
-        $log->info("invoking the linker");
-        $linkerProcessResult = Process::env($environmentVariables)
-            ->path($workspaceDirectory)
-            ->timeout(10)
-            ->command($linkerCommand)->run();
-    
-        if($linkerProcessResult->exitCode() !== 0)
+        // if we're here and $response is still null, the compile stage succeeded, invoke linker
+        if($response == null)
         {
-            $response = [
-                "statusCode" => 400,
-                "stdout" => $this->filterOutput($linkerProcessResult->output()),
-                "stderr" => $this->filterOutput($linkerProcessResult->errorOutput()),
-            ];
-    
-            $log->error("linking failed", [
-                "stdout" => $linkerProcessResult->output(),
-                "stderr" => $linkerProcessResult->errorOutput(),
-            ]);
+            $log->info("invoking the linker");
+            $linkerProcessResult = Process::env($environmentVariables)
+                ->path($workspaceDirectory)
+                ->timeout(10)
+                ->command($linkerCommand)->run();
+        
+            if($linkerProcessResult->exitCode() !== 0)
+            {
+                $response = [
+                    "statusCode" => 400,
+                    "stdout" => $this->filterOutput($linkerProcessResult->output()),
+                    "stderr" => $this->filterOutput($linkerProcessResult->errorOutput()),
+                ];
+        
+                $log->error("linking failed", [
+                    "stdout" => $linkerProcessResult->output(),
+                    "stderr" => $linkerProcessResult->errorOutput(),
+                ]);
+            }
+        }
+        
+        if($response == null)
+        {
+            if(!$localDisk->exists("{$directoryName}/pgetinker.html"))
+            {
+                $response = [
+                    "statusCode" => 42069,
+                    "stderr" => "something really bad happened in order for this to occur. contact the administrator",
+                ];
+        
+                Log::debug("Compile: failed beyond the linker stage", $response);
+            }
+        }
+        
+        if($response == null)
+        {
+            // if we've made it here, SUCCESS!
+            $html = $localDisk->get("{$directoryName}/pgetinker.html");
             
-            return $response;
-        }
-        
-        if(Storage::fileMissing("{$directoryName}/pgetinker.html"))
-        {
+            if(env("COMPILER_CACHING", false))
+            {
+                $remoteDisk->put("compilerCache/{$hashedCode}", $html);
+            }
+            
+            $localDisk->deleteDirectory($directoryName);
+
             $response = [
-                "statusCode" => 42069,
-                "message" => "something really bad up happened in order for this to occur. contact the administrator",
+                "statusCode" => 200,
+                "hash" => $hashedCode,
+                "html" => $html,
             ];
-    
-            Log::debug("Compile: failed beyond the linker stage", $response);
-            return $response;
-        }
-    
-        // if we've made it here, SUCCESS!
-        $html = Storage::read("{$directoryName}/pgetinker.html");
-        
-        if(env("COMPILER_CACHING", false))
-        {
-            Storage::move("{$directoryName}/pgetinker.html", "compilerCache/{$hashedCode}");
+            
+            Log::info("Compile: finished successfully");
         }
 
-        Storage::deleteDirectory($directoryName);
-        
-        return [
-            "statusCode" => 200,
-            "hash" => $hashedCode,
-            "html" => $html,
-        ];
+        if($response["statusCode"] != 200)
+        {
+            // it's possible that the local disk and remote disk
+            // are the same
+            if(get_class($localDisk) != get_class($remoteDisk))
+            {
+                Log::info("uploading files to remote disk.");
+                // get the local files
+                $files = $localDisk->files($directoryName);
+            
+                // create the remote directory
+                $remoteDisk->makeDirectory($directoryName);
+                
+                for($i = 0; $i < count($files); $i++)
+                {
+                    // copy the file from the localDisk to the remoteDisk
+                    $remoteDisk->put(
+                        $files[$i],
+                        $localDisk->get($files[$i])
+                    );
+                }
+                
+                // remove the local files
+                $localDisk->deleteDirectory($directoryName);
+            }
+            Log::info("Compile: finished disgracefully");
+        }
+
+        return $response;
     }
     
     function filterOutput($text)
     {
-        
         $text = str_replace("/opt/emsdk/upstream/emscripten/cache/sysroot", "/***", $text);
-
         return $text;
-        // $text = explode("\n", $text);
-
-        // for($i = 0 $i < count($text))
-
-        // // $text = array_filter(explode("\n", $text), function($value)
-        // // {
-        // //     return (strpos($value, "undefined symbol") !== false) ||
-        // //         (strpos($value, "duplicate symbol") !== false) ||
-        // //         (strpos($value, "pgetinker.cpp") === 0);
-        // // });
-        
-        // return implode("\n", $text);
     }
 
 }
