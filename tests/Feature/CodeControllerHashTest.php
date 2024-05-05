@@ -34,7 +34,7 @@ class CodeControllerHashTest extends TestCase
     public function test_string_literal_hash(): void
     {
         $c = new CodeController();
-        $this->assertFalse($c->hashCode('"this is a string') == $c->hashCode('"this is a longer string"'));
+        $this->assertFalse($c->hashCode('"this is a string"') == $c->hashCode('"this is a longer string"'));
     }
 
     public function test_one_line_macro(): void
