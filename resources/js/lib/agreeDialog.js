@@ -41,7 +41,13 @@ export default function agreeDialog()
                     <li>
                         Share your code worldwide. This only applies if you
                         use the "Share" functionality.
-                    </li>    
+                    </li>
+                    <li>
+                        To use <a href="https://developers.cloudflare.com/analytics/web-analytics/" target="_blank">
+                        passive monitoring analytics</a> for the purpose
+                        of identifying problems with the app and improving
+                        the overall experience.
+                    </li>
                 </ul>
             </div>
             <div class="footer">
