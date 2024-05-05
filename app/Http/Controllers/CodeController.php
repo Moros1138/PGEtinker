@@ -153,6 +153,7 @@ class CodeController extends Controller
 
     function compileCode($code)
     {
+        $cacheDisk = (!empty(env("AWS_BUCKET"))) ? Storage::disk("s3") : Storage::disk("local");
         if($code == null)
         {
             Log::debug("Compile: missing required code parameters");
@@ -176,21 +177,22 @@ class CodeController extends Controller
         
         if(env("COMPILER_CACHING", false))
         {
-            if(Storage::directoryMissing("compilerCache"))
+            
+            if(!$cacheDisk->exists("compilerCache"))
             {
-                Storage::createDirectory("compilerCache");
+                $cacheDisk->makeDirectory("compilerCache");
             }
         
-            if(Storage::directoryMissing(("remoteIncludeCache")))
+            if(!$cacheDisk->exists("remoteIncludeCache"))
             {
-                Storage::createDirectory("remoteIncludeCache");
+                $cacheDisk->makeDirectory("remoteIncludeCache");
             }
 
-            if(Storage::fileExists("compilerCache/{$hashedCode}"))
+            if($cacheDisk->exists("compilerCache/{$hashedCode}"))
             {
                 Log::debug("Compile: cache hit", ["hashedCode" => $hashedCode]);
                 
-                $html = Storage::read("compilerCache/{$hashedCode}");
+                $html = $cacheDisk->get("compilerCache/{$hashedCode}");
             
                 return [
                     "statusCode" => 200,
@@ -303,10 +305,13 @@ class CodeController extends Controller
                 if(env("COMPILER_CACHING", false))
                 {
                     // if we have a cached version of the url's contents, don't pull it
-                    if(Storage::fileExists("remoteIncludeCache/{$hashedUrl}"))
+                    if($cacheDisk->exists("remoteIncludeCache/{$hashedUrl}"))
                     {
                         $log->info("remote include cache hit");
-                        Storage::copy("remoteIncludeCache/{$hashedUrl}", "{$directoryName}/{$potentialFilename}");
+                        Storage::put(
+                            "{$directoryName}/{$potentialFilename}",
+                            $cacheDisk->get("remoteIncludeCache/{$hashedUrl}")
+                        );
                         $linesOfCode[$i] = '#include "' . $potentialFilename .'"';
                         continue;
                     }
@@ -367,8 +372,8 @@ class CodeController extends Controller
                 
                 if(env("COMPILER_CACHING", false))
                 {
-                    $log->info("copying remote file to cache");
-                    Storage::copy("{$directoryName}/{$potentialFilename}", "remoteIncludeCache/{$hashedUrl}");
+                    $log->info("caching remotely included source file: $potentialFilename");
+                    $cacheDisk->put("remoteIncludeCache/{$hashedUrl}", $response->body());
                 }
 
                 $linesOfCode[$i] = '#include "' . $potentialFilename .'"';
@@ -542,7 +547,7 @@ class CodeController extends Controller
         
         if(env("COMPILER_CACHING", false))
         {
-            Storage::move("{$directoryName}/pgetinker.html", "compilerCache/{$hashedCode}");
+            $cacheDisk->put("compilerCache/{$hashedCode}", $html);
         }
 
         Storage::deleteDirectory($directoryName);
