@@ -569,6 +569,8 @@ class CodeController extends Controller
                 "hash" => $hashedCode,
                 "html" => $html,
             ];
+            
+            Log::info("Compile: finished successfully");
         }
 
         if($response["statusCode"] != 200)
@@ -577,6 +579,7 @@ class CodeController extends Controller
             // are the same
             if(get_class($localDisk) != get_class($remoteDisk))
             {
+                Log::info("uploading files to remote disk.");
                 // get the local files
                 $files = $localDisk->files($directoryName);
             
@@ -595,6 +598,7 @@ class CodeController extends Controller
                 // remove the local files
                 $localDisk->deleteDirectory($directoryName);
             }
+            Log::info("Compile: finished disgracefully");
         }
 
         return $response;
