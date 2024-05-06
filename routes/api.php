@@ -3,6 +3,7 @@
 use App\Http\Controllers\CodeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 Route::post("/share",   [CodeController::class, "Share" ]);
 Route::post("/compile", [CodeController::class, "Compile" ]);
@@ -76,4 +77,17 @@ Route::get("/news", function(Request $request)
     }
     
     return $changeLog;
+});
+
+Route::get("/supporters", function(Request $request)
+{
+    $disk = (!empty(env("AWS_BUCKET"))) ? Storage::disk("s3") : Storage::disk("local");
+    
+    $supporters = [];
+    if($disk->exists("supporters.json"))
+    {
+        $supporters = json_decode($disk->get("supporters.json"));
+    }
+    
+    return $supporters;
 });
