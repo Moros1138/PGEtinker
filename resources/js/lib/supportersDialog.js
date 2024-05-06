@@ -26,11 +26,6 @@ export default function supportersDialog()
             
             response.data.supporters.forEach((entry) =>
             {
-                entries.push(`<div class="name">${entry}</div>`);
-                entries.push(`<div class="name">${entry}</div>`);
-                entries.push(`<div class="name">${entry}</div>`);
-                entries.push(`<div class="name">${entry}</div>`);
-                entries.push(`<div class="name">${entry}</div>`);
             });
             
             supportersDialog.innerHTML = `
