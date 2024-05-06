@@ -83,7 +83,7 @@ Route::get("/supporters", function(Request $request)
 {
     $disk = (!empty(env("AWS_BUCKET"))) ? Storage::disk("s3") : Storage::disk("local");
     
-    $supporters = [];
+    $supporters = ["supporters" => []];
     if($disk->exists("supporters.json"))
     {
         $supporters = json_decode($disk->get("supporters.json"));
