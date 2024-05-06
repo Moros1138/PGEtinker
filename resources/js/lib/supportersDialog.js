@@ -24,9 +24,17 @@ export default function supportersDialog()
             
             let entries = [];
             
-            response.data.supporters.forEach((entry) =>
+            if(response.data.supporters.length > 0)
             {
-            });
+                response.data.supporters.forEach((entry) =>
+                {
+                    entries.push(`<div class="name">◀ ${entry} ▶</div>`);
+                });
+            }
+            else
+            {
+                entries.push(`<div class="name">◀ No Supporters Yet ▶</div>`);
+            }
             
             supportersDialog.innerHTML = `
             <div class="window">
