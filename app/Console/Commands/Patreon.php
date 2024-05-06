@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
-class MoveDatabase extends Command
+class Patreon extends Command
 {
     /**
      * The name and signature of the console command.
