@@ -7,7 +7,7 @@ It is a summary of changes that would be pertinent to the end user of the PGEtin
 ## unpublished
 
 - Added cloudflare analytics and disclosure
-
+- Added supporter wall
 
 ## 2024-05-05
 
