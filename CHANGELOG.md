@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file. Each batch 
 
 It is a summary of changes that would be pertinent to the end user of the PGEtinker website. For a comprehensive history of changes made to the project, please refer to the repository's commit history.
 
+## 2024-05-06
+
+- Added cloudflare analytics and disclosure
+- Added supporter wall
+
 ## 2024-05-05
 
 - Added logging to database

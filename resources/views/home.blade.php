@@ -13,7 +13,6 @@
     @vite('resources/js/app.js')
 </head>
 <body>
-
     <div id="app">
         <nav id="header">
             <a class="brand" href="/">
@@ -119,5 +118,8 @@
         </div>
     </div>
     <textarea id="code" style="display: none;">{{ $code }}</textarea>
+    
+    @include("shared.analytics")
+
 </body>
 </html>

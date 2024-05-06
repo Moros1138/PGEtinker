@@ -7,6 +7,7 @@ import agreeDialog from './lib/agreeDialog';
 import shareDialog from './lib/shareDialog';
 import newsDialog from './lib/newsDialog';
 import defaultLayout from './lib/defaultLayout';
+import supportersDialog from './lib/supportersDialog';
 
 class PGEtinker
 {
@@ -192,7 +193,7 @@ class PGEtinker
         document.querySelector("#supporters").addEventListener("click", (event) =>
         {
             event.preventDefault();
-            alert("Not Implemented");
+            supportersDialog();
         });
 
         document.querySelector("#news-and-updates").addEventListener("click", (event) =>

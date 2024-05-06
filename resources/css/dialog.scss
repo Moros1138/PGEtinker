@@ -129,3 +129,33 @@
     content: "✔ Fixed: ";
     color: rgb(252, 252, 170);
 }
+
+.dialog.supporters h3 {
+    text-align: center;
+    font-size: 2rem;
+    // text-decoration: underline;
+    padding-bottom: 1rem;
+    border-bottom: 4px solid var(--dialog-text-color);
+}
+
+.dialog.supporters .names {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    justify-content: center;
+    // justify-items: center;
+    align-items: center;
+}
+
+.dialog.supporters .names .name {
+    padding: .5rem 2rem;
+    font-size: 2.5rem;
+}
+
+.dialog.supporters a {
+    display: block;
+    text-align: center;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    font-size: 2.5rem;
+}

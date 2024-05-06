@@ -54,5 +54,8 @@
 
 
     </div>
+    
+    @include("shared.analytics")
+
 </body>
 </html>
