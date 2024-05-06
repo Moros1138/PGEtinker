@@ -36,6 +36,9 @@ export default function supportersDialog()
                     <div class="names">
                         ${entries.join('')}
                     </div>
+                    <a target="_blank" href="https://patreon.com/PGEtinker">
+                        Become a Supporter
+                    </a>                    
                 </div>
             </div>`;
 
