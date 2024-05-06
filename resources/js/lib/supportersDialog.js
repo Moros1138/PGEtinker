@@ -26,9 +26,12 @@ export default function supportersDialog()
             
             if(response.data.supporters.length > 0)
             {
+                // sort biggest first
+                response.data.supporters.sort((a, b) => b.amount - a.amount);
+                
                 response.data.supporters.forEach((entry) =>
                 {
-                    entries.push(`<div class="name">◀ ${entry} ▶</div>`);
+                    entries.push(`<div class="name">◀ ${entry.name} ▶</div>`);
                 });
             }
             else
