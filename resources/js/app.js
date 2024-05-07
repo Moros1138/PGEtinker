@@ -314,6 +314,7 @@ class PGEtinker
         
         let playerFrame = document.createElement('iframe');
         playerFrame.setAttribute("srcdoc", this.lastPlayerHtml);
+        playerFrame.setAttribute("sandbox", "allow-scripts");
         document.querySelector("#player-panel .iframe-container").append(playerFrame);
         
         playerFrame.classList.toggle("display-block", true);
@@ -524,6 +525,7 @@ class PGEtinker
             {
                 let playerFrame = document.createElement('iframe');
                 playerFrame.setAttribute("srcdoc", this.lastPlayerHtml);
+                playerFrame.setAttribute("sandbox", "allow-scripts");
                 document.querySelector("#player-panel .iframe-container").append(playerFrame);
                 
                 playerFrame.classList.toggle("display-block", true);
