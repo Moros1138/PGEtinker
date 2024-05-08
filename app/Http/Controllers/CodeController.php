@@ -309,7 +309,7 @@ class CodeController extends Controller
             }
 
             preg_match(
-                '/^\s*#\s*i(nclude|mport)(_next)?\s+["<](https:\/\/(.*)[^">]*)[">]/',
+                '/^\s*#\s*i(nclude|mport)(_next)?\s+["<](https?:\/\/(.*)[^">]*)[">]/',
                 $linesOfCode[$i],
                 $match,
                 PREG_OFFSET_CAPTURE,
