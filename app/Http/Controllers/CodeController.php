@@ -512,6 +512,7 @@ class CodeController extends Controller
             "pgetinker.cpp",
             "-o",
             "pgetinker.o",
+            "-std=c++20",
         ]);
         
         $log->info("preparing linker command");
@@ -531,19 +532,31 @@ class CodeController extends Controller
             "-sUSE_SDL_MIXER=2",
             "-sLLD_REPORT_UNDEFINED",
             "-sSINGLE_FILE",
+            "-std=c++20",
         ]);
     
-        $log->info("invoking the compiler");
-        $compilerProcessResult = Process::env($environmentVariables)
-            ->path($workspaceDirectory)
-            ->timeout(10)
-            ->command($compilerCommand)->run();
-        
-        $log->info("compiler exited with code: " . $compilerProcessResult->exitCode());
-        
         $response = null;
 
-        if($compilerProcessResult->exitCode() !== 0)
+        $log->info("invoking the compiler");
+        try
+        {
+            $compilerProcessResult = Process::env($environmentVariables)
+                ->path($workspaceDirectory)
+                ->timeout(10)
+                ->command($compilerCommand)->run();
+            
+            $log->info("compiler exited with code: " . $compilerProcessResult->exitCode());
+        }
+        catch(Exception $e)
+        {
+            $response = [
+                "statusCode" => 400,
+                "stdout" => "",
+                "stderr" => "compiler timed out. your code is either broken or there's too much of it!",
+            ];
+        }
+        
+        if($response == null)
         {
             $response = [
                 "statusCode" => 400,
@@ -561,11 +574,23 @@ class CodeController extends Controller
         if($response == null)
         {
             $log->info("invoking the linker");
-            $linkerProcessResult = Process::env($environmentVariables)
-                ->path($workspaceDirectory)
-                ->timeout(10)
-                ->command($linkerCommand)->run();
-        
+            
+            try
+            {
+                $linkerProcessResult = Process::env($environmentVariables)
+                    ->path($workspaceDirectory)
+                    ->timeout(10)
+                    ->command($linkerCommand)->run();
+            }
+            catch(Exception $e)
+            {
+                $response = [
+                    "statusCode" => 400,
+                    "stdout" => "",
+                    "stderr" => "linker timed out. your code is either broken or there's too much of it or there's some other bug, report it?",
+                ];
+            }
+
             if($linkerProcessResult->exitCode() !== 0)
             {
                 $response = [
