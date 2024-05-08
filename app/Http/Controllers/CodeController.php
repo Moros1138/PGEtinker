@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Code;
 use Exception;
+use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Process;
@@ -327,7 +328,9 @@ class CodeController extends Controller
                 
                 try
                 {
-                    $response = Http::head($potentialUrl);
+                    $request = new PendingRequest();
+                    $request->timeout(3);
+                    $response = $request->head($potentialUrl);
                 }
                 catch(Exception $e)
                 {
@@ -355,7 +358,9 @@ class CodeController extends Controller
 
                 $log->info("retrieving the body content");
 
-                $response = Http::get($potentialUrl);
+                    $request = new PendingRequest();
+                    $request->timeout(5);
+                    $response = $request->get($potentialUrl);
                 
                 // check included source for bad things
                 preg_match_all(
