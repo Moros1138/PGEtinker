@@ -309,7 +309,7 @@ class CodeController extends Controller
                 $potentialFilename = basename($match[3][0]);
                 $hashedUrl = hash("sha256", $potentialUrl);
 
-                if(env("COMPILER_CACHING", false))
+                if(env("REMOTE_INCLUDE_CACHING", false))
                 {
                     // if we have a cached version of the url's contents, don't pull it
                     if($remoteDisk->exists("remoteIncludeCache/{$hashedUrl}"))
@@ -381,7 +381,7 @@ class CodeController extends Controller
                 $log->info("writing remote file to: {$directoryName}/{$potentialFilename}");
                 $localDisk->put("{$directoryName}/{$potentialFilename}", $response->body());
                 
-                if(env("COMPILER_CACHING", false))
+                if(env("REMOTE_INCLUDE_CACHING", false))
                 {
                     $log->info("caching remotely included source file: $potentialFilename");
                     $remoteDisk->put("remoteIncludeCache/{$hashedUrl}", $response->body());
