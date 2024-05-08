@@ -249,10 +249,25 @@ class CodeController extends Controller
         $libraries = [];
 
         $log->info("begin parsing linesOfCode");
+        
+        // mark the start of processing
+        $processingStartTime = microtime(true);
+        
 
         // line by line code processing and filtering
         for($i = 0; $i < count($linesOfCode); $i++)
         {
+            
+            $processingEndTime = microtime(true);
+            $processingDuration = $processingEndTime - $processingStartTime;
+
+            if($processingDuration > floatval(env("PROCESSING_TIMEOUT", 5)))
+            {
+                $errors[] = "/pgetinker.cpp:" . $i . ":1: error: took too long to process code.";
+                $errors[] = "         this can happen if you are using alot of remote includes";
+                break;
+            }
+            
             // filter include macros with an absolute or relative path, naughty naughty
             preg_match(
                 '/^\s*#\s*i(nclude|mport)(_next)?\s+["<]((\.{1,2}|\/)[^">]*)[">]/',
@@ -312,9 +327,16 @@ class CodeController extends Controller
                 if(env("REMOTE_INCLUDE_CACHING", false))
                 {
                     // if we have a cached version of the url's contents, don't pull it
-                    if($remoteDisk->exists("remoteIncludeCache/{$hashedUrl}"))
+                    if(
+                        $remoteDisk->exists("remoteIncludeCache/{$hashedUrl}") &&
+                        $remoteDisk->exists("remoteIncludeCache/{$hashedUrl}.time")
+                    )
                     {
                         $log->info("remote include cache hit");
+                        
+                        $requestTime = floatval($remoteDisk->get("remoteIncludeCache/{$hashedUrl}.time"));
+                        usleep($requestTime * 1000000);
+
                         $localDisk->put(
                             "{$directoryName}/{$potentialFilename}",
                             $remoteDisk->get("remoteIncludeCache/{$hashedUrl}")
@@ -335,7 +357,7 @@ class CodeController extends Controller
                 catch(Exception $e)
                 {
                     $errors[] = "/pgetinker.cpp:" . $i + 1 . ":1: error: failed to retrieve {$potentialUrl}";
-                    $log->info("failed to include remote file: {$potentialUrl} at line: " . $i + 1);
+                    $log->info("failed to include remote file: {$potentialUrl} at line: " . $i + 1, [ "message" => $e->getMessage()]);
                     continue;
                 }
                 
@@ -358,9 +380,23 @@ class CodeController extends Controller
 
                 $log->info("retrieving the body content");
 
+                try
+                {
+                    $requestStartTime = microtime(true);
+                    
                     $request = new PendingRequest();
                     $request->timeout(5);
+                    
                     $response = $request->get($potentialUrl);
+                    
+                    $requestDuration = microtime(true) - $requestStartTime;
+                }
+                catch(Exception $e)
+                {
+                    $errors[] = "/pgetinker.cpp:" . $i + 1 . ":1: error: failed to retrieve {$potentialUrl}";
+                    $log->info("failed to include remote file: {$potentialUrl} at line: " . $i + 1);
+                    continue;
+                }                
                 
                 // check included source for bad things
                 preg_match_all(
@@ -385,6 +421,7 @@ class CodeController extends Controller
                 {
                     $log->info("caching remotely included source file: $potentialFilename");
                     $remoteDisk->put("remoteIncludeCache/{$hashedUrl}", $response->body());
+                    $remoteDisk->put("remoteIncludeCache/{$hashedUrl}.time", $requestDuration);
                 }
 
                 $linesOfCode[$i] = '#include "' . $potentialFilename .'"';
