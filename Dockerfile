@@ -31,6 +31,7 @@ RUN apt-get -y update && \
     libtool \
     make \
     pkg-config \
+    cgroup-tools \
     protobuf-compiler && \
     rm -rf /var/lib/apt/lists/*
     

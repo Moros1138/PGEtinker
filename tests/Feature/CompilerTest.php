@@ -2,19 +2,92 @@
 
 namespace Tests\Feature;
 
-// use Illuminate\Foundation\Testing\RefreshDatabase;
-
-use App\Http\Controllers\CodeController;
+use Illuminate\Support\Facades\Storage;
+use PGEtinker\Compiler;
 use Tests\TestCase;
 
 class CompilerTest extends TestCase
 {
-    public function test_compiler_compiles_hello_world(): void
-    {
-        $response = $this->post("/api/compile", [
-            "code" => '#include <stdio.h> int main() { printf("Hello, World\n"); return 0; }'
-        ]);
 
-        $response->assertStatus(200);
+    
+    public function test_compiler_builds_hello_world(): void
+    {
+        if(Storage::disk("local")->exists(__FUNCTION__))
+            Storage::disk("local")->deleteDirectory(__FUNCTION__);
+
+        Storage::disk("local")->makeDirectory(__FUNCTION__);
+        $workingDirectory = Storage::disk("local")->path(__FUNCTION__);
+        $testSourceDirectory = __DIR__ . "/compiler-test-source";
+
+        $compiler = new Compiler();
+        $compiler->setWorkingDirectory($workingDirectory);
+        $compiler->setCode(file_get_contents("{$testSourceDirectory}/hello-world.cpp"));
+        
+        $this->assertTrue($compiler->build());
     }
+
+    public function test_compiler_build_timeout(): void
+    {
+        if(Storage::disk("local")->exists(__FUNCTION__))
+            Storage::disk("local")->deleteDirectory(__FUNCTION__);
+        
+        Storage::disk("local")->makeDirectory(__FUNCTION__);
+        $workingDirectory = Storage::disk("local")->path(__FUNCTION__);
+        $testSourceDirectory = __DIR__ . "/compiler-test-source";
+        
+        $compiler = new Compiler();
+        $compiler->setWorkingDirectory($workingDirectory);
+        $compiler->setCode(file_get_contents("{$testSourceDirectory}/ice-timeout.cpp"));
+        
+        $this->assertFalse($compiler->build());
+    }
+
+    public function test_compiler_builds_example(): void
+    {
+        if(Storage::disk("local")->exists(__FUNCTION__))
+            Storage::disk("local")->deleteDirectory(__FUNCTION__);
+        
+        Storage::disk("local")->makeDirectory(__FUNCTION__);
+        $workingDirectory = Storage::disk("local")->path(__FUNCTION__);
+        $testSourceDirectory = __DIR__ . "/compiler-test-source";
+        
+        $compiler = new Compiler();
+        $compiler->setWorkingDirectory($workingDirectory);
+        $compiler->setCode(file_get_contents("{$testSourceDirectory}/example.cpp"));
+
+        $this->assertTrue($compiler->build());
+    }
+    
+    public function test_compiler_absolute_and_relative_include_trap(): void
+    {
+        if(Storage::disk("local")->exists(__FUNCTION__))
+            Storage::disk("local")->deleteDirectory(__FUNCTION__);
+
+        Storage::disk("local")->makeDirectory(__FUNCTION__);
+        $workingDirectory = Storage::disk("local")->path(__FUNCTION__);
+        $testSourceDirectory = __DIR__ . "/compiler-test-source";
+
+        $compiler = new Compiler();
+        $compiler->setWorkingDirectory($workingDirectory);
+        $compiler->setCode(file_get_contents("{$testSourceDirectory}/absolute-or-relative.cpp"));
+        
+        $this->assertFalse($compiler->build());
+    }
+
+    public function test_remote_includes(): void
+    {
+        if(Storage::disk("local")->exists(__FUNCTION__))
+            Storage::disk("local")->deleteDirectory(__FUNCTION__);
+
+        Storage::disk("local")->makeDirectory(__FUNCTION__);
+        $workingDirectory = Storage::disk("local")->path(__FUNCTION__);
+        $testSourceDirectory = __DIR__ . "/compiler-test-source";
+
+        $compiler = new Compiler();
+        $compiler->setWorkingDirectory($workingDirectory);
+        $compiler->setCode(file_get_contents("{$testSourceDirectory}/remote-includes.cpp"));
+        
+        $this->assertTrue($compiler->build());
+    }
+
 }

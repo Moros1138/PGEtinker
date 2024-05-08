@@ -7,6 +7,7 @@ It is a summary of changes that would be pertinent to the end user of the PGEtin
 ## 2024-05-08
 
 - Added limitations to the remote include feature
+- Catch compiler/linker timeout for better error handling
 
 ## 2024-05-06
 
