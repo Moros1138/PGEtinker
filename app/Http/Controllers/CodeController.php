@@ -3,14 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Code;
-use Exception;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use PGEtinker\Compiler;
 
+use PGEtinker\Compiler;
 use function PGEtinker\Utils\hashCode;
 
 class CodeController extends Controller
@@ -78,6 +77,22 @@ class CodeController extends Controller
         return response([ "statusCode" => 500, "message" => "some major server malfunction" ], 500)->header("Content-Type", "application/json");
     }
 
+    function HealthCheck()
+    {
+        $compiler = new Compiler();
+        if($compiler->healthCheck())
+        {
+            return response([
+                "statusCode" => 200,
+                "message" => "healthy"
+            ], 200);
+        }
+
+        return response([
+            "statusCode" => 400,
+            "message" => "unhealthy"
+        ], 400);
+    }
 
     function compileCode($code)
     {
