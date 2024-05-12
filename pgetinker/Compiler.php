@@ -547,4 +547,53 @@ class Compiler
         $this->cleanUp();
         return false;
     }
+
+    public function healthCheck()
+    {
+        $this->setWorkingDirectory("/tmp");
+
+        try
+        {
+            $compilerProcessResult = Process::env($this->environmentVariables)
+                ->path($this->workingDirectory)
+                ->timeout(intval(env("COMPILER_TIMEOUT", 10)))
+                ->command([
+                    "nsjail",
+                    "--config",
+                    base_path() . "/third_party/nsjail-emscripten.cfg",
+                    "-B",
+                    "{$this->workingDirectory}:/user",
+                    "--",
+                    "/opt/emsdk/upstream/emscripten/em++",
+                    "-v",
+                ])
+                ->run();
+            
+            $this->compilerExitCode = $compilerProcessResult->exitCode();
+            
+            $didTheThingSuccessfully = ($this->compilerExitCode == 0);
+            
+            $this->output = array_merge(
+                $this->output,
+                explode("\n", $compilerProcessResult->output())
+            );
+
+            $this->errors = array_merge(
+                $this->errors,
+                explode("\n", $compilerProcessResult->errorOutput())
+            );
+
+            if($this->compilerExitCode == 137)
+            {
+                $this->errors[] = "Compiler Killed (SIGTERM)";
+            }
+        }
+        catch(Exception $e)
+        {
+            $this->errors[] = "compiler timed out on health check";
+            $didTheThingSuccessfully = false;
+        }
+
+        return $didTheThingSuccessfully;
+    }
 }

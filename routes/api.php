@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Storage;
 
 Route::post("/share",   [CodeController::class, "Share" ]);
 Route::post("/compile", [CodeController::class, "Compile" ]);
+Route::get("/health-check", [CodeController::class, "HealthCheck" ]);
 
 Route::get("model/{version}", function(Request $request, string $version)
 {
