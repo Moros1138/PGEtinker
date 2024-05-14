@@ -17,6 +17,11 @@ Route::get('/', function (Request $request) {
 Route::get('/s/{slug}', function(Request $request, string $slug)
 {
     $code = Code::where("slug", $slug)->firstOrFail();
+    
+    $code->view_count++;
+    
+    $code->save();
+
     return view("home", [
         "code" => $code->code,
     
