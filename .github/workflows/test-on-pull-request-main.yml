@@ -28,7 +28,7 @@ jobs:
         run: echo -e "VERSION=${{ steps.vars.outputs.sha }}\nVITE_VERSION=${{ steps.vars.outputs.sha }}" >> .env.example
 
       - name: Copy environment file and set version
-        run: cp .env.example .env
+        run: cp .env.test .env
 
       - name: Install Dependencies
         run: npm install && npm run build && composer install --prefer-dist --no-interaction --no-progress && php artisan dusk:chrome-driver --detect
