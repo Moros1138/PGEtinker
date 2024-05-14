@@ -328,7 +328,7 @@ class Compiler
             $nsJailCommand = [
                 "nsjail",
                 "--config",
-                base_path() . "/third_party/nsjail-emscripten.cfg",
+                base_path() . env("COMPILER_NSJAIL_CFG", "/third_party/nsjail-emscripten.cfg"),
                 "-B",
                 "{$this->workingDirectory}:/user",
                 "-R",
@@ -560,7 +560,7 @@ class Compiler
                 ->command([
                     "nsjail",
                     "--config",
-                    base_path() . "/third_party/nsjail-emscripten.cfg",
+                    base_path() . env("COMPILER_NSJAIL_CFG", "/third_party/nsjail-emscripten.cfg"),
                     "-B",
                     "{$this->workingDirectory}:/user",
                     "--",
