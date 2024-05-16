@@ -37,7 +37,7 @@ class CodeController extends Controller
         $share = Code::where("hash", $result["hash"])->first();
         if($share != null)
         {
-            $result["shareURL"] = $request->root() . "/s/" . $share->slug;
+            $result["shareURL"] = env("APP_URL") . "/s/" . $share->slug;
             unset($result["hash"]);
     
             return response($result, $result["statusCode"])->header("Content-Type", "application/json");
@@ -67,7 +67,7 @@ class CodeController extends Controller
     
         if($share->save())
         {
-            $result["shareURL"] = $request->root() . "/s/" . $slug;
+            $result["shareURL"] = env("APP_URL") . "/s/" . $slug;
             unset($result["hash"]);
             
             return response($result, $result["statusCode"])->header("Content-Type", "application/json");
