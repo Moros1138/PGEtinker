@@ -3,6 +3,7 @@ import laravel from 'laravel-vite-plugin';
 import path from "node:path";
 
 export default defineConfig({
+    base: "./",
     server: {
         watch: {
             ignored: [
