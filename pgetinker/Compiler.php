@@ -343,7 +343,7 @@ class Compiler
     
     private function prepareEnvironment()
     {
-        $version = "v0.01";
+        $version = "v0.02";
 
         $compilerEnvironment = env("COMPILER_ENVIRONMENT", "local");
 

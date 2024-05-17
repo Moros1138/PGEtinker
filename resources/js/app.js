@@ -487,7 +487,7 @@ class PGEtinker
             if(this.monacoModelIntellisense === null)
             {
                 this.monacoModelIntellisense = monaco.editor.createModel("", "cpp", monaco.Uri.parse("inmemory://pgetinker.h"));
-                axios.get("/api/model/v0.01").then((response) =>
+                axios.get("/api/model/v0.02").then((response) =>
                 {
                     this.monacoModelIntellisense.setValue(response.data);
                 });
