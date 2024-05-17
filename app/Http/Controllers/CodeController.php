@@ -6,6 +6,7 @@ use App\Models\Code;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -119,26 +120,21 @@ class CodeController extends Controller
         
         if(env("COMPILER_CACHING", false))
         {
-            if(Storage::directoryMissing("compilerCache"))
-            {
-                Storage::makeDirectory("compilerCache");
-            }
-        
-            if(Storage::directoryMissing("remoteIncludeCache"))
-            {
-                Storage::makeDirectory("remoteIncludeCache");
-            }
-
-            if(Storage::fileExists("compilerCache/{$hashedCode}"))
+            $cachedCode = Redis::get("compiler_{$hashedCode}");
+            
+            if(isset($cachedCode))
             {
                 Log::debug("Compile: cache hit", ["hashedCode" => $hashedCode]);
                 
-                $html = Storage::get("compilerCache/{$hashedCode}");
-            
+                $compiler = new Compiler();
+                $compiler->deserialize($cachedCode);
+
                 return [
-                    "statusCode" => 200,
+                    "statusCode" => $compiler->getStatus(),
                     "hash" => $hashedCode,
-                    "html" => $html,
+                    "html" => $compiler->getHtml(),
+                    "stdout" => $compiler->getOutput(),
+                    "stderr" => $compiler->getErrorOutput(),
                 ];
             }
             
@@ -167,10 +163,7 @@ class CodeController extends Controller
         
         if($compiler->build())
         {
-            Storage::put(
-                "compilerCache/{$hashedCode}",
-                $compiler->getHtml()
-            );
+            Redis::set("compiler_{$hashedCode}", $compiler->serialize());
 
             return [
                 "statusCode" => 200,
@@ -180,10 +173,13 @@ class CodeController extends Controller
                 "stderr" => $compiler->getErrorOutput(),
             ];
         }
+
+        Redis::set("compiler_{$hashedCode}", $compiler->serialize());
         
         return [
             "statusCode" => 400,
             "hash" => $hashedCode,
+            "html" => $compiler->getHtml(),
             "stdout" => $compiler->getOutput(),
             "stderr" => $compiler->getErrorOutput(),
         ];
