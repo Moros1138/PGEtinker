@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Process;
+use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Storage;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\StreamHandler;
@@ -197,22 +198,20 @@ class Compiler
 
             if(env("COMPILER_REMOTE_INCLUDE_CACHING", false))
             {
+                $remoteIncludeCache = Redis::get("remote_include_{$hashedUrl}");
+                
                 // if we have a cached version of the url's contents, don't pull it
-                if(
-                    Storage::fileExists("remoteIncludeCache/{$hashedUrl}") &&
-                    Storage::fileExists("remoteIncludeCache/{$hashedUrl}.time")
-                )
+                if(isset($remoteIncludeCache))
                 {
                     $this->logger->info("remote include cache hit");
-                    
-                    $requestTime = floatval(Storage::get("remoteIncludeCache/{$hashedUrl}.time"));
+                    $remoteIncludeCache = json_decode($remoteIncludeCache, false);
                     
                     // just because it's cached, doesn't mean you get to compile faster!
-                    usleep($requestTime * 1000000);
-
+                    usleep(floatval($remoteIncludeCache->time) * 1000000);
+                    
                     file_put_contents(
                         "{$this->workingDirectory}/{$potentialFilename}",
-                        Storage::get("remoteIncludeCache/{$hashedUrl}")
+                        $remoteIncludeCache->content
                     );
                     
                     $this->code[$index] = '#include "' . $potentialFilename .'"';
@@ -297,8 +296,13 @@ class Compiler
             if(env("COMPILER_REMOTE_INCLUDE_CACHING", false))
             {
                 $this->logger->info("caching remotely included source file: $potentialFilename");
-                Storage::put("remoteIncludeCache/{$hashedUrl}", $response->body());
-                Storage::put("remoteIncludeCache/{$hashedUrl}.time", $requestDuration);
+
+                $remoteIncludeCache = new stdClass();
+                
+                $remoteIncludeCache->time = $requestDuration;
+                $remoteIncludeCache->content = $response->body();
+                
+                Redis::set("remote_include_{$hashedUrl}", json_encode($remoteIncludeCache, JSON_PRETTY_PRINT));
             }
 
             $this->code[$index] = '#include "' . $potentialFilename .'"';
@@ -510,36 +514,8 @@ class Compiler
     
     private function cleanUp()
     {
-        $this->logger->info("cleanUp called");
-
         $this->logger->info("OUTPUT:\n\n" . $this->getOutput() . "\n\nERROR:\n\n" . $this->getErrorOutput());
-
-        if(env("FILESYSTEM_DISK") == "s3")
-        {
-            // convert workingDirectory to laravel disk path
-            $prefix = dirname($this->workingDirectory);
-            $this->workingDirectory = str_replace("{$prefix}/", "", $this->workingDirectory);
-
-            Log::info("uploading files to remote disk.");
-            
-            // get the local files
-            $files = Storage::disk("local")->files($this->workingDirectory);
-        
-            // create the s3 directory
-            Storage::makeDirectory($this->workingDirectory);
-            
-            for($i = 0; $i < count($files); $i++)
-            {
-                // copy the file from the localDisk to the s3
-                Storage::put(
-                    $files[$i],
-                    Storage::disk("local")->get($files[$i])
-                );
-            }
-            
-            // remove the local files
-            Storage::disk("local")->deleteDirectory($this->workingDirectory);
-        }
+        Log::info("Compile: finished disgracefully");
     }
 
     public function build()
