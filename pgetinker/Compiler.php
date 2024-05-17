@@ -107,6 +107,12 @@ class Compiler
         return $this->html;
     }
 
+    public function getStatus()
+    {
+        return ($this->compilerExitCode == 0 && $this->linkerExitCode == 0) ?
+            200 : 400;
+    }
+
     private function processCodeAbsoluteOrRelativePaths($index)
     {
         // filter include macros with an absolute or relative path, naughty naughty
