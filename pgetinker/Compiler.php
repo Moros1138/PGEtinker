@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Storage;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
+use stdClass;
 
 class Compiler
 {
@@ -42,7 +43,24 @@ class Compiler
         $this->logger = new Logger("compiler");
         return $this;
     }
+    
+    public function serialize()
+    {
+        $object = new stdClass();
 
+        $object->code = $this->code;
+        $object->compilerCommand = $this->compilerCommand;
+        $object->compilerExitCode = $this->compilerExitCode;
+        $object->environmentVariables = $this->environmentVariables;
+        $object->errors = $this->errors;
+        $object->html = $this->html;
+        $object->linkerCommand = $this->linkerCommand;
+        $object->linkerExitCode = $this->linkerExitCode;
+        $object->linkerInputFiles = $this->linkerInputFiles;
+        $object->output = $this->output;
+
+        return json_encode($object, JSON_PRETTY_PRINT);
+    }
     public function setCode(string $code)
     {
         $this->code = explode("\n", $code);
