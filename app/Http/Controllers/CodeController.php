@@ -163,7 +163,11 @@ class CodeController extends Controller
         
         if($compiler->build())
         {
-            Redis::set("compiler_{$hashedCode}", $compiler->serialize());
+            if(env("COMPILER_CACHING", false))
+            {
+                Redis::set("compiler_{$hashedCode}", $compiler->serialize());
+            }
+                
 
             return [
                 "statusCode" => 200,
@@ -174,8 +178,11 @@ class CodeController extends Controller
             ];
         }
 
-        Redis::set("compiler_{$hashedCode}", $compiler->serialize());
-        
+        if(env("COMPILER_CACHING", false))
+        {
+            Redis::set("compiler_{$hashedCode}", $compiler->serialize());
+        }
+    
         return [
             "statusCode" => 400,
             "hash" => $hashedCode,
