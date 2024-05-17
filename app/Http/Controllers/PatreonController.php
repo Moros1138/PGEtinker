@@ -6,14 +6,13 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Storage;
 
 class PatreonController extends Controller
 {
     function update(Request $request)
     {
-        $disk = (!empty(env("AWS_BUCKET"))) ? Storage::disk("s3") : Storage::disk("local");
-
         if(empty(env("PATREON_ACCESS_TOKEN")) || empty(env("PATREON_WEBHOOK_SECRET")))
         {
             Log::error("Error: missing Patreon Access Token or Webhook Secret... aborted.");
@@ -41,8 +40,6 @@ class PatreonController extends Controller
 
     function getPatreonNames()
     {
-        $disk = (!empty(env("AWS_BUCKET"))) ? Storage::disk("s3") : Storage::disk("local");
-
         Log::info("Getting Patreon Supporters");
 
         $campaign = Http::withToken(env("PATREON_ACCESS_TOKEN"))
@@ -94,7 +91,7 @@ class PatreonController extends Controller
             }
         }
         
-        $disk->put("supporters.json", json_encode(["supporters" => $supporters]));
+        Redis::set("supporters", json_encode(["supporters" => $supporters], JSON_PRETTY_PRINT));
     }
 }
 
