@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file. Each batch 
 
 It is a summary of changes that would be pertinent to the end user of the PGEtinker website. For a comprehensive history of changes made to the project, please refer to the repository's commit history.
 
+## 2024-05-17
+
+- Added support to deploy on subpaths
+- Added updated version of PGE, Extensions, and Utlities
+
 ## 2024-05-14
 
 - Added view counter to shared codes

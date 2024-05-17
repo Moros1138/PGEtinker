@@ -53,8 +53,8 @@
 	
 	With significant contributions from:
 	
-	Piratux, Gusgo99, Gorbit99, MagetzUb, Dandistine
-	cstdint, sigonasr, bixxy, Qwerasd
+	Piratux, Gusgo99, Gorbit99, MaGetzUb, Dandistine, Moros1138
+	cstdint, sigonasr, bixxy, Qwerasd, starfreakclone, fux
 
 	Changes:
 	v1.01:		+Made constants inline
@@ -111,6 +111,9 @@
 
 		ray reflect(ray, a)
 			Returns a ray that is a reflection of supplied incident ray against Shape A
+
+		optional<point, normal> collision(ray, a)
+			Returns the point and normal where a ray collides with Shape A
 	
 */
 
@@ -124,7 +127,7 @@
 
 	where:
 
-	f = overlaps, intersects, contains, closest, envelope_r, envelope_b
+	f = overlaps, intersects, contains, closest, envelope_r, envelope_b, reflects, collision
 	a = p, l, r, c, t, q, pol (point, line, rect, circ, triangle, ray, polygon)
 
 	example:
@@ -169,12 +172,14 @@
              | intersects   | intersects   | intersects   | intersects   | intersects   |              |
              |              |              |              |              |              |              |
     ---------+--------------+--------------+--------------+--------------+--------------+--------------+
-    RAY      |              |              |              |              |              |              |
+    RAY      | contains     |              |              |              |              |              |
              |              |              |              |              |              |              |
-             |              |              |              |              |              |              |
+             |              | collision    | collision    | collision    | collision    | collision*   |
              |              | intersects   | intersects   | intersects   | intersects   | intersects   |
-             |              |              |              |              |              |              |
+             |              | reflect      | reflect      | reflect      | reflect      | reflect*     |
     ---------+--------------+--------------+--------------+--------------+--------------+--------------+
+
+	* Exists but always fails
 */
 
 #pragma once
@@ -185,6 +190,16 @@
 #include <cstdint>
 #include <optional>
 #include <cassert>
+#include <array>
+
+
+#ifdef PGE_VER
+#error "olcUTIL_Geometry2D.h must be included BEFORE olcPixelGameEngine.h"
+#else
+
+#ifndef OLC_IGNORE_VEC2D
+#define OLC_IGNORE_VEC2D
+#endif
 
 #ifndef OLC_V2D_TYPE
 #define OLC_V2D_TYPE
@@ -306,7 +321,7 @@ namespace olc
 		// Linearly interpolate between this vector, and another vector, given normalised parameter 't'
 		inline constexpr v_2d lerp(const v_2d& v1, const double t) const
 		{
-			return (T(1.0 - t)) + (v1 * T(t));
+			return (*this) * (T(1.0 - t)) + (v1 * T(t));
 		}
 
 		// Compare if this vector is numerically equal to another
@@ -322,9 +337,15 @@ namespace olc
 		}
 
 		// Return this vector as a std::string, of the form "(x,y)"
-		inline constexpr std::string str() const
+		inline std::string str() const
 		{
 			return std::string("(") + std::to_string(this->x) + "," + std::to_string(this->y) + ")";
+		}
+
+		// Assuming this vector is incident, given a normal, return the reflection
+		inline constexpr v_2d reflect(const v_2d& n) const
+		{
+			return (*this) - 2.0 * (this->dot(n) * n);
 		}
 
 		// Allow 'casting' from other v_2d types
@@ -670,7 +691,8 @@ namespace olc::utils::geom2d
 			if ((i & 0b11) == 0) return top();
 			if ((i & 0b11) == 1) return right();
 			if ((i & 0b11) == 2) return bottom();
-			if ((i & 0b11) == 3) return left();
+			//if ((i & 0b11) == 3) return left(); // Dumb compilers cant fathom this
+			return left();
 		}
 
 		// Get area of rectangle
@@ -865,6 +887,15 @@ namespace olc::utils::geom2d
 		}
 	}
 
+	// closest(ray,p)
+	// Returns closest point on ray to point
+	template<typename T1, typename T2>
+	inline olc::v_2d<T1> closest(const ray<T1>& r, const olc::v_2d<T2>& p)
+	{
+		// TODO: implement
+		return p;
+	}
+
 
 	// Closest location on [SHAPE] to Line
 
@@ -928,10 +959,9 @@ namespace olc::utils::geom2d
 	// closest(c,c)
 	// Returns closest point on circle to circle
 	template<typename T1, typename T2>
-	inline olc::v_2d<T1> closest(const circle<T1>& c, const circle<T2>& l)
+	inline olc::v_2d<T1> closest(const circle<T1>& c1, const circle<T2>& c2)
 	{
-		// TODO:
-		return {};
+		return closest(c1, c2.pos);
 	}
 
 	// closest(t,c)
@@ -1043,10 +1073,35 @@ namespace olc::utils::geom2d
 		return s >= T2(0) && v >= T2(0) && (s + v) <= T2(2) * A * sign;
 	}
 
+	template<typename T1, typename T2>
+	inline constexpr bool contains(const ray<T1>& r, const olc::v_2d<T2>& p)
+	{
+		// Calculate the vector from the ray's origin to point p
+		olc::v_2d<T2> op = p - r.origin;
 
+		// Calculate the dot product between op and the ray's direction
+		// This checks if p is in the direction of the ray and not behind the origin
+		T2 dotProduct = op.dot(r.direction);
+
+		if (dotProduct < 0) {
+			// p is behind the ray's origin
+			return false;
+		}
+
+		// Project op onto the ray's direction (which is already normalized)
+		olc::v_2d<T2> projection = { r.direction.x * dotProduct, r.direction.y * dotProduct };
+
+		// Check if the projection of op onto the ray's direction is equivalent to op
+		// This is true if p lies on the ray
+
+		T2 distance = std::sqrt((projection.x - op.x) * (projection.x - op.x) + (projection.y - op.y) * (projection.y - op.y));
+
+		// Assuming a small threshold for floating point arithmetic issues
+		return distance < epsilon;
+	}
 
 	// overlaps(p,p)
-	// Check if point overlaps with point (analagous to contains())
+	// Check if point overlaps with point (analogous to contains())
 	template<typename T1, typename T2>
 	inline constexpr bool overlaps(const olc::v_2d<T1>& p1, const olc::v_2d<T2>& p2)
 	{
@@ -1582,7 +1637,8 @@ namespace olc::utils::geom2d
 	template<typename T1, typename T2>
 	inline constexpr bool contains(const circle<T1>& c1, const circle<T2>& c2)
 	{
-		return (c1.pos - c2.pos).mag2() <= (c1.radius - c2.radius) * (c1.radius - c2.radius);
+		return (std::sqrt(std::pow(c2.pos.x - c1.pos.x, 2) + std::pow(c2.pos.y - c1.pos.y, 2)) + c2.radius) <= c1.radius;
+
 	}
 
 	// contains(t,c)
@@ -2082,7 +2138,7 @@ namespace olc::utils::geom2d
 		olc::v_2d<T2> vClosest;
 		for (const auto& vContact : vAllIntersections)
 		{
-			double dDistance = (vContact - c.pos).mag2();
+			double dDistance = (vContact - q.origin).mag2();
 			if (dDistance < dClosest)
 			{
 				dClosest = dDistance;
@@ -2098,8 +2154,37 @@ namespace olc::utils::geom2d
 	template<typename T1, typename T2, typename T3>
 	inline std::optional<olc::v_2d<T2>> project(const circle<T1>& c, const rect<T2>& r, const ray<T3>& q)
 	{
-		// TODO:
-		return std::nullopt;
+		const auto s1 = project(c, r.top(), q);
+		const auto s2 = project(c, r.bottom(), q);
+		const auto s3 = project(c, r.left(), q);
+		const auto s4 = project(c, r.right(), q);
+
+		std::vector<olc::v_2d<T2>> vAllIntersections;
+		if (s1.has_value()) vAllIntersections.push_back(s1.value());
+		if (s2.has_value()) vAllIntersections.push_back(s2.value());
+		if (s3.has_value()) vAllIntersections.push_back(s3.value());
+		if (s4.has_value()) vAllIntersections.push_back(s4.value());
+		
+		if (vAllIntersections.size() == 0)
+		{
+			// No intersections at all, so
+			return std::nullopt;
+		}
+
+		// Find closest
+		double dClosest = std::numeric_limits<double>::max();
+		olc::v_2d<T2> vClosest;
+		for (const auto& vContact : vAllIntersections)
+		{
+			double dDistance = (vContact - q.origin).mag2();
+			if (dDistance < dClosest)
+			{
+				dClosest = dDistance;
+				vClosest = vContact;
+			}
+		}
+
+		return vClosest;
 	}
 
 	// project(c,t)
@@ -2141,6 +2226,19 @@ namespace olc::utils::geom2d
 			return {}; // Intersection, but behind a rays origin, so not really an intersection in context
 	}
 
+	// intersects(q,p)
+	// return intersection point (if it exists) of a ray and a point
+	template<typename T1, typename T2>
+	inline std::vector<olc::v_2d<T2>> intersects(const ray<T1>& q, const v_2d<T2>& p)
+	{
+		const line<T1> l = { q.origin, q.origin + q.direction };
+		
+		if (std::abs(l.side(p)) < epsilon )
+			return { p }; // Intersection
+		else
+			return {}; 
+	}
+
 	// intersects(q,l)
 	// return intersection point (if it exists) of a ray and a line segment
 	template<typename T1, typename T2>
@@ -2170,6 +2268,177 @@ namespace olc::utils::geom2d
 						// so not really an intersection in context
 	}
 
+	// collision(q,l)
+	// optionally returns collision point and collision normal of ray and a line segment, if it collides
+	template<typename T1, typename T2>
+	inline std::optional<std::pair<olc::v_2d<T2>, olc::v_2d<T2>>> collision(const ray<T1>& q, const line<T2>& l)
+	{
+		const auto vIntersection = intersects(q, l);
+		if (vIntersection.size() > 0)
+		{
+			return { {vIntersection[0], l.vector().perp().norm() * l.side(q.origin)} };
+		}
+		
+		return std::nullopt;
+	}
+
+	// reflect(q,l)
+	// optionally returns a ray reflected off a line segement if collision occurs
+	template<typename T1, typename T2>
+	inline std::optional<ray<T1>> reflect(const ray<T1>& q, const line<T2>& l)
+	{
+		const auto vCollision = collision(q, l);
+		if (vCollision.has_value())
+		{
+			return { ray<T1>{vCollision.value().first, q.direction.reflect(vCollision.value().second)} };
+		}
+
+		return std::nullopt;
+	}
+
+	// reflect(q,p)
+	// optionally returns a ray reflected off a point if collision occurs
+	template<typename T1, typename T2>
+	inline std::optional<ray<T1>> reflect(const ray<T1>& q, const olc::v_2d<T2>& p)
+	{
+		// TODO:
+		return std::nullopt;
+	}
+
+	// collision(q,r)
+	// optionally returns collision point and collision normal of ray and a line segment, if it collides
+	template<typename T1, typename T2>
+	inline std::optional<std::pair<olc::v_2d<T1>, olc::v_2d<T1>>> collision(const ray<T1>& q, const rect<T2>& r)
+	{
+		olc::v_2d<T1> vClosestIntersection;
+		olc::v_2d<T1> vIntersectionNormal;
+		double dClosestDistance2 = std::numeric_limits<double>::max();
+		bool bCollide = false;
+
+		for (size_t i = 0; i < r.side_count(); i++)
+		{
+			auto v = intersects(q, r.side(i));
+			if (v.size() > 0)
+			{
+				bCollide = true;
+				double d = (v[0] - q.origin).mag2();
+				if (d < dClosestDistance2)
+				{
+					dClosestDistance2 = d;
+					vClosestIntersection = v[0];
+					vIntersectionNormal = r.side(i).vector().perp().norm();
+				}
+			}
+		}
+
+		if (bCollide)
+		{
+			return { {vClosestIntersection, vIntersectionNormal} };
+		}
+
+		return std::nullopt;
+	}
+
+	// reflect(q,r)
+	// optionally returns a ray reflected off a rectangle if collision occurs
+	template<typename T1, typename T2>
+	inline std::optional<ray<T1>> reflect(const ray<T1>& q, const rect<T2>& r)
+	{
+		const auto vCollision = collision(q, r);
+		if (vCollision.has_value())
+		{
+			return { ray<T1>{vCollision.value().first, q.direction.reflect(vCollision.value().second)} };
+		}
+
+		return std::nullopt;
+	}
+
+	// collision(q,c)
+	// optionally returns collision point and collision normal of ray and a circle, if it collides
+	template<typename T1, typename T2>
+	inline std::optional<std::pair<olc::v_2d<T2>, olc::v_2d<T2>>> collision(const ray<T1>& q, const circle<T2>& c)
+	{
+		const auto vIntersection = intersects(q, c);
+		if (vIntersection.size() > 0)
+		{
+			return { {vIntersection[0], (vIntersection[0] - c.pos).norm()}};
+		}
+
+		return std::nullopt;
+	}
+
+	// reflect(q,c)
+	// optionally returns a ray reflected off a circle if collision occurs
+	template<typename T1, typename T2>
+	inline std::optional<ray<T1>> reflect(const ray<T1>& q, const circle<T2>& c)
+	{
+		const auto vCollision = collision(q, c);
+		if (vCollision.has_value())
+		{
+			return { ray<T1>{vCollision.value().first, q.direction.reflect(vCollision.value().second)} };
+		}
+
+		return std::nullopt;
+	}
+
+	// collision(q,r)
+	// optionally returns collision point and collision normal of ray and a triangle, if it collides
+	template<typename T1, typename T2>
+	inline std::optional<std::pair<olc::v_2d<T1>, olc::v_2d<T1>>> collision(const ray<T1>& q, const triangle<T2>& t)
+	{
+		olc::v_2d<T1> vClosestIntersection;
+		olc::v_2d<T1> vIntersectionNormal;
+		double dClosestDistance2 = std::numeric_limits<double>::max();
+		bool bCollide = false;
+
+		for (size_t i = 0; i < t.side_count(); i++)
+		{
+			auto v = intersects(q, t.side(i));
+			if (v.size() > 0)
+			{
+				bCollide = true;
+				double d = (v[0] - q.origin).mag2();
+				if (d < dClosestDistance2)
+				{
+					dClosestDistance2 = d;
+					vClosestIntersection = v[0];
+					vIntersectionNormal = t.side(i).vector().perp().norm();
+				}
+			}
+		}
+
+		if (bCollide)
+		{
+			return { {vClosestIntersection, vIntersectionNormal} };
+		}
+
+		return std::nullopt;
+	}
+
+	// reflect(q,t)
+	// optionally returns a ray reflected off a triangle if collision occurs
+	template<typename T1, typename T2>
+	inline std::optional<ray<T1>> reflect(const ray<T1>& q, const triangle<T2>& t)
+	{
+		const auto vCollision = collision(q, t);
+		if (vCollision.has_value())
+		{
+			return { ray<T1>{vCollision.value().first, q.direction.reflect(vCollision.value().second)} };
+		}
+
+		return std::nullopt;
+	}
+
+	// reflect(q,r)
+	// can't reflect a ray of a ray
+	template<typename T1, typename T2>
+	inline std::optional<ray<T1>> reflect(const ray<T1>& q1, const ray<T2>& q2)
+	{
+		// Can't reflect!
+		return std::nullopt;
+	}
+
+
 	// intersects(q,c)
 	// Get intersection points where a ray intersects a circle
 	template<typename T1, typename T2>
@@ -2196,7 +2465,8 @@ namespace olc::utils::geom2d
 			if (s2 < 0)
 				return { q.origin + q.direction * s1 };
 
-			return { q.origin + q.direction * std::min(s1, s2) };
+			const auto [min_s, max_s] = std::minmax(s1, s2);
+			return { q.origin + q.direction * min_s, q.origin + q.direction * max_s };
 		}
 	}
 
@@ -2232,3 +2502,5 @@ namespace olc::utils::geom2d
 		return internal::filter_duplicate_points(intersections);
 	}
 }
+
+#endif // PGE_VER
