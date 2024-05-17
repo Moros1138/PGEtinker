@@ -61,6 +61,25 @@ class Compiler
 
         return json_encode($object, JSON_PRETTY_PRINT);
     }
+
+    public function deserialize(string $json)
+    {
+        $object = json_decode($json, false);
+        
+        $this->code = $object->code;
+        $this->compilerCommand = $object->compilerCommand;
+        $this->compilerExitCode = $object->compilerExitCode;
+        $this->environmentVariables = $object->environmentVariables;
+        $this->errors = $object->errors;
+        $this->html = $object->html;
+        $this->linkerCommand = $object->linkerCommand;
+        $this->linkerExitCode = $object->linkerExitCode;
+        $this->linkerInputFiles = $object->linkerInputFiles;
+        $this->logger = null;
+        $this->output = $object->output;
+        $this->workingDirectory = "";
+    }
+
     public function setCode(string $code)
     {
         $this->code = explode("\n", $code);
