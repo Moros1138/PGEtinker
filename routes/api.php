@@ -5,6 +5,7 @@ use App\Http\Controllers\PatreonController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 
@@ -85,15 +86,15 @@ Route::get("/news", function(Request $request)
 
 Route::get("/supporters", function(Request $request)
 {
-    $disk = (!empty(env("AWS_BUCKET"))) ? Storage::disk("s3") : Storage::disk("local");
+    $supporters = Redis::get("supporters");
     
-    $supporters = ["supporters" => []];
-    if($disk->exists("supporters.json"))
+    if(isset($supporters))
     {
-        $supporters = json_decode($disk->get("supporters.json"));
+        $supporters = json_decode($supporters);
+        return $supporters;
     }
-    
-    return $supporters;
+
+    return ["supporters" => []];
 });
 
 Route::post("/update-supporters", [PatreonController::class, "update" ]);
