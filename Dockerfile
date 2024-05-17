@@ -47,6 +47,7 @@ RUN cd /nsjail && \
 WORKDIR /var/www/html
 
 RUN docker-php-ext-configure opcache --enable-opcache && \
+    docker-php-ext-install redis && \
     docker-php-ext-install pdo pdo_mysql && \
     docker-php-ext-install pdo pdo_pgsql
     
