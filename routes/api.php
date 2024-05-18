@@ -3,11 +3,7 @@
 use App\Http\Controllers\CodeController;
 use App\Http\Controllers\PatreonController;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Storage;
 
 Route::post("/share",   [CodeController::class, "Share" ]);
 Route::post("/compile", [CodeController::class, "Compile" ]);
