@@ -93,9 +93,12 @@ class Compiler
         return $this;
     }
 
-    public function getOutput()
+    public function getOutput($raw = false)
     {
-        return implode("\n", $this->output);
+        if($raw)
+            return implode("\n", $this->output);
+        
+        return str_replace("/opt/emsdk/upstream/emscripten/cache/sysroot", "/***", implode("\n", $this->output));
     }
     
     public function getErrorOutput()
