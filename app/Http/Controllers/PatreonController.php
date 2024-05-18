@@ -38,6 +38,28 @@ class PatreonController extends Controller
         return [];
     }
 
+    function get_supporters(Request $request)
+    {
+        if(empty(env("PATREON_ACCESS_TOKEN")) || empty(env("PATREON_WEBHOOK_SECRET")))
+        {
+            return response([
+                "statusCode" => 500,
+                "message" => "Missing Patreon Access Token or Webhook Secret.",
+                "supporters" => [],
+            ], 500);
+        }
+
+        $supporters = Redis::get("supporters");
+        
+        if(isset($supporters))
+        {
+            $supporters = json_decode($supporters);
+            return $supporters;
+        }
+    
+        return $this->getPatreonNames();
+    }
+
     function getPatreonNames()
     {
         Log::info("Getting Patreon Supporters");

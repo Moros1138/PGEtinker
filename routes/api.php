@@ -84,17 +84,5 @@ Route::get("/news", function(Request $request)
     return $changeLog;
 });
 
-Route::get("/supporters", function(Request $request)
-{
-    $supporters = Redis::get("supporters");
-    
-    if(isset($supporters))
-    {
-        $supporters = json_decode($supporters);
-        return $supporters;
-    }
-
-    return ["supporters" => []];
-});
-
+Route::get("/supporters", [PatreonController::class, "get_supporters" ]);
 Route::post("/update-supporters", [PatreonController::class, "update" ]);
