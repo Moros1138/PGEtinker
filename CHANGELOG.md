@@ -9,6 +9,7 @@ It is a summary of changes that would be pertinent to the end user of the PGEtin
 - Added support to deploy on subpaths
 - Added updated version of PGE, Extensions, and Utlities
 - Fixed patreon supporters not updated after PGEtinker upgrades
+- Added filters for compiler output
 
 ## 2024-05-14
 
