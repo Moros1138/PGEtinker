@@ -113,7 +113,10 @@ class PatreonController extends Controller
             }
         }
         
-        Redis::set("supporters", json_encode(["supporters" => $supporters], JSON_PRETTY_PRINT));
+        $supporters = ["supporters" => $supporters];
+        Redis::set("supporters", json_encode($supporters, JSON_PRETTY_PRINT));
+        
+        return $supporters;
     }
 }
 
