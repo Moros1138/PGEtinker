@@ -192,12 +192,6 @@ class CodeController extends Controller
         ];
     }
     
-    function filterOutput($text)
-    {
-        $text = str_replace("/opt/emsdk/upstream/emscripten/cache/sysroot", "/***", $text);
-        return $text;
-    }
-
 }
 
 

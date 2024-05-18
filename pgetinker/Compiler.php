@@ -93,14 +93,20 @@ class Compiler
         return $this;
     }
 
-    public function getOutput()
+    public function getOutput($raw = false)
     {
-        return implode("\n", $this->output);
+        if($raw)
+            return implode("\n", $this->output);
+        
+        return str_replace("/opt/emsdk/upstream/emscripten/cache/sysroot", "/***", implode("\n", $this->output));
     }
     
-    public function getErrorOutput()
+    public function getErrorOutput($raw = false)
     {
-        return implode("\n", $this->errors);
+        if($raw)
+            return implode("\n", $this->errors);
+        
+        return str_replace("/opt/emsdk/upstream/emscripten/cache/sysroot", "/***", implode("\n", $this->errors));
     }
 
     public function getHtml()
@@ -514,7 +520,7 @@ class Compiler
     
     private function cleanUp()
     {
-        $this->logger->info("OUTPUT:\n\n" . $this->getOutput() . "\n\nERROR:\n\n" . $this->getErrorOutput());
+        $this->logger->info("OUTPUT:\n\n" . $this->getOutput(true) . "\n\nERROR:\n\n" . $this->getErrorOutput(true));
         Log::info("Compile: finished disgracefully");
     }
 
