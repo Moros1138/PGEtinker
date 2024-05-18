@@ -3,11 +3,7 @@
 use App\Http\Controllers\CodeController;
 use App\Http\Controllers\PatreonController;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Storage;
 
 Route::post("/share",   [CodeController::class, "Share" ]);
 Route::post("/compile", [CodeController::class, "Compile" ]);
@@ -84,17 +80,5 @@ Route::get("/news", function(Request $request)
     return $changeLog;
 });
 
-Route::get("/supporters", function(Request $request)
-{
-    $supporters = Redis::get("supporters");
-    
-    if(isset($supporters))
-    {
-        $supporters = json_decode($supporters);
-        return $supporters;
-    }
-
-    return ["supporters" => []];
-});
-
+Route::get("/supporters", [PatreonController::class, "get_supporters" ]);
 Route::post("/update-supporters", [PatreonController::class, "update" ]);
