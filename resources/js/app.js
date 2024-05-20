@@ -543,6 +543,23 @@ class PGEtinker
                 this.consoleAutoScrollEnabled = true;
                 document.querySelector("#console-auto-scroll").classList.toggle("hidden", this.consoleAutoScrollEnabled);
             });
+
+            consoleContainer.addEventListener("wheel", (event) =>
+            {
+                let nearBottom = ((consoleContainer.scrollHeight - consoleContainer.clientHeight) <= (consoleContainer.scrollTop + 1));
+
+                if(nearBottom)
+                {
+                    // up
+                    if(event.deltaY < 0)
+                    {
+                        this.consoleAutoScrollEnabled = false;
+                        consoleContainer.scrollTop = consoleContainer.scrollHeight - 20;
+                        document.querySelector("#console-auto-scroll").classList.toggle("hidden", this.consoleAutoScrollEnabled);
+                    }
+                }
+            });
+
             this.UpdateStatusBar();
             this.UpdateTheme();
         });
