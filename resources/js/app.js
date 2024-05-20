@@ -536,6 +536,13 @@ class PGEtinker
                 document.querySelector("#player-panel .compiling-failed").classList.toggle("display-flex", false);
             }
             
+            let consoleContainer = document.querySelector("#console-panel");
+            
+            document.querySelector("#console-auto-scroll").addEventListener("click", () =>
+            {
+                this.consoleAutoScrollEnabled = true;
+                document.querySelector("#console-auto-scroll").classList.toggle("hidden", this.consoleAutoScrollEnabled);
+            });
             this.UpdateStatusBar();
             this.UpdateTheme();
         });
