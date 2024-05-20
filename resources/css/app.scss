@@ -231,6 +231,8 @@ nav .navbar-right-menu .menu-item {
     text-align: center;
 }
 
+.hidden { display: none; }
+
 @import "./console-panel.scss";
 @import "./editor-panel.scss";
 @import "./info-panel.scss";
