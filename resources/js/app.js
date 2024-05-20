@@ -391,8 +391,8 @@ class PGEtinker
         this.layout.registerComponent('consoleComponent', function(container)
         {
             container.getElement().html(`
-                <div id="console-panel">
-                </div>
+                <div id="console-panel"></div>
+                <button id="console-auto-scroll" class="hidden">AutoScroll</button>
             `);
         });
 

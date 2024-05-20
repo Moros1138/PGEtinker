@@ -8,6 +8,24 @@
     padding: 1rem 1rem 2rem 1rem;
 }
 
+#console-auto-scroll {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    border: none;
+    border-radius: 0.4rem;
+    padding: 0.6rem;
+    font-size: 1.2rem;
+
+    background-color: var(--link-color);
+    color: var(--text-color);
+    text-shadow: .2rem .2rem .5rem var(--text-shadow-color);
+}
+
+#console-auto-scroll:active {    
+    background-color: var(--link-hover-color);
+}
+
 #console-panel div {
     white-space: pre;
     font-family: "Droid Sans Mono", "monospace", monospace;
