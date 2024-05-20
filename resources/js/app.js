@@ -30,6 +30,7 @@ class PGEtinker
 
     consolePanelExist = false;
     informationPanelExist = false;
+    consoleAutoScrollEnabled = true;
 
     constructor()
     {
@@ -230,11 +231,13 @@ class PGEtinker
                 if(!this.informationPanelExist)
                     return;
 
-                let elem = document.createElement('div');
-                elem.innerHTML = event.data.data;
                 
-                document.querySelector('#console-panel').scrollTop = document.querySelector('#console-panel').scrollHeight;
-                document.querySelector('#console-panel').append(elem);
+                let consoleContainer = document.querySelector("#console-panel");
+                consoleContainer.innerHTML += `<div>${event.data.data}</div>`;
+                
+                // auto scroll
+                if(this.consoleAutoScrollEnabled)
+                    consoleContainer.scrollTop = consoleContainer.scrollHeight;
 
                 let consolePanel = this.layout.root.getItemsById('console')[0];
                 if(consolePanel.parent.isStack)
