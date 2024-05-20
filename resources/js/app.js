@@ -30,6 +30,7 @@ class PGEtinker
 
     consolePanelExist = false;
     informationPanelExist = false;
+    consoleAutoScrollEnabled = true;
 
     constructor()
     {
@@ -230,11 +231,13 @@ class PGEtinker
                 if(!this.informationPanelExist)
                     return;
 
-                let elem = document.createElement('div');
-                elem.innerHTML = event.data.data;
                 
-                document.querySelector('#console-panel').scrollTop = document.querySelector('#console-panel').scrollHeight;
-                document.querySelector('#console-panel').append(elem);
+                let consoleContainer = document.querySelector("#console-panel");
+                consoleContainer.innerHTML += `<div>${event.data.data}</div>`;
+                
+                // auto scroll
+                if(this.consoleAutoScrollEnabled)
+                    consoleContainer.scrollTop = consoleContainer.scrollHeight;
 
                 let consolePanel = this.layout.root.getItemsById('console')[0];
                 if(consolePanel.parent.isStack)
@@ -391,8 +394,8 @@ class PGEtinker
         this.layout.registerComponent('consoleComponent', function(container)
         {
             container.getElement().html(`
-                <div id="console-panel">
-                </div>
+                <div id="console-panel"></div>
+                <button id="console-auto-scroll" class="hidden">AutoScroll</button>
             `);
         });
 
@@ -533,6 +536,30 @@ class PGEtinker
                 document.querySelector("#player-panel .compiling-failed").classList.toggle("display-flex", false);
             }
             
+            let consoleContainer = document.querySelector("#console-panel");
+            
+            document.querySelector("#console-auto-scroll").addEventListener("click", () =>
+            {
+                this.consoleAutoScrollEnabled = true;
+                document.querySelector("#console-auto-scroll").classList.toggle("hidden", this.consoleAutoScrollEnabled);
+            });
+
+            consoleContainer.addEventListener("wheel", (event) =>
+            {
+                let nearBottom = ((consoleContainer.scrollHeight - consoleContainer.clientHeight) <= (consoleContainer.scrollTop + 1));
+
+                if(nearBottom)
+                {
+                    // up
+                    if(event.deltaY < 0)
+                    {
+                        this.consoleAutoScrollEnabled = false;
+                        consoleContainer.scrollTop = consoleContainer.scrollHeight - 20;
+                        document.querySelector("#console-auto-scroll").classList.toggle("hidden", this.consoleAutoScrollEnabled);
+                    }
+                }
+            });
+
             this.UpdateStatusBar();
             this.UpdateTheme();
         });
