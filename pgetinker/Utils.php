@@ -4,6 +4,7 @@ namespace PGEtinker\Utils;
 
 use Exception;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 function hashCode(string $code)
 {
@@ -78,6 +79,12 @@ function hashCode(string $code)
 
 function takeScreenshotOfHtml($html)
 {
+    if(empty(env("SCREENSHOTTER_URL")))
+    {
+        Log::error("Error: screenshotter url not set... aborted.");
+        return null;
+    }
+    
     try
     {
         $screenshot = Http::withHeader("Content-Type", "application/json")
