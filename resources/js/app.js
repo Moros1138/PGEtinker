@@ -122,7 +122,7 @@ class PGEtinker
                 code: this.monacoEditor.getValue()
             }).then((response) =>
             {
-                shareDialog(response.data.shareURL)
+                shareDialog(response.data.shareURL, response.data.shareThumbURL)
                     .finally(() =>
                     {
                         this.compileSuccessHandler(response.data);

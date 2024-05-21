@@ -1,4 +1,4 @@
-export default function shareDialog(shareUrl)
+export default function shareDialog(shareUrl, shareThumbUrl)
 {
     function shareClickAnywhereHandler(event)
     {
@@ -19,6 +19,7 @@ export default function shareDialog(shareUrl)
             <div class="window">
                 <div class="header">Share Your Masterpiece!</div>
                 <div class="content">
+                    <img src="${shareThumbUrl}">
                     <div class="input-group">
                         <label>Share URL:</label>
                         <input type="text" id="share-url" value="${shareUrl}" readonly>
