@@ -45,6 +45,13 @@ class CodeController extends Controller
         if($share != null)
         {
             $result["shareURL"] = env("APP_URL") . "/s/" . $share->slug;
+
+            if(empty($share->thumb_url))
+            {
+                $share->thumb_url = uploadFileToPit($share->slug . ".png", takeScreenshotOfHtml($result["html"]));
+                $share->save();
+            }
+
             $result["shareThumbURL"] = $share->thumb_url;
             unset($result["hash"]);
             return response($result, $result["statusCode"])->header("Content-Type", "application/json");
