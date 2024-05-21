@@ -2,6 +2,9 @@
 
 namespace PGEtinker\Utils;
 
+use Exception;
+use Illuminate\Support\Facades\Http;
+
 function hashCode(string $code)
 {
     /**
@@ -71,5 +74,23 @@ function hashCode(string $code)
     $cppcode = preg_replace('/\n\s*\n/', "\n", $cppcode);
 
     return hash("sha256", $cppcode);
+}
+
+function takeScreenshotOfHtml($html)
+{
+    try
+    {
+        $screenshot = Http::withHeader("Content-Type", "application/json")
+                            ->post(env("SCREENSHOTTER_URL"), [
+                                "html" => $html,
+                            ])
+                            ->body();
+    }
+    catch(Exception $e)
+    {
+        return null;
+    }
+    
+    return $screenshot;
 }
 
