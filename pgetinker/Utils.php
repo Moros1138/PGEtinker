@@ -103,6 +103,13 @@ function takeScreenshotOfHtml($html)
 
 function uploadFileToPit($filename, $content)
 {
+
+    if(empty(env("PIT_ACCESS_TOKEN")))
+    {
+        Log::error("Error: missing Pit Access Token... aborted.");
+        return null;
+    }
+
     try
     {
         $response = Http::withHeader("x-api-key", env("PIT_ACCESS_TOKEN"))
