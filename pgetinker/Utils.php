@@ -114,10 +114,11 @@ function uploadFileToPit($filename, $content)
     {
         $response = Http::withHeader("x-api-key", env("PIT_ACCESS_TOKEN"))
                         ->attach($filename, $content, $filename)
-                        ->post(env("PIT_URL") . "/api/upload")
-                        ->json();
+                        ->post(env("PIT_URL") . "/api/upload");
+        
+        Log::debug("upload status: " . $response->status(), ["response" => $response]);
 
-        $fileUrl = $response["url"];
+        $fileUrl = $response->json()["url"];
     }
     catch(Exception $e)
     {
