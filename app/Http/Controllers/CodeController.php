@@ -3,15 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Models\Code;
-
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 use PGEtinker\Compiler;
+
+
 use function PGEtinker\Utils\hashCode;
+
+use function PGEtinker\Utils\takeScreenshotOfHtml;
+use function PGEtinker\Utils\uploadFileToPit;
 
 class CodeController extends Controller
 {
@@ -39,8 +45,8 @@ class CodeController extends Controller
         if($share != null)
         {
             $result["shareURL"] = env("APP_URL") . "/s/" . $share->slug;
+            $result["shareThumbURL"] = $share->thumb_url;
             unset($result["hash"]);
-    
             return response($result, $result["statusCode"])->header("Content-Type", "application/json");
         }
         
@@ -65,12 +71,14 @@ class CodeController extends Controller
         $share->code = $code;
         $share->hash = $result["hash"];
         $share->slug = $slug;
-    
+        $share->thumb_url = uploadFileToPit($share->slug . ".png", takeScreenshotOfHtml($result["html"]));
+        
         if($share->save())
         {
             $result["shareURL"] = env("APP_URL") . "/s/" . $slug;
+            $result["shareThumbURL"] = $share->thumb_url;
             unset($result["hash"]);
-            
+
             return response($result, $result["statusCode"])->header("Content-Type", "application/json");
         }
     
@@ -168,7 +176,6 @@ class CodeController extends Controller
                 Redis::set("compiler_{$hashedCode}", $compiler->serialize());
             }
                 
-
             return [
                 "statusCode" => 200,
                 "hash" => $hashedCode,
@@ -192,6 +199,7 @@ class CodeController extends Controller
         ];
     }
     
+
 }
 
 
