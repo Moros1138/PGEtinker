@@ -94,3 +94,21 @@ function takeScreenshotOfHtml($html)
     return $screenshot;
 }
 
+function uploadFileToPit($filename, $content)
+{
+    try
+    {
+        $response = Http::withHeader("x-api-key", env("PIT_ACCESS_TOKEN"))
+                        ->attach($filename, $content, $filename)
+                        ->post(env("PIT_URL") . "/api/upload")
+                        ->json();
+
+        $fileUrl = $response["url"];
+    }
+    catch(Exception $e)
+    {
+        return null;
+    }
+
+    return $fileUrl;
+}
