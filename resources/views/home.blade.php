@@ -15,6 +15,7 @@
 @endif
 
     <meta property="og:title" content="PGEtinker" />
+    <meta property="og:description" content="Interactively build olcPixelGameEngine programs right from the browser." />
     <meta property="url" content="{{ env("APP_URL") }}" />
     <meta property="og:type" content="website" />
 @if (empty($share_thumb_url))
