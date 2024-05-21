@@ -8,7 +8,8 @@ Route::get('/', function (Request $request)
 {
     return view('home', [
         "code" => "",
-        
+        "share_thumb_url" => "",
+
         // TODO: hook sponsor data into some dynamically loading situation.
         "navBarSponsorLink" => "https://www.youtube.com/channel/UC-yuWVUplUJZvieEligKBkA",
         "navBarSponsorText" => "Watch Javidx9, the creator of the olcPixelGameEngine, on Youtube."
@@ -25,7 +26,8 @@ Route::get('/s/{slug}', function(Request $request, string $slug)
 
     return view("home", [
         "code" => $code->code,
-    
+        "share_thumb_url" => $code->thumb_url,
+        
         // TODO: hook sponsor data into some dynamically loading situation.
         "navBarSponsorLink" => "https://www.youtube.com/channel/UC-yuWVUplUJZvieEligKBkA",
         "navBarSponsorText" => "Watch Javidx9, the creator of the olcPixelGameEngine, on Youtube."

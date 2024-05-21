@@ -3,7 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:title" content="PGEtinker" />
+
+    <meta property="twitter:description" content="Interactively build olcPixelGameEngine programs right from the browser." />
+@if (empty($share_thumb_url))
+    <meta property="twitter:image:src" content="{{ env("APP_URL") }}/images/PGEtinker-screenshot.png" />
+@else
+    <meta property="twitter:image:src" content="{{ $share_thumb_url }}" />
+@endif
+
+    <meta property="og:title" content="PGEtinker" />
+    <meta property="url" content="{{ env("APP_URL") }}" />
+    <meta property="og:type" content="website" />
+@if (empty($share_thumb_url))
+    <meta property="og:image" content="{{ env("APP_URL") }}/images/PGEtinker-screenshot.png" />
+    <meta property="og:image:secure_url" content="{{ env("APP_URL") }}/images/PGEtinker-screenshot.png" />
+@else
+    <meta property="og:image" content="{{ $share_thumb_url }}" />
+    <meta property="og:image:secure_url" content="{{ $share_thumb_url }}" />
+@endif
+
     <title>PGEtinker</title>
+    
     <link rel="icon" type="text/svg" href="{{ env('APP_URL') }}/favicon.svg">
     <link rel="stylesheet" type="text/css" href="{{ Vite::asset('resources/css/goldenlayout-base.scss')}}">
     <link rel="stylesheet" type="text/css" href="{{ Vite::asset('resources/css/goldenlayout-dark-theme.scss')}}" id="goldenlayout-dark-theme">
