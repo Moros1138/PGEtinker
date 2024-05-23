@@ -48,6 +48,7 @@ class CodeController extends Controller
 
             if(empty($share->thumb_url))
             {
+                Log::info("no thumbnail, try to upload it");
                 $share->thumb_url = uploadFileToPit($share->slug . ".png", takeScreenshotOfHtml($result["html"]));
                 $share->save();
             }
@@ -78,6 +79,7 @@ class CodeController extends Controller
         $share->code = $code;
         $share->hash = $result["hash"];
         $share->slug = $slug;
+        
         $share->thumb_url = uploadFileToPit($share->slug . ".png", takeScreenshotOfHtml($result["html"]));
         
         if($share->save())
