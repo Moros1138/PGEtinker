@@ -95,6 +95,7 @@ function takeScreenshotOfHtml($html)
     }
     catch(Exception $e)
     {
+        Log::error("Failed to get screenshot. Is the screenshot service running?");
         return null;
     }
     
