@@ -6409,8 +6409,6 @@ namespace olc
 					// update the PGE window size
 					Module._olc_PGE_UpdateWindowSize(viewWidth, viewHeight);
 					
-					// force focus on our PGE canvas
-					Module.canvas.focus();
 				}, 200);
 			};
 
