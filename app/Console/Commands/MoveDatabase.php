@@ -27,6 +27,9 @@ class MoveDatabase extends Command
      */
     public function handle()
     {
+        echo "might wanna revamp this first\n\n";
+        return;
+        
         //
         $codes = DB::connection('development')->select("SELECT * FROM codes;");
         for($i = 0; $i < count($codes); $i++)

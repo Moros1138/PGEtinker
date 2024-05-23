@@ -2,6 +2,10 @@
 
 namespace PGEtinker\Utils;
 
+use Exception;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+
 function hashCode(string $code)
 {
     /**
@@ -73,3 +77,54 @@ function hashCode(string $code)
     return hash("sha256", $cppcode);
 }
 
+function takeScreenshotOfHtml($html)
+{
+    if(empty(env("SCREENSHOTTER_URL")))
+    {
+        Log::error("Error: screenshotter url not set... aborted.");
+        return null;
+    }
+    
+    try
+    {
+        $screenshot = Http::withHeader("Content-Type", "application/json")
+                            ->post(env("SCREENSHOTTER_URL"), [
+                                "html" => $html,
+                            ])
+                            ->body();
+    }
+    catch(Exception $e)
+    {
+        Log::error("Failed to get screenshot. Is the screenshot service running?");
+        return null;
+    }
+    
+    return $screenshot;
+}
+
+function uploadFileToPit($filename, $content)
+{
+
+    if(empty(env("PIT_ACCESS_TOKEN")))
+    {
+        Log::error("Error: missing Pit Access Token... aborted.");
+        return null;
+    }
+
+    try
+    {
+        $response = Http::withHeader("x-api-key", env("PIT_ACCESS_TOKEN"))
+                        ->attach($filename, $content, $filename)
+                        ->post(env("PIT_URL") . "/api/upload");
+        
+        Log::debug("upload status: " . $response->status(), ["response" => $response]);
+
+        $fileUrl = $response->json()["url"];
+    }
+    catch(Exception $e)
+    {
+        return null;
+    }
+
+    return $fileUrl;
+}

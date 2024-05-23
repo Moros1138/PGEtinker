@@ -49,7 +49,12 @@
     padding: 0.4rem 1rem;
     border-radius: 0.2rem;
 }
-
+.dialog .window > .content img {
+    display: block;
+    width: auto;
+    height: 30rem;
+    margin: 2rem auto;
+}
 .ok {
     background: #0D6EFD;
     color: var(--dialog-text-color);
