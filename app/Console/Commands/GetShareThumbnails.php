@@ -18,7 +18,7 @@ class GetShareThumbnails extends Command
      *
      * @var string
      */
-    protected $signature = 'app:get-share-thumbnails';
+    protected $signature = 'app:share-thumbnails';
 
     /**
      * The console command description.
@@ -32,6 +32,22 @@ class GetShareThumbnails extends Command
      */
     public function handle()
     {
+        $codes = Code::where("thumb_url", "")->get();
         
+        if(count($codes) == 0)
+        {
+            echo "Finished. Nothing to do.\n";
+            return;
+        }
+        
+        $controller = new CodeController();
+        
+        foreach($codes as $code)
+        {
+            $result = $controller->compileCode($code->code);
+            $code->thumb_url = uploadFileToPit($code->slug . ".png", takeScreenshotOfHtml($result["html"]));
+            $code->save();
+        }
+
     }        
 }
