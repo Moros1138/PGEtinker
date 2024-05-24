@@ -76,7 +76,25 @@ class CompilerTest extends TestCase
 
         Storage::disk("local")->deleteDirectory(__FUNCTION__);
     }
-    
+
+    public function test_compiler_builds_example_with_geometry(): void
+    {
+        if(Storage::disk("local")->exists(__FUNCTION__))
+            Storage::disk("local")->deleteDirectory(__FUNCTION__);
+        
+        Storage::disk("local")->makeDirectory(__FUNCTION__);
+        $workingDirectory = Storage::disk("local")->path(__FUNCTION__);
+        $testSourceDirectory = __DIR__ . "/compiler-test-source";
+        
+        $compiler = new Compiler();
+        $compiler->setWorkingDirectory($workingDirectory);
+        $compiler->setCode(file_get_contents("{$testSourceDirectory}/example-with-geometry.cpp"));
+
+        $this->assertTrue($compiler->build());
+
+        Storage::disk("local")->deleteDirectory(__FUNCTION__);
+    }
+
     public function test_compiler_absolute_and_relative_include_trap(): void
     {
         if(Storage::disk("local")->exists(__FUNCTION__))
