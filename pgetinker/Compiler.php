@@ -187,6 +187,12 @@ class Compiler
                     // blank the line
                     $this->code[$index] = "";
                     
+                    if($macro == "OLC_PGE_APPLICATION" && $this->foundGeometryHeader)
+                    {
+                        $objectFileName = "olcPixelGameEngine_withGeometry.o";
+                        $this->logger->info("Found the need for geometry utility support");
+                    }
+                        
                     // indicate that we use this library
                     $this->linkerInputFiles[] = "./lib/{$objectFileName}";
                     
