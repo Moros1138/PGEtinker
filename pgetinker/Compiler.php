@@ -25,6 +25,8 @@ class Compiler
 
     private $errors = [];
     
+    private $foundGeometryHeader = false;
+
     private $html = "";
 
     private $linkerCommand = [];
@@ -141,6 +143,23 @@ class Compiler
         return false;
     }
     
+    private function processCodeDetectGeometryUtility($index)
+    {
+        preg_match(
+            '/^\s*#\s*i(nclude|mport)(_next)?\s+["<](.*)olcUTIL_Geometry2D.h[">]/',
+            $this->code[$index],
+            $match,
+            PREG_OFFSET_CAPTURE,
+            0
+        );
+
+        if(count($match) > 0)
+        {
+            $this->foundGeometryHeader = true;
+            return true;
+        }
+    }
+
     private function processCodeDetectImplementationMacros($index)
     {
         $libraryMap = [
@@ -168,6 +187,12 @@ class Compiler
                     // blank the line
                     $this->code[$index] = "";
                     
+                    if($macro == "OLC_PGE_APPLICATION" && $this->foundGeometryHeader)
+                    {
+                        $objectFileName = "olcPixelGameEngine_withGeometry.o";
+                        $this->logger->info("Found the need for geometry utility support");
+                    }
+                        
                     // indicate that we use this library
                     $this->linkerInputFiles[] = "./lib/{$objectFileName}";
                     
@@ -331,7 +356,10 @@ class Compiler
                 $this->errors[] = "/pgetinker.cpp:" . $i . ":1: error: took too long to process your code, stopped here";
                 return false;
             }
-                
+            
+            if($this->processCodeDetectGeometryUtility($i))
+                continue;
+            
             if($this->processCodeAbsoluteOrRelativePaths($i))
                 continue;
 
@@ -520,7 +548,10 @@ class Compiler
     
     private function cleanUp()
     {
-        $this->logger->info("OUTPUT:\n\n" . $this->getOutput(true) . "\n\nERROR:\n\n" . $this->getErrorOutput(true));
+        $this->logger->info("OUTPUT:\n" . $this->getOutput());
+        $this->logger->info("ERROR:\n" . $this->getErrorOutput());
+        $this->logger->info("LIBRARIES:\n" . implode("\n", $this->linkerInputFiles));
+        
         Log::info("Compile: finished disgracefully");
     }
 
