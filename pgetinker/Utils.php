@@ -96,14 +96,19 @@ function takeScreenshotOfHtml($html)
     catch(Exception $e)
     {
         Log::error("Failed to get screenshot. Is the screenshot service running?");
-        return null;
+        return file_get_contents(base_path() . "/resources/images/screenshot-fail.png");
     }
     
     return $screenshot;
 }
 
-function uploadFileToPit($filename, $content)
+function uploadFileToPit($filename, $content = null)
 {
+    if($content == null)
+    {
+        Log::error("Error: missing content.");
+        return null;
+    }
 
     if(empty(env("PIT_ACCESS_TOKEN")))
     {
