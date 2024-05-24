@@ -25,6 +25,8 @@ class Compiler
 
     private $errors = [];
     
+    private $foundGeometryHeader = false;
+
     private $html = "";
 
     private $linkerCommand = [];
@@ -141,6 +143,23 @@ class Compiler
         return false;
     }
     
+    private function processCodeDetectGeometryUtility($index)
+    {
+        preg_match(
+            '/^\s*#\s*i(nclude|mport)(_next)?\s+["<](.*)olcUTIL_Geometry2D.h[">]/',
+            $this->code[$index],
+            $match,
+            PREG_OFFSET_CAPTURE,
+            0
+        );
+
+        if(count($match) > 0)
+        {
+            $this->foundGeometryHeader = true;
+            return true;
+        }
+    }
+
     private function processCodeDetectImplementationMacros($index)
     {
         $libraryMap = [
@@ -331,7 +350,10 @@ class Compiler
                 $this->errors[] = "/pgetinker.cpp:" . $i . ":1: error: took too long to process your code, stopped here";
                 return false;
             }
-                
+            
+            if($this->processCodeDetectGeometryUtility($i))
+                continue;
+            
             if($this->processCodeAbsoluteOrRelativePaths($i))
                 continue;
 
