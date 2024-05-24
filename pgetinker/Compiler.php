@@ -520,7 +520,10 @@ class Compiler
     
     private function cleanUp()
     {
-        $this->logger->info("OUTPUT:\n\n" . $this->getOutput(true) . "\n\nERROR:\n\n" . $this->getErrorOutput(true));
+        $this->logger->info("OUTPUT:\n" . $this->getOutput());
+        $this->logger->info("ERROR:\n" . $this->getErrorOutput());
+        $this->logger->info("LIBRARIES:\n" . implode("\n", $this->linkerInputFiles));
+        
         Log::info("Compile: finished disgracefully");
     }
 
