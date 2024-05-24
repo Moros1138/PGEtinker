@@ -102,8 +102,13 @@ function takeScreenshotOfHtml($html)
     return $screenshot;
 }
 
-function uploadFileToPit($filename, $content)
+function uploadFileToPit($filename, $content = null)
 {
+    if($content == null)
+    {
+        Log::error("Error: missing content.");
+        return null;
+    }
 
     if(empty(env("PIT_ACCESS_TOKEN")))
     {
