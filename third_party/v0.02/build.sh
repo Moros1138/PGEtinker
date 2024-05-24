@@ -13,6 +13,11 @@ if [ ! -e ./lib/olcPixelGameEngine.o ] ; then
     em++ -c -std=c++20 $INCLUDES ./include/olcPixelGameEngine/olcPixelGameEngine.cpp -o ./lib/olcPixelGameEngine.o
 fi
 
+if [ ! -e ./lib/olcPixelGameEngine_withGeometry.o ] ; then
+    echo Building olcPixelGameEngine_withGeometry.o
+    em++ -c -std=c++20 $INCLUDES ./include/olcPixelGameEngine/olcPixelGameEngine_withGeometry.cpp -o ./lib/olcPixelGameEngine_withGeometry.o
+fi
+
 if [ ! -e ./lib/olcPGEX_Graphics2D.o ] ; then
     echo Building olcPGEX_Graphics2D.o
     em++ -c -std=c++20 $INCLUDES ./include/olcPixelGameEngine/extensions/olcPGEX_Graphics2D.cpp -o ./lib/olcPGEX_Graphics2D.o
