@@ -28,7 +28,7 @@ public:
         //
         // built with any other native toolchain, the macro does nothing and all file
         // access is done just as it would in any other normal scenario.
-        FILE_RESOLVE("https://i.imgur.com/KdWjkwC.png", "assets/gfx/broken.png");
+        FILE_RESOLVE("https://pit.pgetinker.com/MwpptUlwPhnc.png", "assets/gfx/broken.png");
         
         renBroken.Load("assets/gfx/broken.png");
 
