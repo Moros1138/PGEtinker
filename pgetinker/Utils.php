@@ -82,7 +82,7 @@ function takeScreenshotOfHtml($html)
     if(empty(env("SCREENSHOTTER_URL")))
     {
         Log::error("Error: screenshotter url not set... aborted.");
-        return null;
+        return file_get_contents(base_path() . "/resources/images/screenshot-fail.png");
     }
     
     try
