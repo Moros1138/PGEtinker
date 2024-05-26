@@ -87,19 +87,24 @@ function takeScreenshotOfHtml($html)
     
     try
     {
-        $screenshot = Http::withHeader("Content-Type", "application/json")
+        $response = Http::withHeader("Content-Type", "application/json")
                             ->post(env("SCREENSHOTTER_URL"), [
                                 "html" => $html,
-                            ])
-                            ->body();
+                            ]);
+                            
+        if($response->status() != 200)
+        {
+            Log::debug("Failed to get screenshot. Using failure screenshot.");
+            return file_get_contents(base_path() . "/resources/images/screenshot-fail.png");
+        }
+        
+        return $response->body();
     }
     catch(Exception $e)
     {
         Log::error("Failed to get screenshot. Is the screenshot service running?");
         return file_get_contents(base_path() . "/resources/images/screenshot-fail.png");
     }
-    
-    return $screenshot;
 }
 
 function uploadFileToPit($filename, $content = null)
