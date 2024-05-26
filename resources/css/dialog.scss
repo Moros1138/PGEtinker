@@ -135,6 +135,11 @@
     color: rgb(252, 252, 170);
 }
 
+.dialog.news .changed:before {
+    content: "✔ Changed: ";
+    color: rgb(170, 252, 177);
+}
+
 .dialog.supporters h3 {
     text-align: center;
     font-size: 2rem;
