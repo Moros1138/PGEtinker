@@ -7,6 +7,7 @@ It is a summary of changes that would be pertinent to the end user of the PGEtin
 ## 2024-05-25
 
 - Fixed screenshot failure handling
+- Changed example code to use image hosted in the pit, rather than imgur
 
 ## 2024-05-23
 
