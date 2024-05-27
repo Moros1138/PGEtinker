@@ -52,12 +52,21 @@ class BrowserTest extends DuskTestCase
             $browser->visit("/");
             $browser->pause(1000);
             $browser->assertSee("News and Updates");
+        });
+    }
+    
+    public function testDismissesNewsAndUpdates(): void
+    {
+        $this->browse(function(Browser $browser)
+        {
+            $browser->visit("/");
             
             $browser->pause(1000);
 
             $browser->click(".news");
 
             $browser->pause(1000);
+            
             $browser->assertNotPresent(".news");
         });
     }
