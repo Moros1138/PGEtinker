@@ -5,7 +5,7 @@ namespace Tests\Browser;
 use Laravel\Dusk\Browser;
 use Tests\DuskTestCase;
 
-class QuickTest extends DuskTestCase
+class BrowserTest extends DuskTestCase
 {
     
     public function testFirstLoadShowsTermsOfUseDisclosure(): void
@@ -52,12 +52,21 @@ class QuickTest extends DuskTestCase
             $browser->visit("/");
             $browser->pause(1000);
             $browser->assertSee("News and Updates");
+        });
+    }
+    
+    public function testDismissesNewsAndUpdates(): void
+    {
+        $this->browse(function(Browser $browser)
+        {
+            $browser->visit("/");
             
             $browser->pause(1000);
 
             $browser->click(".news");
 
             $browser->pause(1000);
+            
             $browser->assertNotPresent(".news");
         });
     }
@@ -94,7 +103,7 @@ class QuickTest extends DuskTestCase
         {
             $browser->visit("/");
 
-            $browser->click("#compile");
+            $browser->click("#start-stop");
             $browser->waitFor("#player-panel .iframe-container iframe", 10);
             $browser->assertPresent("#player-panel .iframe-container iframe");
         });

@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file. Each batch 
 
 It is a summary of changes that would be pertinent to the end user of the PGEtinker website. For a comprehensive history of changes made to the project, please refer to the repository's commit history.
 
+## 2024-05-27
+
+- Changed complete revamp of the frontend code, much more organized
+- Fixed UI annoyances
+- Added Control+S to the Build and Run command
+- Added Default editor font size
+- Added Control+Mouse Wheel zooming in the editor
+- Added Control+0 to reset editor zoom
+- Changed Build &amp; Run to Run, that turns into a stop button when the player is running
+
 ## 2024-05-25
 
 - Fixed screenshot failure handling

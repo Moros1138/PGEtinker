@@ -1,6 +1,6 @@
 import './lib/bootstrap';
 import './lib/goldenLayout';
-import './lib/monaco';
+// import './lib/monaco';
 import './lib/lucide';
 import version from "./lib/version";
 import agreeDialog from './lib/agreeDialog';
@@ -9,42 +9,38 @@ import newsDialog from './lib/newsDialog';
 import defaultLayout from './lib/defaultLayout';
 import supportersDialog from './lib/supportersDialog';
 
+import ConsolePanel from './components/ConsolePanel';
+import EditorPanel from './components/EditorPanel';
+import InfoPanel from './components/InfoPanel';
+import PlayerPanel from './components/PlayerPanel';
+
 class PGEtinker
 {
-    sharedFlag = false;
-    lastPlayerHtml = "";
+    consolePanel;
+    editorPanel;
+    infoPanel;
+    playerPanel;
 
     layoutInitialized = false;
     compiling = false;
 
     layoutConfig = null;
     
-    maxFileSize = 50000;
-    
     theme = "dark";
-    consoleShown = false;
-
-    monacoEditor = null;
-    monacoModel  = null;
-    monacoModelIntellisense = null;
-
-    consolePanelExist = false;
-    informationPanelExist = false;
-    consoleAutoScrollEnabled = true;
 
     constructor()
     {
-        this.sharedFlag = (window.location.pathname.indexOf("/s/") === 0);
-        
+        this.consolePanel = new ConsolePanel(this);
+        this.editorPanel  = new EditorPanel(this);
+        this.infoPanel    = new InfoPanel(this);
+        this.playerPanel  = new PlayerPanel(this);
+
         this.layoutConfig = window.localStorage.getItem("pgetinkerLayout");
         this.layoutConfig = (this.layoutConfig !== null) ? JSON.parse(this.layoutConfig) : defaultLayout;
         
         this.theme = window.localStorage.getItem("pgetinkerTheme");
         if(this.theme !== "dark" && this.theme !== "light")
             this.theme = "dark";
-
-        this.consoleShown = window.localStorage.getItem("pgetinkerConsoleShown");
-        this.consoleShown = (this.consoleShown === "true") ? true : false;
 
         // Default Code Button
         document.querySelector("#default-code").addEventListener("click", (event) =>
@@ -53,8 +49,8 @@ class PGEtinker
 
             axios.get("/api/default-code").then((response) =>
             {
-                this.monacoModel.setValue(response.data.code);
-                this.monacoEditor.revealPositionInCenter({
+                this.editorPanel.setValue(response.data.code);
+                this.editorPanel.reveal({
                     column: 1,
                     lineNumber: 1,
                 });
@@ -90,7 +86,7 @@ class PGEtinker
         {
             event.preventDefault();
             
-            if(!this.lastPlayerHtml.includes("Emscripten-Generated Code"))
+            if(!this.playerPanel.getHtml().includes("Emscripten-Generated Code"))
             {
                 alert("You have to build the code before you can download!")
                 return;
@@ -99,7 +95,7 @@ class PGEtinker
             const a = document.createElement('a');
             
             // create the data url
-            a.href = `data:text/html;base64,${btoa(this.lastPlayerHtml)}`;
+            a.href = `data:text/html;base64,${btoa(this.playerPanel.getHtml())}`;
             a.download = "pgetinker.html";
 
             document.body.appendChild(a);
@@ -119,7 +115,7 @@ class PGEtinker
                 return;
 
             axios.post("/api/share", {
-                code: this.monacoEditor.getValue()
+                code: this.editorPanel.getValue()
             }).then((response) =>
             {
                 shareDialog(response.data.shareURL, response.data.shareThumbURL)
@@ -152,43 +148,35 @@ class PGEtinker
         });
 
         // Compile Button
-        document.querySelector("#compile").addEventListener("click", (event) => 
+        document.querySelector("#start-stop").addEventListener("click", (event) => 
         {
             event.preventDefault();
+            let startStopElem = document.querySelector("#start-stop");
+            let playIconElem = startStopElem.querySelector(".lucide-circle-play");
+            let stopIconElem = startStopElem.querySelector(".lucide-circle-stop");
+            let spanElem     = startStopElem.querySelector("span");
 
-            if(this.compiling)
-                return;
-
-            if(!this.preCompile())
-                return;
-            
-            axios.post("/api/compile", {
-                code: this.monacoEditor.getValue()
-            }).then((response) =>
+            if(spanElem.innerHTML == "Run")
             {
-                this.compileSuccessHandler(response.data);
-            }).catch((error) =>
-            {
-                
-                if(error.response)
+                playIconElem.classList.toggle("hidden", true);
+                stopIconElem.classList.toggle("hidden", false);
+                spanElem.innerHTML = "Stop";
+                this.compile().catch(() =>
                 {
-                    if(error.response.status)
-                    {
-                        if(error.response.status == 503)
-                        {
-                            this.compileFailHandler("pgetinker.cpp:1:1: error: PGEtinker service has gone offline. try again later.\n");
-                            return;
-                        }
-                    }
-                    
-                    if(error.response.data.stderr)
-                    {
-                        this.compileFailHandler(error.response.data.stderr);
-                        return;
-                    }
-                }
-                this.compileFailHandler("pgetinker.cpp:1:1: error: compilation failed in a way that's not being handled. please make a bug report.\n");
-            });
+                    playIconElem.classList.toggle("hidden", false);
+                    stopIconElem.classList.toggle("hidden", true);
+                    spanElem.innerHTML = "Run";
+                });
+                return;
+            }
+
+            if(spanElem.innerHTML == "Stop")
+            {
+                this.playerPanel.stop();
+                playIconElem.classList.toggle("hidden", false);
+                stopIconElem.classList.toggle("hidden", true);
+                spanElem.innerHTML = "Run";
+            }
         });
 
         document.querySelector("#supporters").addEventListener("click", (event) =>
@@ -201,51 +189,6 @@ class PGEtinker
         {
             event.preventDefault();
             newsDialog();
-        });
-
-        window.addEventListener("message", (event) =>
-        {
-            if(typeof event.data !== "object")
-                return;
-                
-            if(typeof event.data.message !== "string")
-                return;
-        
-            if(event.data.message === "player-ready")
-            {
-                // update player theme
-                document.querySelector("#player-panel iframe").contentWindow.postMessage({
-                    message: "set-theme",
-                    theme: this.theme
-                }, "*");
-        
-                // update player theme
-                document.querySelector("#player-panel iframe").contentWindow.postMessage({
-                    message: "show-console",
-                    value: this.consoleShown
-                }, "*");
-            }
-            
-            if(event.data.message === "console-output")
-            {
-                if(!this.informationPanelExist)
-                    return;
-
-                
-                let consoleContainer = document.querySelector("#console-panel");
-                consoleContainer.innerHTML += `<div>${event.data.data}</div>`;
-                
-                // auto scroll
-                if(this.consoleAutoScrollEnabled)
-                    consoleContainer.scrollTop = consoleContainer.scrollHeight;
-
-                let consolePanel = this.layout.root.getItemsById('console')[0];
-                if(consolePanel.parent.isStack)
-                {
-                    consolePanel.parent.setActiveContentItem(consolePanel);
-                }
-            }
-
         });
 
         let agreedToTerms = window.localStorage.getItem("pgetinkerAgreedToTerms");
@@ -276,174 +219,92 @@ class PGEtinker
 
     preCompile()
     {
-        if(this.monacoEditor.getValue().length > this.maxFileSize)
+        if(this.editorPanel.exceedsMaxSize())
         {
             alert("Maximum size exceeded!");
             return false;
         }
         
-        if(this.informationPanelExist)
-        {
-            let infoPanel = this.layout.root.getItemsById('info')[0];
-            if(infoPanel.parent.isStack)
-            {
-                infoPanel.parent.setActiveContentItem(infoPanel);
-            }
-            
-            document.querySelector("#info-panel").innerHTML = "";
-            document.querySelector("#console-panel").innerHTML = "";
-        }
+        this.infoPanel.focus();
+        this.infoPanel.clear();
+        this.consolePanel.clear();
 
+        this.editorPanel.clearMarkers();
+        this.playerPanel.setCompiling();
+        
         this.compiling = true;
-    
-        this.lastPlayerHtml = "";
-        let playerFrame = document.querySelector("#player-panel iframe");
-        
-        if(playerFrame != null)
-            playerFrame.remove();
-        
-        document.querySelector("#player-panel .compiling").classList.toggle("display-flex", true);
-        document.querySelector("#player-panel .compiling-failed").classList.toggle("display-flex", false);
-
-        monaco.editor.removeAllMarkers("owner");
-        this.monacoEditor.trigger("", "closeMarkersNavigation");
-    
         return true;
+    }
+    
+    compile()
+    {
+        if(this.compiling)
+            return new Promise((_, reject) => reject());
+
+        if(!this.preCompile())
+            return new Promise((_, reject) => reject());
+        
+        return new Promise((resolve, reject) =>
+        {
+            axios.post("/api/compile", {
+                code: this.editorPanel.getValue()
+            }).then((response) =>
+            {
+                this.compileSuccessHandler(response.data);
+                resolve();
+            }).catch((error) =>
+            {
+                
+                if(error.response)
+                {
+                    if(error.response.status)
+                    {
+                        if(error.response.status == 503)
+                        {
+                            this.compileFailHandler("pgetinker.cpp:1:1: error: PGEtinker service has gone offline. try again later.\n");
+                            reject();
+                            return;
+                        }
+                    }
+                    
+                    if(error.response.data.stderr)
+                    {
+                        this.compileFailHandler(error.response.data.stderr);
+                        reject();
+                        return;
+                    }
+                }
+                this.compileFailHandler("pgetinker.cpp:1:1: error: compilation failed in a way that's not being handled. please make a bug report.\n");
+                reject();
+            });
+        });
+        
     }
     
     compileSuccessHandler(data)
     {
-        this.lastPlayerHtml = data.html;
-        
-        let playerFrame = document.createElement('iframe');
-        playerFrame.setAttribute("srcdoc", this.lastPlayerHtml);
-        playerFrame.setAttribute("sandbox", "allow-scripts");
-        document.querySelector("#player-panel .iframe-container").append(playerFrame);
-        
-        playerFrame.classList.toggle("display-block", true);
-        document.querySelector("#player-panel .compiling").classList.toggle("display-flex", false);
-        document.querySelector("#player-panel .compiling-failed").classList.toggle("display-flex", false);
-        
+        this.playerPanel.setHtml(data.html);
         this.compiling = false;
     }
     
     compileFailHandler(stderr)
     {
-        let infoPanel = document.querySelector("#info-panel");
-        infoPanel.innerHTML = `<div>${stderr}</div>`;
-        infoPanel.scrollTop = infoPanel.scrollHeight;
+        this.infoPanel.setContent(stderr);
+        this.editorPanel.extractAndSetMarkers(stderr);
 
-        const compilerRegex = /pgetinker.cpp:(\d+):(\d+): (fatal error|error|warning|note): (.*)/gm;
-        const linkerRegex   = /wasm-ld: error: pgetinker.o: (.*): (.*)/gm;
-        
-        let markers = [];
-        
-        let matches;
-        
-        while((matches = compilerRegex.exec(stderr)) !== null)
-        {
-            let severity = monaco.MarkerSeverity.Error;
-            
-            if(matches[3] == "warning")
-                severity = monaco.MarkerSeverity.Warning;
-            
-            if(matches[3] == "note")
-                severity = monaco.MarkerSeverity.Info;
-
-            markers.push({
-                message: matches[4],
-                severity: severity,
-                startLineNumber: parseInt(matches[1]),
-                startColumn: parseInt(matches[2]),
-                endLineNumber: parseInt(matches[1]),
-                endColumn: this.monacoModel.getLineLength(parseInt(matches[1])),
-                source: "Emscripten Compiler",
-            });
-        }
-        
-        while((matches = linkerRegex.exec(stderr)) !== null)
-        {
-            markers.push({
-                message: `${matches[1]} ${matches[2]}`,
-                severity: monaco.MarkerSeverity.Error,
-                startLineNumber: 1,
-                startColumn: 1,
-                endLineNumber: 1,
-                endColumn: this.monacoModel.getLineLength(1),
-                source: "Emscripten Linker",
-            });
-        }
-    
-        // show errors in the editor, if they exist
-        if(markers.length > 0)
-        {
-            monaco.editor.setModelMarkers(this.monacoModel, "owner", markers);
-            this.monacoEditor.setPosition({lineNumber: markers[0].startLineNumber, column: markers[0].startColumn });
-            setTimeout(() => { this.monacoEditor.trigger("", "editor.action.marker.next"); }, 50);
-        }
-    
-        document.querySelector("#player-panel .compiling").classList.toggle("display-flex", false);
-        document.querySelector("#player-panel .compiling-failed").classList.toggle("display-flex", true);
+        this.playerPanel.setCompilingFailed();
         this.compiling = false;
     }
     
     SetupLayout()
     {
         this.layout = new GoldenLayout(this.layoutConfig, document.querySelector("#content"))
-    
-        this.layout.registerComponent('consoleComponent', function(container)
-        {
-            container.getElement().html(`
-                <div id="console-panel"></div>
-                <button id="console-auto-scroll" class="hidden">AutoScroll</button>
-            `);
-        });
-
-        this.layout.registerComponent('infoComponent', function(container)
-        {
-            container.getElement().html(`
-                <div id="info-panel">
-                </div>
-            `);
-        });
-
-        this.layout.registerComponent('playerComponent', function(container)
-        {   
-            container.getElement().html(`
-                <div id="player-panel">
-                    <div class="iframe-container">
-                    </div>
-                    <div class="compiling">
-                        <div class="lds-ring">
-                            <div></div>
-                            <div></div>
-                            <div></div>
-                            <div></div>
-                        </div>
-                        <p>
-                            Compiling
-                        </p>
-                    </div>
-                    <div class="compiling-failed">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-frown"><circle cx="12" cy="12" r="10"/><path d="M16 16s-1.5-2-4-2-4 2-4 2"/><line x1="9" x2="9.01" y1="9" y2="9"/><line x1="15" x2="15.01" y1="9" y2="9"/></svg>
-                        <p>
-                            Compile Failed.
-                        </p>
-                    </div>
-                </div>
-            `);
-        });        
         
-        this.layout.registerComponent('editorComponent', function(container)
-        {
-            container.getElement().html(`
-                <div id="editor-panel">
-                    <div class="code-editor"></div>
-                    <div class="status">Loading</div>
-                </div>
-            `);
-        });
-        
+        this.consolePanel.register();
+        this.editorPanel.register();
+        this.infoPanel.register();
+        this.playerPanel.register();
+
         this.layout.on("stateChanged", () =>
         {
             if(this.layoutInitialized)
@@ -452,115 +313,14 @@ class PGEtinker
         
         this.layout.on("initialised", () =>
         {
-            this.informationPanelExist = (this.layout.root.getItemsById('info').length > 0);
-            this.consolePanelExist     = (this.layout.root.getItemsById('console').length > 0);
-            
             this.layoutInitialized = true;
             window.addEventListener("resize", (event) => this.layout.updateSize());
             
-            if(this.monacoModel === null)
-            {
-                this.monacoModel = monaco.editor.createModel("", "cpp", monaco.Uri.parse("inmemory://pgetinker.cpp"));
-    
-                let codeBox = document.querySelector("#code");
-                if(codeBox.value !== "")
-                {
-                    this.monacoModel.setValue(document.querySelector("#code").value);
-                    window.localStorage.setItem("pgetinkerCode", JSON.stringify(document.querySelector("#code").value));
-                }
-                else
-                {
-                    let code = window.localStorage.getItem("pgetinkerCode");
-                    code = (code !== null) ? JSON.parse(code) : "";
-        
-                    if(code === "")
-                    {
-                        axios.get("/api/default-code").then((response) =>
-                        {
-                            this.monacoModel.setValue(response.data.code);
-                        }).catch((reason) => console.log(reason));
-                    }
-                    else
-                    {
-                        this.monacoModel.setValue(code);
-                    }
-                }
-            }
-    
-            if(this.monacoModelIntellisense === null)
-            {
-                this.monacoModelIntellisense = monaco.editor.createModel("", "cpp", monaco.Uri.parse("inmemory://pgetinker.h"));
-                axios.get("/api/model/v0.02").then((response) =>
-                {
-                    this.monacoModelIntellisense.setValue(response.data);
-                });
-            }
+            this.consolePanel.onInit();
+            this.editorPanel.onInit();
+            this.infoPanel.onInit();
+            this.playerPanel.onInit();
             
-            this.monacoEditor = monaco.editor.create(document.querySelector('#editor-panel .code-editor'), {
-                automaticLayout: true,
-                model: this.monacoModel,
-                theme: `vs-${this.theme}`,
-            });
-    
-            this.monacoEditor.addAction({
-                id: 'build-and-run',
-                label: 'Build and Run',
-                keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter],
-                run: () =>
-                {
-                    document.querySelector("#compile").dispatchEvent(new Event("click"));
-                }
-            });
-    
-            this.monacoEditor.onDidChangeCursorPosition(() => this.UpdateStatusBar());
-            
-            this.monacoEditor.onDidChangeModelContent(() =>
-            {
-                window.localStorage.setItem("pgetinkerCode", JSON.stringify(this.monacoEditor.getValue()));
-                
-                if(this.sharedFlag)
-                {
-                    window.history.replaceState({}, "", "/");
-                }
-            });
-            
-            if(this.lastPlayerHtml != "")
-            {
-                let playerFrame = document.createElement('iframe');
-                playerFrame.setAttribute("srcdoc", this.lastPlayerHtml);
-                playerFrame.setAttribute("sandbox", "allow-scripts");
-                document.querySelector("#player-panel .iframe-container").append(playerFrame);
-                
-                playerFrame.classList.toggle("display-block", true);
-                document.querySelector("#player-panel .compiling").classList.toggle("display-flex", false);
-                document.querySelector("#player-panel .compiling-failed").classList.toggle("display-flex", false);
-            }
-            
-            let consoleContainer = document.querySelector("#console-panel");
-            
-            document.querySelector("#console-auto-scroll").addEventListener("click", () =>
-            {
-                this.consoleAutoScrollEnabled = true;
-                document.querySelector("#console-auto-scroll").classList.toggle("hidden", this.consoleAutoScrollEnabled);
-            });
-
-            consoleContainer.addEventListener("wheel", (event) =>
-            {
-                let nearBottom = ((consoleContainer.scrollHeight - consoleContainer.clientHeight) <= (consoleContainer.scrollTop + 1));
-
-                if(nearBottom)
-                {
-                    // up
-                    if(event.deltaY < 0)
-                    {
-                        this.consoleAutoScrollEnabled = false;
-                        consoleContainer.scrollTop = consoleContainer.scrollHeight - 20;
-                        document.querySelector("#console-auto-scroll").classList.toggle("hidden", this.consoleAutoScrollEnabled);
-                    }
-                }
-            });
-
-            this.UpdateStatusBar();
             this.UpdateTheme();
         });
     
@@ -580,30 +340,6 @@ class PGEtinker
         
     }
     
-    UpdateStatusBar()
-    {
-        let statusBar = document.querySelector("#editor-panel .status");
-    
-        let cursor = `Ln ${this.monacoEditor.getPosition().lineNumber}, Col ${this.monacoEditor.getPosition().column}`;
-        let fileSize = `${new Intl.NumberFormat().format(this.monacoEditor.getValue().length)} / ${new Intl.NumberFormat().format(this.maxFileSize)}`;
-        
-        statusBar.classList.toggle('too-fucking-big', false);
-        if(this.monacoModel.getValueLength() > this.maxFileSize)
-        {
-            statusBar.classList.toggle('too-fucking-big', true);
-            fileSize += " EXCEEDING MAXIMUM!";
-        }
-            
-        statusBar.innerHTML = `
-            <div class="status-left">
-                Bytes: <span>${fileSize}</span>
-            </div>
-            <div class="status-right">
-                <span>${cursor}</span>
-            </div>
-        `;
-    }
-
     UpdateTheme()
     {
         // update overall theme
@@ -626,22 +362,18 @@ class PGEtinker
         }
     
         // update editor theme
-        if(this.monacoEditor !== null)
-            this.monacoEditor.updateOptions({ theme: `vs-${this.theme}`});
+        this.editorPanel.setTheme(this.theme);
     
         // update player theme
-        let playerFrame = document.querySelector("#player-panel iframe");
-        if(playerFrame != null)
-        {
-            document.querySelector("#player-panel iframe").contentWindow.postMessage({
-                message: "set-theme",
-                theme: this.theme
-            }, "*");
-        }
-    
+        this.playerPanel.setTheme(this.theme);
+
         // save theme into localStorage
         window.localStorage.setItem("pgetinkerTheme", this.theme);
     }
 }
 
 new PGEtinker();
+
+
+
+
