@@ -163,6 +163,18 @@ export default class EditorPanel
             }
         });
 
+        this.monacoEditor.addAction({
+            id: 'reset-editor-zoom',
+            label: 'Reset Editor Zoom',
+            keybindings: [
+                monaco.KeyMod.CtrlCmd | monaco.KeyCode.Digit0,
+            ],
+            run: () =>
+            {
+                this.monacoEditor.trigger("", "editor.action.fontZoomReset");
+            }
+        })
+
         this.monacoEditor.onDidChangeCursorPosition(() => this.updateStatusBar());
     
         this.monacoEditor.onDidChangeModelContent(() =>
