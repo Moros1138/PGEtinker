@@ -12,6 +12,7 @@ It is a summary of changes that would be pertinent to the end user of the PGEtin
 - Added Default editor font size
 - Added Control+Mouse Wheel zooming in the editor
 - Added Control+0 to reset editor zoom
+- Changed Build &amp; Run to Run, that turns into a stop button when the player is running
 
 ## 2024-05-25
 
