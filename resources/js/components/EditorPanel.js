@@ -145,6 +145,8 @@ export default class EditorPanel
         this.monacoEditor = monaco.editor.create(document.querySelector('#editor-panel .code-editor'), {
             automaticLayout: true,
             model: this.monacoModel,
+            fontSize: 14,
+            mouseWheelZoom: true,
             theme: `vs-${this.state.theme}`,
         });
 
