@@ -7,9 +7,9 @@ self.MonacoEnvironment = {
         return editorWorker();
     }
 };
-// monaco.languages.typescript.javascriptDefaults.setEagerModelSync(true);
+monaco.languages.typescript.javascriptDefaults.setEagerModelSync(true);
 monaco.languages.typescript.javascriptDefaults.setCompilerOptions({
-    // noLib: true,
+    noLib: true,
     allowNonTsExtensions: true
 });
 
