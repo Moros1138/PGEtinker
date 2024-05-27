@@ -151,7 +151,10 @@ export default class EditorPanel
         this.monacoEditor.addAction({
             id: 'build-and-run',
             label: 'Build and Run',
-            keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter],
+            keybindings: [
+                monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter,
+                monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS
+            ],
             run: () =>
             {
                 document.querySelector("#compile").dispatchEvent(new Event("click"));
