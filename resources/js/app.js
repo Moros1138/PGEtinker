@@ -148,43 +148,35 @@ class PGEtinker
         });
 
         // Compile Button
-        document.querySelector("#compile").addEventListener("click", (event) => 
+        document.querySelector("#start-stop").addEventListener("click", (event) => 
         {
             event.preventDefault();
+            let startStopElem = document.querySelector("#start-stop");
+            let playIconElem = startStopElem.querySelector(".lucide-circle-play");
+            let stopIconElem = startStopElem.querySelector(".lucide-circle-stop");
+            let spanElem     = startStopElem.querySelector("span");
 
-            if(this.compiling)
-                return;
-
-            if(!this.preCompile())
-                return;
-            
-            axios.post("/api/compile", {
-                code: this.editorPanel.getValue()
-            }).then((response) =>
+            if(spanElem.innerHTML == "Run")
             {
-                this.compileSuccessHandler(response.data);
-            }).catch((error) =>
-            {
-                
-                if(error.response)
+                playIconElem.classList.toggle("hidden", true);
+                stopIconElem.classList.toggle("hidden", false);
+                spanElem.innerHTML = "Stop";
+                this.compile().catch(() =>
                 {
-                    if(error.response.status)
-                    {
-                        if(error.response.status == 503)
-                        {
-                            this.compileFailHandler("pgetinker.cpp:1:1: error: PGEtinker service has gone offline. try again later.\n");
-                            return;
-                        }
-                    }
-                    
-                    if(error.response.data.stderr)
-                    {
-                        this.compileFailHandler(error.response.data.stderr);
-                        return;
-                    }
-                }
-                this.compileFailHandler("pgetinker.cpp:1:1: error: compilation failed in a way that's not being handled. please make a bug report.\n");
-            });
+                    playIconElem.classList.toggle("hidden", false);
+                    stopIconElem.classList.toggle("hidden", true);
+                    spanElem.innerHTML = "Run";
+                });
+                return;
+            }
+
+            if(spanElem.innerHTML == "Stop")
+            {
+                this.playerPanel.stop();
+                playIconElem.classList.toggle("hidden", false);
+                stopIconElem.classList.toggle("hidden", true);
+                spanElem.innerHTML = "Run";
+            }
         });
 
         document.querySelector("#supporters").addEventListener("click", (event) =>
@@ -242,6 +234,51 @@ class PGEtinker
         
         this.compiling = true;
         return true;
+    }
+    
+    compile()
+    {
+        if(this.compiling)
+            return new Promise((_, reject) => reject());
+
+        if(!this.preCompile())
+            return new Promise((_, reject) => reject());
+        
+        return new Promise((resolve, reject) =>
+        {
+            axios.post("/api/compile", {
+                code: this.editorPanel.getValue()
+            }).then((response) =>
+            {
+                this.compileSuccessHandler(response.data);
+                resolve();
+            }).catch((error) =>
+            {
+                
+                if(error.response)
+                {
+                    if(error.response.status)
+                    {
+                        if(error.response.status == 503)
+                        {
+                            this.compileFailHandler("pgetinker.cpp:1:1: error: PGEtinker service has gone offline. try again later.\n");
+                            reject();
+                            return;
+                        }
+                    }
+                    
+                    if(error.response.data.stderr)
+                    {
+                        this.compileFailHandler(error.response.data.stderr);
+                        reject();
+                        return;
+                    }
+                }
+                this.compileFailHandler("pgetinker.cpp:1:1: error: compilation failed in a way that's not being handled. please make a bug report.\n");
+                reject();
+            });
+        });
+        
     }
     
     compileSuccessHandler(data)

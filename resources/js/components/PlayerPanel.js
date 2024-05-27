@@ -3,6 +3,7 @@ export default class PlayerPanel
 {
     state;
     lastPlayerHtml = "";
+    running = false;
 
     constructor(state)
     {
@@ -37,6 +38,11 @@ export default class PlayerPanel
     getHtml()
     {
         return this.lastPlayerHtml;
+    }
+
+    isRunning()
+    {
+        return this.running;
     }
 
     onInit()
@@ -87,11 +93,8 @@ export default class PlayerPanel
     setCompiling()
     {
         this.lastPlayerHtml = "";
-        let playerFrame = document.querySelector("#player-panel iframe");
-        
-        if(playerFrame != null)
-            playerFrame.remove();
-        
+        this.stop();
+
         document.querySelector("#player-panel .compiling").classList.toggle("display-flex", true);
         document.querySelector("#player-panel .compiling-failed").classList.toggle("display-flex", false);
     }
@@ -101,19 +104,11 @@ export default class PlayerPanel
         document.querySelector("#player-panel .compiling").classList.toggle("display-flex", false);
         document.querySelector("#player-panel .compiling-failed").classList.toggle("display-flex", true);
     }
-
+    
     setHtml(html)
     {
         this.lastPlayerHtml = html;
-        
-        let playerFrame = document.createElement('iframe');
-        playerFrame.setAttribute("srcdoc", this.lastPlayerHtml);
-        playerFrame.setAttribute("sandbox", "allow-scripts");
-        document.querySelector("#player-panel .iframe-container").append(playerFrame);
-        
-        playerFrame.classList.toggle("display-block", true);
-        document.querySelector("#player-panel .compiling").classList.toggle("display-flex", false);
-        document.querySelector("#player-panel .compiling-failed").classList.toggle("display-flex", false);        
+        this.start();
     }
 
     setTheme(theme)
@@ -126,5 +121,29 @@ export default class PlayerPanel
                 theme: theme
             }, "*");
         }
+    }
+
+    start()
+    {
+        let playerFrame = document.createElement('iframe');
+        playerFrame.setAttribute("srcdoc", this.lastPlayerHtml);
+        playerFrame.setAttribute("sandbox", "allow-scripts");
+        document.querySelector("#player-panel .iframe-container").append(playerFrame);
+        
+        playerFrame.classList.toggle("display-block", true);
+        document.querySelector("#player-panel .compiling").classList.toggle("display-flex", false);
+        document.querySelector("#player-panel .compiling-failed").classList.toggle("display-flex", false);
+        
+        this.running = true;
+    }
+
+    stop()
+    {
+        let playerFrame = document.querySelector("#player-panel iframe");
+        
+        if(playerFrame != null)
+            playerFrame.remove();
+
+        this.running = false;
     }
 }

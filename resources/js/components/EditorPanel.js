@@ -159,7 +159,7 @@ export default class EditorPanel
             ],
             run: () =>
             {
-                document.querySelector("#compile").dispatchEvent(new Event("click"));
+                document.querySelector("#start-stop").dispatchEvent(new Event("click"));
             }
         });
 

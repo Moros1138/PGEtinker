@@ -9,7 +9,7 @@ It is a summary of changes that would be pertinent to the end user of the PGEtin
 - Changed complete revamp of the frontend code, much more organized
 - Fixed UI annoyances
 - Added Control+S to the Build and Run command
-- Added default editor font size
+- Added Default editor font size
 - Added Control+Mouse Wheel zooming in the editor
 - Added Control+0 to reset editor zoom
 

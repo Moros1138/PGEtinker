@@ -63,9 +63,10 @@
                         </a>
                     </div>
                 </div>
-                <a class="menu-item" href="#" id="compile">
+                <a class="menu-item" href="#" id="start-stop">
                     <i data-lucide="circle-play"></i>
-                    Build &amp; Run
+                    <i data-lucide="circle-stop" class="hidden"></i>
+                    <span>Run</span>
                 </a>
             </div>
             <div class="navbar-right-menu">
