@@ -167,6 +167,10 @@ class Compiler
 
     private function processCodeDetectImplementationMacros($index)
     {
+        // broad phase, don't process if this line doesn't at least contain the word "define"
+        if(!str_contains($this->code[$index], "define"))
+            return false;
+
         $libraryMap = [
             'OLC_PGE_APPLICATION'      => 'olcPixelGameEngine.o',
             'OLC_SOUNDWAVE_ENGINE'     => 'olcSoundWaveEngine.o',
@@ -181,35 +185,44 @@ class Compiler
             'OLC_PGEX_WIREFRAME'       => 'olcPGEX_Wireframe.o',
         ];       
         
-        // filter macros to detect implementation #define
-        if(str_contains($this->code[$index], "#define"))
+        $foundImplementationMacro = false;
+        
+        foreach($libraryMap as $macro => $objectFileName)
         {
-            $foundImplementationMacro = false;
-            foreach($libraryMap as $macro => $objectFileName)
-            {
-                if(str_contains($this->code[$index], $macro))
-                {
-                    // blank the line
-                    $this->code[$index] = "";
-                    
-                    if($macro == "OLC_PGE_APPLICATION" && $this->foundGeometryHeader)
-                    {
-                        $objectFileName = "olcPixelGameEngine_withGeometry.o";
-                        $this->logger->info("Found the need for geometry utility support");
-                    }
-                        
-                    // indicate that we use this library
-                    $this->linkerInputFiles[] = "./lib/{$objectFileName}";
-                    
-                    $this->logger->info("Found implementation macro: {$macro}");
-                    $foundImplementationMacro = true;
-                    break;
-                }
-            }
+            preg_match(
+                '/(.*)\s*#\s*define?\s+' . $macro . '(.*)/',
+                $this->code[$index],
+                $match,
+                PREG_OFFSET_CAPTURE,
+                0
+            );
+            
+            // no match, this time
+            if(count($match) == 0)
+                continue;
 
-            if($foundImplementationMacro)
-                return true;
-        }        
+            if(!empty(trim($match[1][0])) || !empty(trim($match[2][0])))
+                continue;
+            
+            // blank the line
+            $this->code[$index] = "";
+            
+            if($macro == "OLC_PGE_APPLICATION" && $this->foundGeometryHeader)
+            {
+                $objectFileName = "olcPixelGameEngine_withGeometry.o";
+                $this->logger->info("Found the need for geometry utility support");
+            }
+                        
+            // indicate that we use this library
+            $this->linkerInputFiles[] = "./lib/{$objectFileName}";
+                    
+            $this->logger->info("Found implementation macro: {$macro}");
+            $foundImplementationMacro = true;
+            break;
+        }
+
+        if($foundImplementationMacro)
+            return true;
         
         return false;
     }
