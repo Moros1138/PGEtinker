@@ -83,6 +83,11 @@ class Compiler
         $this->workingDirectory = "";
     }
 
+    public function getCode()
+    {
+        return implode("\n", $this->code);
+    }
+
     public function setCode(string $code)
     {
         $this->code = explode("\n", $code);
