@@ -346,7 +346,7 @@ class Compiler
         }
     }
     
-    private function processCode()
+    public function processCode()
     {
         $this->logger->info("begin processing code");
         $startTime = microtime(true);
