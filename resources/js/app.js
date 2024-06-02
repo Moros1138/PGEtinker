@@ -344,33 +344,31 @@ class PGEtinker
     
     UpdateTheme()
     {
-        // update overall theme
-        document.body.className = this.theme;
-    
-        // update golden layout theme
-        let goldenLayoutDarkThemeStyle = document.querySelector("#goldenlayout-dark-theme");
-        let goldenLayoutLightThemeStyle = document.querySelector("#goldenlayout-light-theme");
-    
-        if(this.theme === "dark")
-        {
-            goldenLayoutDarkThemeStyle.disabled = false;
-            goldenLayoutLightThemeStyle.disabled = true;
-        }
-    
-        if(this.theme === "light")
-        {
-            goldenLayoutDarkThemeStyle.disabled = true;
-            goldenLayoutLightThemeStyle.disabled = false;
-        }
-    
-        // update editor theme
-        this.editorPanel.setTheme(this.theme);
-    
-        // update player theme
-        this.playerPanel.setTheme(this.theme);
-
         // save theme into localStorage
         window.localStorage.setItem("pgetinkerTheme", this.theme);
+
+        let light = (this.theme === "light");
+
+        // update editor theme
+        this.editorPanel.setTheme(this.theme);
+        
+        setTimeout(() =>
+        {
+            document.body.classList.toggle("dark", !light);
+            document.body.classList.toggle("light", light);
+    
+            // update golden layout theme
+            let goldenLayoutDarkThemeStyle = document.querySelector("#goldenlayout-dark-theme");
+            let goldenLayoutLightThemeStyle = document.querySelector("#goldenlayout-light-theme");
+        
+            goldenLayoutDarkThemeStyle.disabled = light;
+            goldenLayoutLightThemeStyle.disabled = !light;
+        
+            // update player theme
+            this.playerPanel.setTheme(this.theme);
+
+        }, 200);
+
     }
 }
 
