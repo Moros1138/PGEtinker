@@ -137,13 +137,13 @@ export default class EditorPanel
         // setTimeout(() => { this.monacoEditor.trigger("", "editor.action.marker.next"); }, 50);
     }
 
-    setTheme(theme)
+    async setTheme(theme)
     {
         if(this.monacoWrapper == null)
             return;
 
         
-        this.monacoWrapper
+        await this.monacoWrapper
             .getMonacoEditorApp()
             .updateUserConfiguration(getUserConfiguration(theme));
     }
