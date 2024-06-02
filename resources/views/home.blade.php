@@ -101,7 +101,11 @@
                         </a>
                         <a target="_blank" href="https://patreon.com/PGEtinker">
                             <i data-lucide="circle-dollar-sign"></i>
-                            Become a Supporter
+                            Support on Patreon
+                        </a>
+                        <a target="_blank" href="https://www.paypal.com/donate?hosted_button_id=JRELVL6T7NZBE">
+                            <i data-lucide="circle-dollar-sign"></i>
+                            Make a Donation on Paypal
                         </a>
                         <a target="_blank" href="https://github.com/Moros1138/PGEtinker">
                             <i data-lucide="github"></i>
