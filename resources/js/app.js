@@ -158,6 +158,8 @@ class PGEtinker
 
             if(spanElem.innerHTML == "Run")
             {
+                this.setActiveTab("Emscripten Player");
+                
                 playIconElem.classList.toggle("hidden", true);
                 stopIconElem.classList.toggle("hidden", false);
                 spanElem.innerHTML = "Stop";
