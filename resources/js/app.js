@@ -356,6 +356,7 @@ class PGEtinker
             setTimeout(() =>
             {
                 document.querySelector("#pgetinker-loading").classList.toggle("display-flex", false);
+                this.setActiveTab("C++ Editor");
             }, 500)
         });
     
