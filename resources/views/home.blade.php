@@ -142,7 +142,7 @@
             </noscript>
         </div>
     </div>
-    <textarea id="code" style="display: none;">{{ $code }}</textarea>
+    <textarea id="code" style="display: none;"><?php echo $code ?></textarea>
     
     @include("shared.analytics")
 
