@@ -141,6 +141,17 @@
                 </p>
             </noscript>
         </div>
+        <div id="pgetinker-loading">
+            <div class="lds-ring">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+            <p>
+                PGEtinker is Loading
+            </p>
+        </div>
     </div>
     <textarea id="code" style="display: none;"><?php echo $code ?></textarea>
     

@@ -298,6 +298,8 @@ class PGEtinker
     
     async SetupLayout()
     {
+        document.querySelector("#pgetinker-loading").classList.toggle("display-flex", true);
+
         await this.editorPanel.onPreInit();
         
         this.layout = new GoldenLayout(this.layoutConfig, document.querySelector("#content"))
@@ -323,7 +325,12 @@ class PGEtinker
             this.infoPanel.onInit();
             this.playerPanel.onInit();
             
-            this.UpdateTheme();
+            await this.UpdateTheme();
+            
+            setTimeout(() =>
+            {
+                document.querySelector("#pgetinker-loading").classList.toggle("display-flex", false);
+            }, 500)
         });
     
         this.layout.init();
@@ -342,7 +349,7 @@ class PGEtinker
         
     }
     
-    UpdateTheme()
+    async UpdateTheme()
     {
         // save theme into localStorage
         window.localStorage.setItem("pgetinkerTheme", this.theme);
@@ -350,7 +357,7 @@ class PGEtinker
         let light = (this.theme === "light");
 
         // update editor theme
-        this.editorPanel.setTheme(this.theme);
+        await this.editorPanel.setTheme(this.theme);
         
         setTimeout(() =>
         {
