@@ -296,8 +296,10 @@ class PGEtinker
         this.compiling = false;
     }
     
-    SetupLayout()
+    async SetupLayout()
     {
+        await this.editorPanel.onPreInit();
+        
         this.layout = new GoldenLayout(this.layoutConfig, document.querySelector("#content"))
         
         this.consolePanel.register();
@@ -311,13 +313,13 @@ class PGEtinker
                 window.localStorage.setItem("pgetinkerLayout", JSON.stringify(this.layout.toConfig()));
         });
         
-        this.layout.on("initialised", () =>
+        this.layout.on("initialised", async() =>
         {
             this.layoutInitialized = true;
             window.addEventListener("resize", (event) => this.layout.updateSize());
             
             this.consolePanel.onInit();
-            this.editorPanel.onInit();
+            await this.editorPanel.onInit();
             this.infoPanel.onInit();
             this.playerPanel.onInit();
             
