@@ -24,12 +24,6 @@ export default class PlayerPanel
                     message: "set-theme",
                     theme: this.state.theme
                 }, "*");
-        
-                // update player theme
-                document.querySelector("#player-panel iframe").contentWindow.postMessage({
-                    message: "show-console",
-                    value: this.state.consolePanel.shown()
-                }, "*");
             }
     
         });
