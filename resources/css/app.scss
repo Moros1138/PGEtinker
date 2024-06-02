@@ -1,5 +1,5 @@
 @import "./pixel-code.scss";
-
+@import "./loading.scss";
 
 body {
     --pgetinker-link-color: #ff6500;
@@ -219,7 +219,6 @@ nav .navbar-right-menu .menu-item {
 #content {
     position: absolute;
     top: 49px;
-    bottom: 33px;
     bottom: 0px;
     width: 100%;
     overflow: hidden;
