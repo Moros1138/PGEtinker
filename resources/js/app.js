@@ -313,6 +313,8 @@ class PGEtinker
     
     compileFailHandler(stderr)
     {
+        this.setActiveTab("C++ Editor");
+
         this.infoPanel.setContent(stderr);
         this.editorPanel.extractAndSetMarkers(stderr);
 
