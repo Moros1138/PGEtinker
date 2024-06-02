@@ -76,11 +76,18 @@ export default class EditorPanel
                 window.history.replaceState({}, "", "/");
             }
         });
-            
+        
+        /**
+         * TODO: magic numbers are bad, mkay?
+         * But I'm using them until they break!
+         */
         this.monacoWrapper.getEditor().addAction({
             id: 'editor.action.build-and-run',
             label: 'Build and Run',
-            keybindings: [],
+            keybindings: [
+                2051, // monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter
+                2097, // monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS
+            ],
             run: () =>
             {
                 let startStopButton = document.querySelector("#start-stop");
