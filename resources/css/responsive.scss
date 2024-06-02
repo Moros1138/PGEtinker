@@ -1,0 +1,12 @@
+@media screen and (max-width: 1320px) {
+    nav .navbar-right-menu .sponsor {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 750px) {
+    #settings-menu,
+    nav .navbar-right-menu {
+        display: none;
+    }
+}

@@ -155,12 +155,6 @@ nav .sponsor {
 .sponsor a:hover {
     text-decoration: underline;
 }
-
-@media (width <= 1320px) {
-    nav .sponsor {
-        display: none;
-    }
-}
   
 .dropdown {
     position: relative;
@@ -237,3 +231,5 @@ nav .navbar-right-menu .menu-item {
 @import "./info-panel.scss";
 @import "./player-panel.scss";
 @import "./dialog.scss";
+
+@import "./responsive.scss";
