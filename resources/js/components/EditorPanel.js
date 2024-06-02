@@ -1,15 +1,14 @@
-
-
-
-
+import { getUserConfiguration } from "../lib/monacoConfig";
+import { runCppWrapper } from "../lib/monacoWrapper";
+import pgetinkerCppCode from '../../example.cpp?raw';
 
 export default class EditorPanel
 {
     state;
     
-    monacoEditor = null;
-    monacoModel  = null;
-    monacoModelIntellisense = null;
+    code = "";
+
+    monacoWrapper = null;
 
     maxFileSize = 50000;
     
@@ -19,35 +18,82 @@ export default class EditorPanel
     {
         this.state = state;
         this.sharedFlag = (window.location.pathname.indexOf("/s/") === 0);
-        console.log("Editor panel", "constructor");
     }
     
     getValue()
     {
-        return this.monacoEditor.getValue();
+        return this.monacoWrapper.getEditor().getValue();
     }
+    
     setValue(value)
     {
-        this.monacoModel.setValue(value);
-
+        this.monacoWrapper.getEditor().setValue(value);
+    }
+    
+    async onPreInit()
+    {
+        try
+        {
+            if(this.monacoWrapper !== null)
+            {
+                await this.monacoWrapper.dispose();
+            }
+        }
+        catch(e)
+        {
+            console.log(e);
+        }
     }
 
-    onInit()
+    async onInit()
     {
-
-        // this.monacoEditor.onDidChangeCursorPosition(() => this.updateStatusBar());
-    
-        // this.monacoEditor.onDidChangeModelContent(() =>
-        // {
-        //     window.localStorage.setItem("pgetinkerCode", JSON.stringify(this.monacoEditor.getValue()));
+        this.monacoWrapper = await runCppWrapper(document.querySelector(".code-editor"));
             
-        //     if(this.sharedFlag)
-        //     {
-        //         window.history.replaceState({}, "", "/");
-        //     }
-        // });
-        
-        // this.updateStatusBar();
+        let code = "";
+        if(this.sharedFlag)
+        {
+            code = document.querySelector('#code').value;
+        }
+        else if(window.localStorage.getItem("pgetinkerCode"))
+        {
+            code = JSON.parse(window.localStorage.getItem("pgetinkerCode"));
+        }
+        else
+        {
+            code = pgetinkerCppCode;
+        }
+
+        this.monacoWrapper.getEditor().setValue(code);
+
+        this.monacoWrapper.getEditor().onDidChangeCursorPosition(() => this.updateStatusBar());
+    
+        this.monacoWrapper.getEditor().onDidChangeModelContent(() =>
+        {
+            window.localStorage.setItem("pgetinkerCode", JSON.stringify(this.monacoWrapper.getEditor().getValue()));
+            
+            if(this.sharedFlag)
+            {
+                window.history.replaceState({}, "", "/");
+            }
+        });
+            
+        this.monacoWrapper.getEditor().addAction({
+            id: 'editor.action.build-and-run',
+            label: 'Build and Run',
+            keybindings: [],
+            run: () =>
+            {
+                let startStopButton = document.querySelector("#start-stop");
+                
+                startStopButton.dispatchEvent(new Event("click"));
+                
+                // if we had to stop it first, click again!
+                if(startStopButton.querySelector("span").innerHTML == "Run")
+                    startStopButton.dispatchEvent(new Event("click"));
+            }
+        });
+
+        this.updateStatusBar();
     }
 
     register()
@@ -63,9 +109,22 @@ export default class EditorPanel
         });
     }
     
+    exceedsMaxSize()
+    {
+        return (this.monacoWrapper.getEditor().getValue().length > this.maxFileSize);
+    }   
+
     reveal(position)
     {
-        // this.monacoEditor.revealPositionInCenter(position);
+        this.monacoWrapper.getEditor().revealPositionInCenter(position);
+    }
+    
+    extractAndSetMarkers(input)
+    {
+    }
+
+    clearMarkers()
+    {
     }
 
     setMarkers(markers)
@@ -80,32 +139,37 @@ export default class EditorPanel
 
     setTheme(theme)
     {
-        // if(this.monacoEditor !== null)
-        //     this.monacoEditor.updateOptions({ theme: `vs-${theme}`});
+        if(this.monacoWrapper == null)
+            return;
+
+        
+        this.monacoWrapper
+            .getMonacoEditorApp()
+            .updateUserConfiguration(getUserConfiguration(theme));
     }
 
     updateStatusBar()
     {
-        // let statusBar = document.querySelector("#editor-panel .status");
+        let statusBar = document.querySelector("#editor-panel .status");
     
-        // let cursor = `Ln ${this.monacoEditor.getPosition().lineNumber}, Col ${this.monacoEditor.getPosition().column}`;
-        // let fileSize = `${new Intl.NumberFormat().format(this.monacoEditor.getValue().length)} / ${new Intl.NumberFormat().format(this.maxFileSize)}`;
+        let cursor = `Ln ${this.monacoWrapper.getEditor().getPosition().lineNumber}, Col ${this.monacoWrapper.getEditor().getPosition().column}`;
+        let fileSize = `${new Intl.NumberFormat().format(this.monacoWrapper.getEditor().getValue().length)} / ${new Intl.NumberFormat().format(this.maxFileSize)}`;
             
-        // statusBar.classList.toggle('too-fucking-big', false);
-        // if(this.monacoModel.getValueLength() > this.maxFileSize)
-        // {
-        //     statusBar.classList.toggle('too-fucking-big', true);
-        //     fileSize += " EXCEEDING MAXIMUM!";
-        // }
+        statusBar.classList.toggle('too-fucking-big', false);
+        if(this.monacoWrapper.getEditor().getValue().length > this.maxFileSize)
+        {
+            statusBar.classList.toggle('too-fucking-big', true);
+            fileSize += " EXCEEDING MAXIMUM!";
+        }
                 
-        // statusBar.innerHTML = `
-        //     <div class="status-left">
-        //         Bytes: <span>${fileSize}</span>
-        //     </div>
-        //     <div class="status-right">
-        //         <span>${cursor}</span>
-        //     </div>
-        // `;
+        statusBar.innerHTML = `
+            <div class="status-left">
+                Bytes: <span>${fileSize}</span>
+            </div>
+            <div class="status-right">
+                <span>${cursor}</span>
+            </div>
+        `;
     }
 
 }
