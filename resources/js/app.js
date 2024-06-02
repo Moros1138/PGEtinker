@@ -344,7 +344,11 @@ class PGEtinker
         this.layout.on("initialised", async() =>
         {
             this.layoutInitialized = true;
-            window.addEventListener("resize", (event) => this.layout.updateSize());
+            window.addEventListener("resize", (event) =>
+            {
+                console.log(document.body.clientWidth);
+                this.layout.updateSize();
+            });
             
             this.consolePanel.onInit();
             await this.editorPanel.onInit();
