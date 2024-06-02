@@ -217,6 +217,26 @@ class PGEtinker
         }
     }
 
+    setActiveTab(title)
+    {
+        try
+        {
+            let panel = this.layout.root.getItemsByFilter((item) =>
+            {
+                return (item.config.title == title);
+            })[0];
+            
+            if(panel.parent.isStack)
+            {
+                panel.parent.setActiveContentItem(panel);
+            }
+        }
+        catch(e)
+        {
+            console.log(`Failed to setActiveTab("${title}")`);
+        }
+    }
+
     preCompile()
     {
         if(this.editorPanel.exceedsMaxSize())
