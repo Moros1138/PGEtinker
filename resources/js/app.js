@@ -174,6 +174,8 @@ class PGEtinker
 
             if(spanElem.innerHTML == "Stop")
             {
+                this.setActiveTab("C++ Editor");
+
                 this.playerPanel.stop();
                 playIconElem.classList.toggle("hidden", false);
                 stopIconElem.classList.toggle("hidden", true);
