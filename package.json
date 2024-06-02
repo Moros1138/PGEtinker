@@ -8,6 +8,7 @@
     "devDependencies": {
         "@codingame/esbuild-import-meta-url-plugin": "~1.0.2",
         "@codingame/monaco-vscode-cpp-default-extension": "~5.1.1",
+        "@codingame/monaco-vscode-editor-service-override": "~5.1.1",
         "@codingame/monaco-vscode-files-service-override": "~5.1.1",
         "@codingame/monaco-vscode-keybindings-service-override": "~5.1.1",
         "@codingame/monaco-vscode-rollup-vsix-plugin": "~5.1.1",
