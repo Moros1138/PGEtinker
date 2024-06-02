@@ -183,6 +183,8 @@ class Compiler
             'OLC_PGEX_SPLASHSCREEN'    => 'olcPGEX_SplashScreen.o',
             'OLC_PGEX_TRANSFORMEDVIEW' => 'olcPGEX_TransformedView.o',
             'OLC_PGEX_WIREFRAME'       => 'olcPGEX_Wireframe.o',
+            'MINIAUDIO_IMPLEMENTATION' => 'miniaudio.o',
+            'OLC_PGEX_MINIAUDIO'       => 'olcPGEX_MiniAudio.o',
         ];       
         
         $foundImplementationMacro = false;
@@ -447,6 +449,7 @@ class Compiler
         $this->compilerCommand = array_merge($this->compilerCommand, [
             "/opt/emsdk/upstream/emscripten/em++",
             "-c",
+            "-I./include",
             "-I./include/olcPixelGameEngine",
             "-I./include/olcPixelGameEngine/extensions",
             "-I./include/olcPixelGameEngine/utilities",
