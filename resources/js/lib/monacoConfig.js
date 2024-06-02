@@ -7,11 +7,7 @@ import * as vscode from 'vscode';
 import getEditorServiceOverride from '@codingame/monaco-vscode-editor-service-override';
 import getKeybindingsServiceOverride from '@codingame/monaco-vscode-keybindings-service-override'
 import monacoVscodeTextmateServiceOverride from '@codingame/monaco-vscode-textmate-service-override';
-
-// import '@codingame/monaco-vscode-cpp-default-extension';
-// import { UserConfig } from 'monaco-editor-wrapper';
 import { useOpenEditorStub } from 'monaco-editor-wrapper/vscode/services';
-// import { MonacoLanguageClient } from 'monaco-languageclient';
 
 export const getUserConfiguration = (theme) =>
 {

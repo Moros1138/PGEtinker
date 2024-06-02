@@ -10,7 +10,6 @@ import { RegisteredFileSystemProvider, registerFileSystemOverlay, RegisteredMemo
 import { MonacoEditorLanguageClientWrapper } from 'monaco-editor-wrapper';
 import { useWorkerFactory } from 'monaco-editor-wrapper/workerFactory';
 import { createUserConfig } from './monacoConfig.js';
-import { initUserKeybindings } from '@codingame/monaco-vscode-keybindings-service-override';
 
 
 export const configureMonacoWorkers = () =>
@@ -43,7 +42,7 @@ export const runCppWrapper = async (htmlElement) => {
 
             // open files, so the LS can pick it up
             await vscode.workspace.openTextDocument(pgetinkerCppUri);
-
+            
             await wrapper.start(htmlElement);
             
             // reset editor font zoom
