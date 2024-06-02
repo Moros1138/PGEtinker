@@ -3,8 +3,6 @@ export default class InfoPanel
 {
     state;
     
-    informationPanelExist = false;
-
     constructor(state)
     {
         this.state = state;
@@ -25,19 +23,11 @@ export default class InfoPanel
 
     focus()
     {
-        if(this.exists())
-        {
-            let infoPanel = this.state.layout.root.getItemsById('info')[0];
-            if(infoPanel.parent.isStack)
-            {
-                infoPanel.parent.setActiveContentItem(infoPanel);
-            }
-        }
+        this.state.setActiveTab("Build Information");
     }
 
     onInit()
     {
-        this.informationPanelExist = (this.state.layout.root.getItemsById('info').length > 0);
     }
 
     register()
