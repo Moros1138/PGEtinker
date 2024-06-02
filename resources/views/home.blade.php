@@ -44,7 +44,7 @@
             </a>
             <div class="navbar-left-menu">
                 <div class="dropdown">
-                    <div dusk="settings-menu" class="menu-item">
+                    <div dusk="settings-menu" id="settings-menu" class="menu-item">
                         <i data-lucide="menu"></i>
                         Settings
                     </div>
