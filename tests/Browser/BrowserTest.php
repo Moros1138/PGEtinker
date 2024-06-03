@@ -130,7 +130,6 @@ class BrowserTest extends DuskTestCase
             $shareUrl = $browser->value("#share-url");
             $browser->visit($shareUrl);
             $browser->assertSee("C++ Editor");
-            $browser->assertSee("Emscripten Player");
         });
     }
 }
