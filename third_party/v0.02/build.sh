@@ -2,7 +2,7 @@
 export EMSDK_QUIET=1
 source "/opt/emsdk/emsdk_env.sh"
 
-INCLUDES="-I./include/olcPixelGameEngine -I./include/olcPixelGameEngine/extensions -I./include/olcPixelGameEngine/utilities -I./include/olcSoundWaveEngine"
+INCLUDES="-I./include -I./include/olcPixelGameEngine -I./include/olcPixelGameEngine/extensions -I./include/olcPixelGameEngine/utilities -I./include/olcSoundWaveEngine"
 
 # create the var directories, if doesn't exist
 mkdir -p lib
@@ -69,24 +69,14 @@ if [ ! -e ./lib/olcSoundWaveEngine.o ] ; then
     em++ -c -std=c++20 $INCLUDES ./include/olcSoundWaveEngine/olcSoundWaveEngine.cpp -o ./lib/olcSoundWaveEngine.o
 fi
 
-echo Building Monoaco\'s model
-cat include/olcPixelGameEngine/olcPixelGameEngine.h > model.h
+# build miniaudio
+if [ ! -e ./lib/miniaudio.o ] ; then
+    echo Building miniaudio.o
+    em++ -c -std=c++20 $INCLUDES ./include/miniaudio.c -o ./lib/miniaudio.o
+fi
 
-cat include/olcPixelGameEngine/extensions/olcPGEX_Graphics2D.h >> model.h
-cat include/olcPixelGameEngine/extensions/olcPGEX_Graphics3D.h >> model.h
-cat include/olcPixelGameEngine/extensions/olcPGEX_Network.h >> model.h
-cat include/olcPixelGameEngine/extensions/olcPGEX_PopUpMenu.h >> model.h
-cat include/olcPixelGameEngine/extensions/olcPGEX_QuickGUI.h >> model.h
-cat include/olcPixelGameEngine/extensions/olcPGEX_RayCastWorld.h >> model.h
-cat include/olcPixelGameEngine/extensions/olcPGEX_Sound.h >> model.h
-cat include/olcPixelGameEngine/extensions/olcPGEX_SplashScreen.h >> model.h
-cat include/olcPixelGameEngine/extensions/olcPGEX_TransformedView.h >> model.h
-cat include/olcPixelGameEngine/extensions/olcPGEX_Wireframe.h >> model.h
-cat include/olcPixelGameEngine/utilities/olcUTIL_Animate2D.h >> model.h
-cat include/olcPixelGameEngine/utilities/olcUTIL_Camera2D.h >> model.h
-cat include/olcPixelGameEngine/utilities/olcUTIL_Container.h >> model.h
-cat include/olcPixelGameEngine/utilities/olcUTIL_DataFile.h >> model.h
-cat include/olcPixelGameEngine/utilities/olcUTIL_Geometry2D.h >> model.h
-cat include/olcPixelGameEngine/utilities/olcUTIL_Palette.h >> model.h
-cat include/olcPixelGameEngine/utilities/olcUTIL_QuadTree.h >> model.h
-cat include/olcSoundWaveEngine/olcSoundWaveEngine.h >> model.h
+# build olcPGEX_MiniAudio
+if [ ! -e ./lib/olcPGEX_MiniAudio.o ] ; then
+    echo Building olcPGEX_MiniAudio.o
+    em++ -c -std=c++20 $INCLUDES ./include/olcPGEX_MiniAudio.cpp -o ./lib/olcPGEX_MiniAudio.o
+fi

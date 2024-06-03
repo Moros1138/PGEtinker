@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="manifest.json">
     
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:title" content="PGEtinker" />
@@ -44,7 +45,7 @@
             </a>
             <div class="navbar-left-menu">
                 <div class="dropdown">
-                    <div dusk="settings-menu" class="menu-item">
+                    <div dusk="settings-menu" id="settings-menu" class="menu-item">
                         <i data-lucide="menu"></i>
                         Settings
                     </div>
@@ -101,7 +102,11 @@
                         </a>
                         <a target="_blank" href="https://patreon.com/PGEtinker">
                             <i data-lucide="circle-dollar-sign"></i>
-                            Become a Supporter
+                            Support on Patreon
+                        </a>
+                        <a target="_blank" href="https://www.paypal.com/donate?hosted_button_id=JRELVL6T7NZBE">
+                            <i data-lucide="circle-dollar-sign"></i>
+                            Make a Donation on Paypal
                         </a>
                         <a target="_blank" href="https://github.com/Moros1138/PGEtinker">
                             <i data-lucide="github"></i>
@@ -141,8 +146,19 @@
                 </p>
             </noscript>
         </div>
+        <div id="pgetinker-loading">
+            <div class="lds-ring">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+            <p>
+                PGEtinker is Loading
+            </p>
+        </div>
     </div>
-    <textarea id="code" style="display: none;">{{ $code }}</textarea>
+    <textarea id="code" style="display: none;"><?php echo $code ?></textarea>
     
     @include("shared.analytics")
 

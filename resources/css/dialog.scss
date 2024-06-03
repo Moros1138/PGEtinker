@@ -19,15 +19,15 @@
     width: 90vw;
     max-width: 80rem;
     margin: 10vh auto;
-    background: var(--dialog-background-color);
+    background: var(--pgetinker-dialog-background-color);
     font-size: 1.2rem;
-    color: var(--dialog-text-color);
-    border: 1px solid var(--dialog-border-color);
+    color: var(--pgetinker-dialog-text-color);
+    border: 1px solid var(--pgetinker-dialog-border-color);
     border-radius: 0.4rem;
 }
 
 .dialog .window > .header {
-    border-bottom: 1px solid var(--dialog-border-color);
+    border-bottom: 1px solid var(--pgetinker-dialog-border-color);
     padding: 0.4rem 1rem;
     font-weight: bold;
     font-size: 2rem;
@@ -38,7 +38,7 @@
 }
 
 .dialog .window > .footer {
-    border-top: 1px solid var(--dialog-border-color);
+    border-top: 1px solid var(--pgetinker-dialog-border-color);
     padding: 0.4rem 1rem;
     text-align: right;
 }
@@ -57,24 +57,24 @@
 }
 .ok {
     background: #0D6EFD;
-    color: var(--dialog-text-color);
+    color: var(--pgetinker-dialog-text-color);
     font-weight: bold;
 }
 
 .ok:hover {
     background: #0B5ED7;
-    color: var(--dialog-text-color);
+    color: var(--pgetinker-dialog-text-color);
 }
 
 .cancel {
     background: #DC3545;
-    color: var(--dialog-text-color);
+    color: var(--pgetinker-dialog-text-color);
     font-weight: bold;
 }
 
 .cancel:hover {
     background: #BB2D3B;
-    color: var(--dialog-text-color);
+    color: var(--pgetinker-dialog-text-color);
 }
 
 .input-group {
@@ -145,7 +145,7 @@
     font-size: 2rem;
     // text-decoration: underline;
     padding-bottom: 1rem;
-    border-bottom: 4px solid var(--dialog-text-color);
+    border-bottom: 4px solid var(--pgetinker-dialog-text-color);
 }
 
 .dialog.supporters .names {

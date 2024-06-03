@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import path from "node:path";
+import importMetaUrlPlugin from '@codingame/esbuild-import-meta-url-plugin';
 
 export default defineConfig({
     base: "./",
@@ -8,6 +9,13 @@ export default defineConfig({
         watch: {
             ignored: [
                 path.join(process.cwd(), "storage", "app", "workspaces", "**")
+            ]
+        }
+    },
+    optimizeDeps: {
+        esbuildOptions: {
+            plugins: [
+                importMetaUrlPlugin
             ]
         }
     },
@@ -25,4 +33,10 @@ export default defineConfig({
             refresh: true,
         }),
     ],
+    define: {
+        rootDirectory: JSON.stringify(__dirname)
+    },
+    worker: {
+        format: "es"
+    }
 });

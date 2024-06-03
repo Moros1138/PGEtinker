@@ -1,19 +1,14 @@
 
 export default class ConsolePanel
 {
-    consoleShown = false;
-    consolePanelExist = false;
     consoleAutoScrollEnabled = true;
-    
+     
     state;
    
     constructor(state)
     {
         this.state = state;
         console.log("Console panel", "constructor");
-
-        this.consoleShown = window.localStorage.getItem("pgetinkerConsoleShown");
-        this.consoleShown = (this.consoleShown === "true") ? true : false;
 
         window.addEventListener("message", (event) =>
         {
@@ -25,10 +20,6 @@ export default class ConsolePanel
 
             if(event.data.message === "console-output")
             {
-                if(!this.state.infoPanel.exists())
-                    return;
-
-                
                 let consoleContainer = document.querySelector("#console-panel");
                 consoleContainer.innerHTML += `<div>${event.data.data}</div>`;
                 
@@ -36,11 +27,7 @@ export default class ConsolePanel
                 if(this.consoleAutoScrollEnabled)
                     consoleContainer.scrollTop = consoleContainer.scrollHeight;
 
-                let consolePanel = this.state.layout.root.getItemsById('console')[0];
-                if(consolePanel.parent.isStack)
-                {
-                    consolePanel.parent.setActiveContentItem(consolePanel);
-                }
+                this.state.setActiveTab("Console");
             }
         });
     }
@@ -57,10 +44,7 @@ export default class ConsolePanel
 
     onInit()
     {
-        this.consolePanelExist = (this.state.layout.root.getItemsById('console').length > 0);
-
         let consoleContainer = document.querySelector("#console-panel");
-            
         document.querySelector("#console-auto-scroll").addEventListener("click", () =>
         {
             this.consoleAutoScrollEnabled = true;
@@ -93,11 +77,6 @@ export default class ConsolePanel
                 <button id="console-auto-scroll" class="hidden">AutoScroll</button>
             `);
         });
-    }
-
-    shown()
-    {
-        return this.consoleShown;
     }
 
 }

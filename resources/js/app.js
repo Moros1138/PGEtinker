@@ -158,6 +158,8 @@ class PGEtinker
 
             if(spanElem.innerHTML == "Run")
             {
+                this.setActiveTab("Emscripten Player");
+                
                 playIconElem.classList.toggle("hidden", true);
                 stopIconElem.classList.toggle("hidden", false);
                 spanElem.innerHTML = "Stop";
@@ -172,6 +174,8 @@ class PGEtinker
 
             if(spanElem.innerHTML == "Stop")
             {
+                this.setActiveTab("C++ Editor");
+
                 this.playerPanel.stop();
                 playIconElem.classList.toggle("hidden", false);
                 stopIconElem.classList.toggle("hidden", true);
@@ -214,6 +218,26 @@ class PGEtinker
         else
         {
             this.SetupLayout();
+        }
+    }
+
+    setActiveTab(title)
+    {
+        try
+        {
+            let panel = this.layout.root.getItemsByFilter((item) =>
+            {
+                return (item.config.title == title);
+            })[0];
+            
+            if(panel.parent.isStack)
+            {
+                panel.parent.setActiveContentItem(panel);
+            }
+        }
+        catch(e)
+        {
+            console.log(`Failed to setActiveTab("${title}")`);
         }
     }
 
@@ -289,6 +313,8 @@ class PGEtinker
     
     compileFailHandler(stderr)
     {
+        this.setActiveTab("C++ Editor");
+
         this.infoPanel.setContent(stderr);
         this.editorPanel.extractAndSetMarkers(stderr);
 
@@ -296,8 +322,12 @@ class PGEtinker
         this.compiling = false;
     }
     
-    SetupLayout()
+    async SetupLayout()
     {
+        document.querySelector("#pgetinker-loading").classList.toggle("display-flex", true);
+
+        await this.editorPanel.onPreInit();
+        
         this.layout = new GoldenLayout(this.layoutConfig, document.querySelector("#content"))
         
         this.consolePanel.register();
@@ -311,17 +341,27 @@ class PGEtinker
                 window.localStorage.setItem("pgetinkerLayout", JSON.stringify(this.layout.toConfig()));
         });
         
-        this.layout.on("initialised", () =>
+        this.layout.on("initialised", async() =>
         {
             this.layoutInitialized = true;
-            window.addEventListener("resize", (event) => this.layout.updateSize());
+            window.addEventListener("resize", (event) =>
+            {
+                console.log(document.body.clientWidth);
+                this.layout.updateSize();
+            });
             
             this.consolePanel.onInit();
-            this.editorPanel.onInit();
+            await this.editorPanel.onInit();
             this.infoPanel.onInit();
             this.playerPanel.onInit();
             
-            this.UpdateTheme();
+            await this.UpdateTheme();
+            
+            setTimeout(() =>
+            {
+                document.querySelector("#pgetinker-loading").classList.toggle("display-flex", false);
+                this.setActiveTab("C++ Editor");
+            }, 500)
         });
     
         this.layout.init();
@@ -340,35 +380,33 @@ class PGEtinker
         
     }
     
-    UpdateTheme()
+    async UpdateTheme()
     {
-        // update overall theme
-        document.body.className = this.theme;
-    
-        // update golden layout theme
-        let goldenLayoutDarkThemeStyle = document.querySelector("#goldenlayout-dark-theme");
-        let goldenLayoutLightThemeStyle = document.querySelector("#goldenlayout-light-theme");
-    
-        if(this.theme === "dark")
-        {
-            goldenLayoutDarkThemeStyle.disabled = false;
-            goldenLayoutLightThemeStyle.disabled = true;
-        }
-    
-        if(this.theme === "light")
-        {
-            goldenLayoutDarkThemeStyle.disabled = true;
-            goldenLayoutLightThemeStyle.disabled = false;
-        }
-    
-        // update editor theme
-        this.editorPanel.setTheme(this.theme);
-    
-        // update player theme
-        this.playerPanel.setTheme(this.theme);
-
         // save theme into localStorage
         window.localStorage.setItem("pgetinkerTheme", this.theme);
+
+        let light = (this.theme === "light");
+
+        // update editor theme
+        await this.editorPanel.setTheme(this.theme);
+        
+        setTimeout(() =>
+        {
+            document.body.classList.toggle("dark", !light);
+            document.body.classList.toggle("light", light);
+    
+            // update golden layout theme
+            let goldenLayoutDarkThemeStyle = document.querySelector("#goldenlayout-dark-theme");
+            let goldenLayoutLightThemeStyle = document.querySelector("#goldenlayout-light-theme");
+        
+            goldenLayoutDarkThemeStyle.disabled = light;
+            goldenLayoutLightThemeStyle.disabled = !light;
+        
+            // update player theme
+            this.playerPanel.setTheme(this.theme);
+
+        }, 200);
+
     }
 }
 

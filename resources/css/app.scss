@@ -1,54 +1,54 @@
 @import "./pixel-code.scss";
-
+@import "./loading.scss";
 
 body {
-    --link-color: #ff6500;
-    --link-hover-color: #ffab62;
+    --pgetinker-link-color: #ff6500;
+    --pgetinker-link-hover-color: #ffab62;
 
-    --background-color: #3e3c44;
-    --text-color:#ded;
-    --text-shadow-color: #000;
+    --pgetinker-background-color: #3e3c44;
+    --pgetinker-text-color:#ded;
+    --pgetinker-text-shadow-color: #000;
 
-    --menu-text-color: #ded;
-    --menu-background: #f1f1f1;
-    --menu-hover-background:#a86326;
-    --menu-hover-text-color: #ded;
+    --pgetinker-menu-text-color: #ded;
+    --pgetinker-menu-background: #f1f1f1;
+    --pgetinker-menu-hover-background:#a86326;
+    --pgetinker-menu-hover-text-color: #ded;
 
-    --submenu-text-color: #ded;
-    --submenu-background: #43454b;
-    --submenu-hover-background:#909da7;
-    --submenu-hover-text-color: black;
+    --pgetinker-submenu-text-color: #ded;
+    --pgetinker-submenu-background: #43454b;
+    --pgetinker-submenu-hover-background:#909da7;
+    --pgetinker-submenu-hover-text-color: black;
 
-    --content-border-color: #8c909d;
+    --pgetinker-content-border-color: #8c909d;
 
-    --dialog-background-color:#222;
-    --dialog-text-color:#ded;
-    --dialog-border-color: #444;
+    --pgetinker-dialog-background-color:#222;
+    --pgetinker-dialog-text-color:#ded;
+    --pgetinker-dialog-border-color: #444;
 }
 
 body.light {
-    --link-color: #f70;
-    --link-hover-color: #7a4c23;
+    --pgetinker-link-color: #f70;
+    --pgetinker-link-hover-color: #7a4c23;
 
-    --background-color: #fff;
-    --text-color:#000;
-    --text-shadow-color: #fff;
+    --pgetinker-background-color: #fff;
+    --pgetinker-text-color:#000;
+    --pgetinker-text-shadow-color: #fff;
 
-    --menu-background: #f1f1f1;
-    --menu-hover-background:#f70;
-    --menu-text-color: #424242;
-    --menu-hover-text-color: #ded;
+    --pgetinker-menu-background: #f1f1f1;
+    --pgetinker-menu-hover-background:#f70;
+    --pgetinker-menu-text-color: #424242;
+    --pgetinker-menu-hover-text-color: #ded;
 
-    --submenu-background: #f1f1f1;
-    --submenu-hover-background:#ddd;
-    --submenu-text-color: black;
-    --submenu-hover-text-color: black;
+    --pgetinker-submenu-background: #f1f1f1;
+    --pgetinker-submenu-hover-background:#ddd;
+    --pgetinker-submenu-text-color: black;
+    --pgetinker-submenu-hover-text-color: black;
 
-    --content-border-color: #8c909d;
+    --pgetinker-content-border-color: #8c909d;
 
-    --dialog-background-color:#dee4ff;
-    --dialog-text-color:rgb(56, 56, 56);
-    --dialog-border-color: #444;
+    --pgetinker-dialog-background-color:#dee4ff;
+    --pgetinker-dialog-text-color:rgb(56, 56, 56);
+    --pgetinker-dialog-border-color: #444;
 }
 
 html,
@@ -63,12 +63,12 @@ body {
 a:link,
 a:visited,
 a:active {
-    color: var(--link-color);
+    color: var(--pgetinker-link-color);
     text-decoration: none;
 }
 
 a:hover {
-    color: var(--link-hover-color);
+    color: var(--pgetinker-link-hover-color);
     text-decoration: underline;
 }
 
@@ -78,8 +78,8 @@ a:hover {
     left: 0;
     width: 100%;
     height: 100%;
-    background: var(--background-color);
-    color: var(--text-color);
+    background: var(--pgetinker-background-color);
+    color: var(--pgetinker-text-color);
 }
 
 #header {
@@ -109,7 +109,7 @@ nav a.brand:visited {
     padding: 0 .8rem;
     text-decoration: none;
     font-size: 3rem;
-    color: var(--link-color);
+    color: var(--pgetinker-link-color);
     text-shadow: .2rem .2rem .2rem #000;
 }
 
@@ -119,11 +119,11 @@ a:link.menu-item,
 a:visited.menu-item,
 .menu-item {
     display: inline-block;
-    background-color: var(--background-color);
-    color: var(--menu-text-color);
+    background-color: var(--pgetinker-background-color);
+    color: var(--pgetinker-menu-text-color);
     font-size: 1.2rem;
     letter-spacing: 1px;
-    text-shadow: .2rem .2rem .5rem var(--text-shadow-color);
+    text-shadow: .2rem .2rem .5rem var(--pgetinker-text-shadow-color);
     height: 48px;
     line-height: 48px;
     vertical-align: middle;
@@ -136,7 +136,7 @@ a:visited.menu-item,
 
 .lucide {
     vertical-align: middle;
-    filter: drop-shadow(.2rem .2rem .1rem var(--text-shadow-color));
+    filter: drop-shadow(.2rem .2rem .1rem var(--pgetinker-text-shadow-color));
 }
 
 nav .sponsor {
@@ -144,7 +144,7 @@ nav .sponsor {
     padding: 0;
     margin-right: .5rem;
     font-size: 0.8rem;
-    text-shadow: .1rem .1rem .2rem var(--text-shadow-color);
+    text-shadow: .1rem .1rem .2rem var(--pgetinker-text-shadow-color);
     white-space: nowrap;
 }
 
@@ -155,12 +155,6 @@ nav .sponsor {
 .sponsor a:hover {
     text-decoration: underline;
 }
-
-@media (width <= 1320px) {
-    nav .sponsor {
-        display: none;
-    }
-}
   
 .dropdown {
     position: relative;
@@ -170,24 +164,24 @@ nav .sponsor {
 .dropdown-content {
     display: none;
     position: absolute;
-    background-color: var(--submenu-background);
+    background-color: var(--pgetinker-submenu-background);
     box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
     z-index: 1;
     white-space: nowrap;
-    border-top: 1px solid var(--content-border-color);
+    border-top: 1px solid var(--pgetinker-content-border-color);
 }
 
 .dropdown-content a {
     font-size: 1.2rem;
-    text-shadow: .2rem .2rem .5rem var(--text-shadow-color);
-    color: var(--submenu-text-color);
+    text-shadow: .2rem .2rem .5rem var(--pgetinker-text-shadow-color);
+    color: var(--pgetinker-submenu-text-color);
     padding: 12px 16px;
     text-decoration: none;
     display: block;
 }
 
 .dropdown-content a:hover {
-    background-color: var(--submenu-hover-background);
+    background-color: var(--pgetinker-submenu-hover-background);
 }
 
 .dropdown:hover .dropdown-content {
@@ -197,7 +191,7 @@ nav .sponsor {
 a:hover.menu-item,
 .menu-item:hover,
 .dropdown:hover .menu-item {
-    background-color: var(--menu-hover-background);
+    background-color: var(--pgetinker-menu-hover-background);
 }
 
 /* differentiate between left menus and right menus */
@@ -219,12 +213,11 @@ nav .navbar-right-menu .menu-item {
 #content {
     position: absolute;
     top: 49px;
-    bottom: 33px;
     bottom: 0px;
     width: 100%;
     overflow: hidden;
-    border-top: 1px solid var(--content-border-color);
-    border-bottom: 1px solid var(--content-border-color);
+    border-top: 1px solid var(--pgetinker-content-border-color);
+    border-bottom: 1px solid var(--pgetinker-content-border-color);
 }
 
 .center {
@@ -238,3 +231,5 @@ nav .navbar-right-menu .menu-item {
 @import "./info-panel.scss";
 @import "./player-panel.scss";
 @import "./dialog.scss";
+
+@import "./responsive.scss";
