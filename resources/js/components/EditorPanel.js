@@ -17,7 +17,10 @@ export default class EditorPanel
     constructor(state)
     {
         this.state = state;
-        this.sharedFlag = (window.location.pathname.indexOf("/s/") === 0);
+        this.sharedFlag = (
+            window.location.pathname.indexOf("/s/") === 0 ||
+            window.location.pathname.indexOf("/staging/s/") === 0
+        );
     }
     
     getValue()
