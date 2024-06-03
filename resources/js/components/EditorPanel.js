@@ -13,7 +13,7 @@ export default class EditorPanel
     maxFileSize = 50000;
     
     sharedFlag = false;
-
+    staging = false;
     constructor(state)
     {
         this.state = state;
@@ -21,6 +21,8 @@ export default class EditorPanel
             window.location.pathname.indexOf("/s/") === 0 ||
             window.location.pathname.indexOf("/staging/s/") === 0
         );
+        
+        this.staging = (window.location.pathname.indexOf("/staging/s/") === 0);
     }
     
     getValue()
@@ -76,6 +78,11 @@ export default class EditorPanel
             
             if(this.sharedFlag)
             {
+                if(this.staging)
+                {
+                    window.history.replaceState({}, "", "/staging/");
+                    return;
+                }
                 window.history.replaceState({}, "", "/");
             }
         });
