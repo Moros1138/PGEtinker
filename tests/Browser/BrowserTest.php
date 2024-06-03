@@ -77,6 +77,7 @@ class BrowserTest extends DuskTestCase
         $this->browse(function(Browser $browser)
         {
             $browser->visit("/");
+            $browser->waitUntilMissing("#pgetinker-loading");
             
             $browser->mouseover("@settings-menu");
             $browser->click("#default-code");
@@ -90,9 +91,12 @@ class BrowserTest extends DuskTestCase
         $this->browse(function(Browser $browser)
         {
             $browser->visit("/");
-            
+            $browser->waitUntilMissing("#pgetinker-loading");
+
             $browser->mouseover("@settings-menu");
             $browser->click("#toggle-theme");
+            
+            $browser->waitUntil("document.body.classList.contains('light')");
             $browser->assertAttributeContains("", "class", "light");
         });
     }
@@ -102,6 +106,8 @@ class BrowserTest extends DuskTestCase
         $this->browse(function(Browser $browser)
         {
             $browser->visit("/");
+
+            $browser->waitUntilMissing("#pgetinker-loading");
 
             $browser->click("#start-stop");
             $browser->waitFor("#player-panel .iframe-container iframe", 10);
@@ -115,6 +121,8 @@ class BrowserTest extends DuskTestCase
         {
             $browser->visit("/");
             
+            $browser->waitUntilMissing("#pgetinker-loading");
+
             $browser->mouseover("@sharing-menu");
             $browser->click("#share");
             $browser->waitFor(".share-dialog");
