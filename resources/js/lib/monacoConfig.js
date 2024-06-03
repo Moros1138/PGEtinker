@@ -23,19 +23,22 @@ export const getUserConfiguration = (theme) =>
 
 export const createUserConfig = (workspaceRoot, code, codeUri) =>
 {
+    let secured = (window.location.protocol.indexOf("https") === 0);
+    let staging = (window.location.pathname.indexOf("/staging/") == 0); 
+    
     return {
         languageClientConfig: {
             languageId: 'cpp',
             name: 'Clangd Language Server Example',
             options: {
                 $type: 'WebSocket',
-                host: 'test.pgetinker.com',
-                port: 443,
-                path: 'clangd',
+                host: window.location.host,
+                port: secured ? 443 : 80,
+                path: staging ? "staging/clangd" : "clangd",
                 extraParams: {
                     authorization: 'UserAuth'
                 },
-                secured: true,
+                secured: secured,
                 startOptions: {
                     onCall: (languageClient) => {},
                     reportStatus: true,
