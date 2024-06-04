@@ -116,7 +116,13 @@
             monitorRunDependencies: (left) => {
             }
         };
-        window.onerror = () => {};
+        
+        window.onerror = (event) =>
+        {
+            window.parent.postMessage({
+                message: "player-runtime-error",
+            }, "*");
+        };
 
         window.parent.postMessage({
             message: "player-ready",
