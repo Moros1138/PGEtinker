@@ -88,27 +88,16 @@
     <div id="container">
         <canvas id="canvas" oncontextmenu="event.preventDefault()" tabindex=-1></canvas>
     </div>
-    <textarea id="output"></textarea>
     <button id="toggle-console">Toggle Console</button>
     <script type='text/javascript'>
-
         var Module = {
             print: (function () {
-                var element = document.getElementById('output');
-                if (element) element.value = ''; // clear browser cache
                 return (...args) => {
                     var text = args.join(' ');
-                    console.log(text);
-
                     window.parent.postMessage({
                         message: "console-output",
                         data: text + "\n",
                     }, "*");
-
-                    if (element) {
-                        element.value += text + "\n";
-                        element.scrollTop = element.scrollHeight; // focus on bottom
-                    }
                 };
             })(),
             canvas: (() => {
@@ -133,27 +122,6 @@
             message: "player-ready",
         }, "*");
 
-        let showConsole = false;
-        function ToggleConsole(state)
-        {
-            showConsole = (typeof state === "boolean") ? state : !showConsole;
-
-            if(showConsole)
-            {
-                document.querySelector("#container").className = "show-console";
-                document.querySelector("#output").className = "show-console";
-                return;
-            }
-
-            document.querySelector("#container").className = "";
-            document.querySelector("#output").className = "";
-        }
-
-        document.querySelector("#toggle-console").addEventListener("click", (event) =>
-        {
-            ToggleConsole();
-        });
-
         window.addEventListener("message", (event) =>
         {
             if (typeof event.data !== "object")
@@ -165,15 +133,6 @@
             if (event.data.message === "set-theme") {
                 document.querySelector("body").className = event.data.theme;
                 return;
-            }
-
-            if (event.data.message === "toggle-console") {
-                ToggleConsole();
-                return;
-            }
-
-            if (event.data.message === "show-console") {
-                ToggleConsole(event.data.value);
             }
         });
     </script>
