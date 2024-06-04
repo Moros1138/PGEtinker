@@ -136,24 +136,6 @@ export default class EditorPanel
         this.monacoWrapper.getEditor().revealPositionInCenter(position);
     }
     
-    extractAndSetMarkers(input)
-    {
-    }
-
-    clearMarkers()
-    {
-    }
-
-    setMarkers(markers)
-    {
-        // // set model markers
-        // monaco.editor.setModelMarkers(this.monacoModel, "owner", markers);
-        // // move to first marker
-        // this.monacoEditor.setPosition({lineNumber: markers[0].startLineNumber, column: markers[0].startColumn });
-        // // trigger activate nearest marker
-        // setTimeout(() => { this.monacoEditor.trigger("", "editor.action.marker.next"); }, 50);
-    }
-
     async setTheme(theme)
     {
         if(this.monacoWrapper == null)

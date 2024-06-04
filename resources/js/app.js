@@ -253,7 +253,6 @@ class PGEtinker
         this.infoPanel.clear();
         this.consolePanel.clear();
 
-        this.editorPanel.clearMarkers();
         this.playerPanel.setCompiling();
         
         this.compiling = true;
@@ -307,6 +306,7 @@ class PGEtinker
     
     compileSuccessHandler(data)
     {
+        this.infoPanel.setContent(data.stderr);
         this.playerPanel.setHtml(data.html);
         this.compiling = false;
     }
@@ -316,8 +316,6 @@ class PGEtinker
         this.setActiveTab("C++ Editor");
 
         this.infoPanel.setContent(stderr);
-        this.editorPanel.extractAndSetMarkers(stderr);
-
         this.playerPanel.setCompilingFailed();
         this.compiling = false;
     }
