@@ -25,6 +25,11 @@ export default class PlayerPanel
                     theme: this.state.theme
                 }, "*");
             }
+
+            if(event.data.message === "player-runtime-error")
+            {
+                alert("A runtime error has occured, check the web developer console for more details.");
+            }
     
         });
     }
