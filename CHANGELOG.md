@@ -3,6 +3,7 @@
 All notable changes to this project will be documented in this file. Each batch of changes is marked by the date it was published to the repository for deployment to the PGEtinker site.
 
 It is a summary of changes that would be pertinent to the end user of the PGEtinker website. For a comprehensive history of changes made to the project, please refer to the repository's commit history.
+
 ## 2024-06-03
 
 - Added Clangd Language server to the backend
@@ -12,6 +13,8 @@ It is a summary of changes that would be pertinent to the end user of the PGEtin
 - Added An easy way to set a panel to have focus, required for an upcoming mobile update
 - Added Loading screen
 - Removed "show-console" hook to the emscripten template, no longer used
+- Fixed Overzealous auto complete
+- Fixed Linker error when the Geometry utility was included after the OLC_PGE_APPLICATION macro
 
 ## 2024-05-28
 

@@ -22,14 +22,32 @@ class Compiler
     private $compilerExitCode;
 
     private $environmentVariables = [];
-
-    private $errors = [];
     
+    private $errors = [];
+
     private $foundGeometryHeader = false;
 
     private $html = "";
 
+    private $implementationMacros = [];
+
     private $linkerCommand = [];
+
+    private $libraryMap = [
+        'OLC_PGE_APPLICATION'      => 'olcPixelGameEngine.o',
+        'OLC_SOUNDWAVE_ENGINE'     => 'olcSoundWaveEngine.o',
+        'OLC_PGEX_GRAPHICS2D'      => 'olcPGEX_Graphics2D.o',
+        'OLC_PGEX_GRAPHICS3D'      => 'olcPGEX_Graphics3D.o',
+        'OLC_PGEX_POPUPMENU'       => 'olcPGEX_PopUpMenu.o',
+        'OLC_PGEX_QUICKGUI'        => 'olcPGEX_QuickGUI.o',
+        'OLC_PGEX_RAYCASTWORLD'    => 'olcPGEX_RayCastWorld.o',
+        'OLC_PGEX_SOUND'           => 'olcPGEX_Sound.o',
+        'OLC_PGEX_SPLASHSCREEN'    => 'olcPGEX_SplashScreen.o',
+        'OLC_PGEX_TRANSFORMEDVIEW' => 'olcPGEX_TransformedView.o',
+        'OLC_PGEX_WIREFRAME'       => 'olcPGEX_Wireframe.o',
+        'MINIAUDIO_IMPLEMENTATION' => 'miniaudio.o',
+        'OLC_PGEX_MINIAUDIO'       => 'olcPGEX_MiniAudio.o',
+    ];
 
     private $linkerExitCode;
 
@@ -171,25 +189,9 @@ class Compiler
         if(!str_contains($this->code[$index], "define"))
             return false;
 
-        $libraryMap = [
-            'OLC_PGE_APPLICATION'      => 'olcPixelGameEngine.o',
-            'OLC_SOUNDWAVE_ENGINE'     => 'olcSoundWaveEngine.o',
-            'OLC_PGEX_GRAPHICS2D'      => 'olcPGEX_Graphics2D.o',
-            'OLC_PGEX_GRAPHICS3D'      => 'olcPGEX_Graphics3D.o',
-            'OLC_PGEX_POPUPMENU'       => 'olcPGEX_PopUpMenu.o',
-            'OLC_PGEX_QUICKGUI'        => 'olcPGEX_QuickGUI.o',
-            'OLC_PGEX_RAYCASTWORLD'    => 'olcPGEX_RayCastWorld.o',
-            'OLC_PGEX_SOUND'           => 'olcPGEX_Sound.o',
-            'OLC_PGEX_SPLASHSCREEN'    => 'olcPGEX_SplashScreen.o',
-            'OLC_PGEX_TRANSFORMEDVIEW' => 'olcPGEX_TransformedView.o',
-            'OLC_PGEX_WIREFRAME'       => 'olcPGEX_Wireframe.o',
-            'MINIAUDIO_IMPLEMENTATION' => 'miniaudio.o',
-            'OLC_PGEX_MINIAUDIO'       => 'olcPGEX_MiniAudio.o',
-        ];       
-        
         $foundImplementationMacro = false;
         
-        foreach($libraryMap as $macro => $objectFileName)
+        foreach($this->libraryMap as $macro => $objectFileName)
         {
             preg_match(
                 '/(.*)\s*#\s*define?\s+' . $macro . '(.*)/',
@@ -206,19 +208,11 @@ class Compiler
             if(!empty(trim($match[1][0])) || !empty(trim($match[2][0])))
                 continue;
             
-            // blank the line
-            $this->code[$index] = "";
+            $this->implementationMacros[] = [
+                "macro" => $macro,
+                "lineIndex" => $index
+            ];
             
-            if($macro == "OLC_PGE_APPLICATION" && $this->foundGeometryHeader)
-            {
-                $objectFileName = "olcPixelGameEngine_withGeometry.o";
-                $this->logger->info("Found the need for geometry utility support");
-            }
-                        
-            // indicate that we use this library
-            $this->linkerInputFiles[] = "./lib/{$objectFileName}";
-                    
-            $this->logger->info("Found implementation macro: {$macro}");
             $foundImplementationMacro = true;
             break;
         }
@@ -388,6 +382,28 @@ class Compiler
 
             if($this->processCodeRemoteInclude($i))
                 continue;
+        }
+
+
+        if(count($this->implementationMacros) != 0)
+        {
+            foreach($this->implementationMacros as $implementation)
+            {
+                if($implementation["macro"] == "OLC_PGE_APPLICATION")
+                {
+                    Log::info("Made it here");
+                    if($this->foundGeometryHeader)
+                    {
+                        $this->linkerInputFiles[] = "./lib/olcPixelGameEngine_withGeometry.o";
+                        $this->code[$implementation["lineIndex"]] = "";
+                        continue;
+                    }
+                }
+                
+                $this->linkerInputFiles[] = "./lib/" . $this->libraryMap[$implementation["macro"]];
+                $this->code[$implementation["lineIndex"]] = "";
+                continue;
+            }
         }
 
         $this->logger->info("finished processing code");

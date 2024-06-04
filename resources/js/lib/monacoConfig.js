@@ -18,6 +18,7 @@ export const getUserConfiguration = (theme) =>
         "editor.mouseWheelZoom": "on",
         "editor.wordBasedSuggestions": "off",
         "editor.quickSuggestionDelay": 500,
+        "editor.inlayHints.enabled": "off",
     });
 }
 
