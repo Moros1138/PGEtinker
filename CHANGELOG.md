@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file. Each batch 
 
 It is a summary of changes that would be pertinent to the end user of the PGEtinker website. For a comprehensive history of changes made to the project, please refer to the repository's commit history.
 
+## 2024-06-04
+
+- Added Alert when a runtime error occurs
+
 ## 2024-06-03
 
 - Added Clangd Language server to the backend
