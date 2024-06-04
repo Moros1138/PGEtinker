@@ -1,6 +1,5 @@
 import './lib/bootstrap';
 import './lib/goldenLayout';
-// import './lib/monaco';
 import './lib/lucide';
 import version from "./lib/version";
 import agreeDialog from './lib/agreeDialog';
