@@ -30,7 +30,7 @@ export const createUserConfig = (workspaceRoot, code, codeUri) =>
     return {
         languageClientConfig: {
             languageId: 'cpp',
-            name: 'Clangd Language Server Example',
+            name: 'Clangd Language Server',
             options: {
                 $type: 'WebSocket',
                 host: window.location.host,
