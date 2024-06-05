@@ -138,6 +138,8 @@ export default class EditorPanel
 
     reveal(position)
     {
+        this.monacoWrapper.getEditor().setPosition(position);
+        this.focus();
         this.monacoWrapper.getEditor().revealPositionInCenter(position);
     }
     
