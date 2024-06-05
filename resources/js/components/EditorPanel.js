@@ -130,6 +130,11 @@ export default class EditorPanel
     {
         return (this.monacoWrapper.getEditor().getValue().length > this.maxFileSize);
     }   
+    
+    focus()
+    {
+        this.monacoWrapper.getEditor().focus();
+    }
 
     reveal(position)
     {
