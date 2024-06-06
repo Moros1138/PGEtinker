@@ -305,6 +305,8 @@ class PGEtinker
     
     compileSuccessHandler(data)
     {
+        // pgetinker.cpp:19:17: warning: implicit conversion from 'float' to 'int' changes value from 0.1 to 0 [-Wliteral-conversion] 19 | int a = 0.1f; | ~ ^~~~ 1 warning generated. 
+        alert("If you're seeing this message, Moros deserves to be spanked. Go tell him he left this in here.");
         this.infoPanel.setContent(data.stderr);
         this.playerPanel.setHtml(data.html);
         this.compiling = false;
@@ -314,6 +316,7 @@ class PGEtinker
     {
         this.setActiveTab("C++ Editor");
 
+        alert("If you're seeing this message, Moros deserves to be spanked. Go tell him he left this in here.");
         this.infoPanel.setContent(stderr);
         this.playerPanel.setCompilingFailed();
         this.compiling = false;
