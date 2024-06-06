@@ -10,33 +10,70 @@ export default class InfoPanel
         
         window.addEventListener("update-problems-panel", (event) =>
         {
-            const diagnostics = event.detail;
-
             document.querySelector("#info-panel").innerHTML = "";
-            const wrapper = document.createElement("div");
+            
+            
+            let diagnostics = [];
+            diagnostics.push([]);
+            diagnostics.push([]);
+            diagnostics.push([]);
+            diagnostics.push([]);
 
-            diagnostics.forEach((diagnostic) =>
+            event.detail.forEach((diagnostic) =>
             {
-                const container = document.createElement("p");
-                const link      = document.createElement("a");
-
-                link.setAttribute("href", "#");
-                link.setAttribute("data-line-number", diagnostic.range.start._line);
-                link.setAttribute("data-column", diagnostic.range.start._character);
-                link.setAttribute("title", diagnostic.message);
-                link.innerHTML = diagnostic.message;
-
-                link.addEventListener("click", (event) =>
-                {
-                    const currentLink = event.target;
-                    const lineNumber = parseInt(currentLink.getAttribute("data-line-number")) + 1;
-                    const column     = parseInt(currentLink.getAttribute("data-column")) + 1;
-                    this.state.editorPanel.reveal({ lineNumber, column });
-                });
-                
-                container.append(link);
-                wrapper.append(container);
+                diagnostics[diagnostic.severity].push(diagnostic);
             });
+
+            const wrapper = document.createElement("table");
+            
+            const header = document.createElement("thead");
+            
+            header.innerHTML = `
+                <td>Severity</td>
+                <td>Line</td>
+                <td>Column</td>
+                <td>Message</td>
+            `;
+
+            const body   = document.createElement("tbody");
+            while(diagnostics.length > 0)
+            {
+                let currentDiagnostics = diagnostics.shift();
+                currentDiagnostics.sort((a, b) =>
+                {
+                    return (parseInt(a.range.start._line) - parseInt(b.range.start._line));
+                });
+
+                currentDiagnostics.forEach((diagnostic) =>
+                {
+                    const container = document.createElement("tr");
+                    container.classList.toggle(["Error", "Warning", "Info", "Hint"][diagnostic.severity].toLowerCase());
+
+                    container.innerHTML = `
+                        <th>${["Error", "Warning", "Info", "Hint"][diagnostic.severity]}</th>
+                        <th>${diagnostic.range.start._line}</th>
+                        <th>${diagnostic.range.start._character}</th>
+                        <th>${diagnostic.message}</th>
+                    `;
+                    
+                    container.setAttribute("data-line-number", diagnostic.range.start._line);
+                    container.setAttribute("data-column", diagnostic.range.start._character);
+    
+                    container.addEventListener("click", (event) =>
+                    {
+                        event.preventDefault();
+    
+                        const lineNumber = parseInt(container.getAttribute("data-line-number")) + 1;
+                        const column     = parseInt(container.getAttribute("data-column")) + 1;
+                        this.state.editorPanel.reveal({ lineNumber, column });
+                    });
+
+                    body.append(container);
+                });
+            }
+            
+            wrapper.append(header);
+            wrapper.append(body);
             
             document.querySelector("#info-panel").append(wrapper);
         });
