@@ -238,3 +238,7 @@ nav .navbar-right-menu .menu-item {
 @import "./dialog.scss";
 
 @import "./responsive.scss";
+
+.lm_content {
+    overflow: visible !important;
+}
