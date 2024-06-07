@@ -128,16 +128,25 @@ export default class EditorPanel
     
     exceedsMaxSize()
     {
+        if(this.monacoWrapper == null)
+            return false;
+
         return (this.monacoWrapper.getEditor().getValue().length > this.maxFileSize);
     }   
     
     focus()
     {
+        if(this.monacoWrapper == null)
+            return;
+
         this.monacoWrapper.getEditor().focus();
     }
 
     reveal(position)
     {
+        if(this.monacoWrapper == null)
+            return;
+
         this.monacoWrapper.getEditor().setPosition(position);
         this.focus();
         this.monacoWrapper.getEditor().revealPositionInCenter(position);
@@ -156,6 +165,9 @@ export default class EditorPanel
 
     updateStatusBar()
     {
+        if(this.monacoWrapper == null)
+            return;
+
         let statusBar = document.querySelector("#editor-panel .status");
     
         let cursor = `Ln ${this.monacoWrapper.getEditor().getPosition().lineNumber}, Col ${this.monacoWrapper.getEditor().getPosition().column}`;
