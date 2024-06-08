@@ -238,6 +238,8 @@ class PGEtinker
         else
         {
             this.SetupLayout();
+            this.setActiveTab("editor");
+            this.setActiveTab("problems");
         }
     }
 
