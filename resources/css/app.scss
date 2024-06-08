@@ -232,9 +232,10 @@ nav .navbar-right-menu .menu-item {
 .hidden { display: none; }
 
 @import "./console-panel.scss";
+@import "./compiler-output-panel.scss";
 @import "./editor-panel.scss";
-@import "./info-panel.scss";
 @import "./player-panel.scss";
+@import "./problems-panel.scss";
 @import "./dialog.scss";
 
 @import "./responsive.scss";
