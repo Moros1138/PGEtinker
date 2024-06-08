@@ -23,8 +23,52 @@ export default class ProblemsPanel
                 diagnostics[diagnostic.severity].push(diagnostic);
             });
 
+            let errorCount   = diagnostics[0].length;
+            let warningCount = diagnostics[1].length;
+            let infoCount    = diagnostics[2].length;
+            let hintCount    = diagnostics[3].length;
+
+            let tab = document.querySelector('#problems-tab');
+
+            tab.innerHTML = "";
+
+            if(errorCount > 0)
+            {
+                let span = document.createElement("span");
+                span.classList.toggle("error", true);
+                span.innerHTML = `${errorCount}`;
+
+                tab.append(span);
+            }
+
+            if(warningCount > 0)
+            {
+                let span = document.createElement("span");
+                span.classList.toggle("warning", true);
+                span.innerHTML = `${warningCount}`;
+
+                tab.append(span);
+            }
+
+            if(infoCount > 0)
+            {
+                let span = document.createElement("span");
+                span.classList.toggle("info", true);
+                span.innerHTML = `${infoCount}`;
+
+                tab.append(span);
+            }
+    
+            if(hintCount > 0)
+            {
+                let span = document.createElement("span");
+                span.classList.toggle("hint", true);
+                span.innerHTML = `${hintCount}`;
+
+                tab.append(span);
+            }
+    
             const wrapper = document.createElement("table");
-            
             const header = document.createElement("thead");
             
             header.innerHTML = `
@@ -105,6 +149,14 @@ export default class ProblemsPanel
                 <div id="problems-panel">
                 </div>
             `);
+
+            container.on('tab', function(tab)
+            {
+                let problemsTabBar = document.createElement('div');
+                problemsTabBar.setAttribute('id', 'problems-tab');
+                
+                tab.element.append(problemsTabBar);
+            });
         });        
     }
     
