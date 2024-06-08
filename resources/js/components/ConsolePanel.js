@@ -4,10 +4,13 @@ export default class ConsolePanel
     consoleAutoScrollEnabled = true;
      
     state;
-   
+    firstRun;
+
     constructor(state)
     {
         this.state = state;
+        this.firstRun = true;
+
         console.log("Console panel", "constructor");
 
         window.addEventListener("message", (event) =>
@@ -26,7 +29,11 @@ export default class ConsolePanel
                 if(this.consoleAutoScrollEnabled)
                     this.getElement().scrollTop = this.getElement().scrollHeight;
 
-                this.state.setActiveTab("console");
+                if(this.firstRun)
+                {
+                    this.state.setActiveTab("console");
+                    this.firstRun = false;
+                }
             }
         });
     }
@@ -77,4 +84,8 @@ export default class ConsolePanel
         });
     }
 
+    setFirstRun()
+    {
+        this.firstRun = true;
+    }
 }

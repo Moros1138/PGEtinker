@@ -181,6 +181,7 @@ class PGEtinker
             {
                 this.setActiveTab("player");
                 
+                this.consolePanel.setFirstRun();
                 playIconElem.classList.toggle("hidden", true);
                 stopIconElem.classList.toggle("hidden", false);
                 spanElem.innerHTML = "Stop";
