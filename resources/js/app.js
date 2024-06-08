@@ -2,23 +2,28 @@ import './lib/bootstrap';
 import './lib/goldenLayout';
 import './lib/lucide';
 import version from "./lib/version";
+import { conformStorage, getStorageValue, setStorageValue } from './lib/storage';
 import agreeDialog from './lib/agreeDialog';
 import shareDialog from './lib/shareDialog';
 import newsDialog from './lib/newsDialog';
-import defaultLayout from './lib/defaultLayout';
+import defaultLandscapeLayout from './lib/defaultLandscapeLayout';
+import defaultPortraitLayout from './lib/defaultPortraitLayout';
 import supportersDialog from './lib/supportersDialog';
 
 import ConsolePanel from './components/ConsolePanel';
+import CompilerOutputPanel from './components/CompilerOutputPanel';
 import EditorPanel from './components/EditorPanel';
-import InfoPanel from './components/InfoPanel';
 import PlayerPanel from './components/PlayerPanel';
+import ProblemsPanel from './components/ProblemsPanel';
+import { removeStorageKey } from './lib/storage';
 
 class PGEtinker
 {
     consolePanel;
     editorPanel;
-    infoPanel;
+    compilerOutputPanel;
     playerPanel;
+    problemsPanel;
 
     layoutInitialized = false;
     compiling = false;
@@ -29,13 +34,30 @@ class PGEtinker
 
     constructor()
     {
-        this.consolePanel = new ConsolePanel(this);
-        this.editorPanel  = new EditorPanel(this);
-        this.infoPanel    = new InfoPanel(this);
-        this.playerPanel  = new PlayerPanel(this);
+        conformStorage();
 
-        this.layoutConfig = window.localStorage.getItem("pgetinkerLayout");
-        this.layoutConfig = (this.layoutConfig !== null) ? JSON.parse(this.layoutConfig) : defaultLayout;
+        this.consolePanel        = new ConsolePanel(this);
+        this.compilerOutputPanel = new CompilerOutputPanel(this);
+        this.editorPanel         = new EditorPanel(this);
+        this.playerPanel         = new PlayerPanel(this);
+        this.problemsPanel       = new ProblemsPanel(this);
+        
+        
+        this.layoutConfig = getStorageValue("layout");
+        if(this.layoutConfig === null)
+        {
+            this.layoutConfig = defaultLandscapeLayout;
+            
+            if(document.body.clientWidth <= 750)
+            {
+                console.log("chose portrait layout");
+                this.layoutConfig = defaultPortraitLayout;
+            }
+            else
+            {
+                console.log("chose landscapre layout");
+            }
+        }
         
         this.theme = window.localStorage.getItem("pgetinkerTheme");
         if(this.theme !== "dark" && this.theme !== "light")
@@ -157,7 +179,7 @@ class PGEtinker
 
             if(spanElem.innerHTML == "Run")
             {
-                this.setActiveTab("Emscripten Player");
+                this.setActiveTab("player");
                 
                 playIconElem.classList.toggle("hidden", true);
                 stopIconElem.classList.toggle("hidden", false);
@@ -173,13 +195,15 @@ class PGEtinker
 
             if(spanElem.innerHTML == "Stop")
             {
-                this.setActiveTab("C++ Editor");
+                this.setActiveTab("editor");
 
                 this.playerPanel.stop();
                 playIconElem.classList.toggle("hidden", false);
                 stopIconElem.classList.toggle("hidden", true);
                 spanElem.innerHTML = "Run";
             }
+            
+            startStopElem.blur();
         });
 
         document.querySelector("#supporters").addEventListener("click", (event) =>
@@ -194,23 +218,20 @@ class PGEtinker
             newsDialog();
         });
 
-        let agreedToTerms = window.localStorage.getItem("pgetinkerAgreedToTerms");
-        agreedToTerms = (agreedToTerms == null) ? false : JSON.parse(agreedToTerms);
-        
-        if(!agreedToTerms)
+        if(!getStorageValue("agreed-to-terms"))
         {
             agreeDialog()
                 .then(() =>
                 {
-                    window.localStorage.setItem("pgetinkerAgreedToTerms", JSON.stringify(true));
+                    setStorageValue("agreed-to-terms", true);
                     this.SetupLayout();
                 })
                 .catch(() =>
                 {
-                    window.localStorage.removeItem("pgetinkerCode");
-                    window.localStorage.removeItem("pgetinkerTheme");
-                    window.localStorage.removeItem("pgetinkerLayout");
-                    window.localStorage.removeItem("pgetinkerVersion");
+                    removeStorageKey("code");
+                    removeStorageKey("theme");
+                    removeStorageKey("layout");
+                    removeStorageKey("version");
                     window.location.pathname = "/disagree";
                 });
         }
@@ -220,13 +241,13 @@ class PGEtinker
         }
     }
 
-    setActiveTab(title)
+    setActiveTab(id)
     {
         try
         {
             let panel = this.layout.root.getItemsByFilter((item) =>
             {
-                return (item.config.title == title);
+                return (item.config.id == id);
             })[0];
             
             if(panel.parent.isStack)
@@ -236,7 +257,7 @@ class PGEtinker
         }
         catch(e)
         {
-            console.log(`Failed to setActiveTab("${title}")`);
+            console.log(`Failed to setActiveTab("${id}")`);
         }
     }
 
@@ -248,8 +269,8 @@ class PGEtinker
             return false;
         }
         
-        this.infoPanel.focus();
-        this.infoPanel.clear();
+        this.compilerOutputPanel.focus();
+        this.compilerOutputPanel.clear();
         this.consolePanel.clear();
 
         this.playerPanel.setCompiling();
@@ -307,17 +328,17 @@ class PGEtinker
     {
         // pgetinker.cpp:19:17: warning: implicit conversion from 'float' to 'int' changes value from 0.1 to 0 [-Wliteral-conversion] 19 | int a = 0.1f; | ~ ^~~~ 1 warning generated. 
         alert("If you're seeing this message, Moros deserves to be spanked. Go tell him he left this in here.");
-        this.infoPanel.setContent(data.stderr);
+        this.compilerOutputPanel.setContent(data.stderr);
         this.playerPanel.setHtml(data.html);
         this.compiling = false;
     }
     
     compileFailHandler(stderr)
     {
-        this.setActiveTab("C++ Editor");
+        this.setActiveTab("editor");
 
         alert("If you're seeing this message, Moros deserves to be spanked. Go tell him he left this in here.");
-        this.infoPanel.setContent(stderr);
+        this.compilerOutputPanel.setContent(stderr);
         this.playerPanel.setCompilingFailed();
         this.compiling = false;
     }
@@ -332,13 +353,16 @@ class PGEtinker
         
         this.consolePanel.register();
         this.editorPanel.register();
-        this.infoPanel.register();
+        this.compilerOutputPanel.register();
         this.playerPanel.register();
+        this.problemsPanel.register();
 
         this.layout.on("stateChanged", () =>
         {
             if(this.layoutInitialized)
-                window.localStorage.setItem("pgetinkerLayout", JSON.stringify(this.layout.toConfig()));
+            {
+                setStorageValue("layout", this.layout.toConfig());
+            }
         });
         
         this.layout.on("initialised", async() =>
@@ -352,29 +376,27 @@ class PGEtinker
             
             this.consolePanel.onInit();
             await this.editorPanel.onInit();
-            this.infoPanel.onInit();
+            this.compilerOutputPanel.onInit();
             this.playerPanel.onInit();
-            
+            this.problemsPanel.onInit();
+
             await this.UpdateTheme();
             
             setTimeout(() =>
             {
                 document.querySelector("#pgetinker-loading").classList.toggle("display-flex", false);
-                this.setActiveTab("C++ Editor");
+                this.setActiveTab("editor");
             }, 500)
         });
     
         this.layout.init();
 
-        let pgetinkerVersion = window.localStorage.getItem("pgetinkerVersion");
-        pgetinkerVersion = (pgetinkerVersion != "string") ? pgetinkerVersion : "";
-        
-        if(version !== pgetinkerVersion)
+        if(version !== getStorageValue("version"))
         {
             newsDialog()
                 .finally(() =>
                 {
-                    window.localStorage.setItem("pgetinkerVersion", version);
+                    setStorageValue("version", version);
                 });
         }
         
@@ -383,7 +405,7 @@ class PGEtinker
     async UpdateTheme()
     {
         // save theme into localStorage
-        window.localStorage.setItem("pgetinkerTheme", this.theme);
+        setStorageValue("theme", this.theme);
 
         let light = (this.theme === "light");
 
