@@ -243,25 +243,33 @@ class Compiler
 
             if(env("COMPILER_REMOTE_INCLUDE_CACHING", false))
             {
-                $remoteIncludeCache = Redis::get("remote_include_{$hashedUrl}");
-                
-                // if we have a cached version of the url's contents, don't pull it
-                if(isset($remoteIncludeCache))
+                try
                 {
-                    $this->logger->info("remote include cache hit");
-                    $remoteIncludeCache = json_decode($remoteIncludeCache, false);
+                    $remoteIncludeCache = Redis::get("remote_include_{$hashedUrl}");
                     
-                    // just because it's cached, doesn't mean you get to compile faster!
-                    usleep(floatval($remoteIncludeCache->time) * 1000000);
-                    
-                    file_put_contents(
-                        "{$this->workingDirectory}/{$potentialFilename}",
-                        $remoteIncludeCache->content
-                    );
-                    
-                    $this->code[$index] = '#include "' . $potentialFilename .'"';
-                    return true;
+                    // if we have a cached version of the url's contents, don't pull it
+                    if(isset($remoteIncludeCache))
+                    {
+                        $this->logger->info("remote include cache hit");
+                        $remoteIncludeCache = json_decode($remoteIncludeCache, false);
+                        
                         Redis::expire("remote_include_{$hashedUrl}", env("REDIS_TTL", 60));
+                        
+                        // just because it's cached, doesn't mean you get to compile faster!
+                        usleep(floatval($remoteIncludeCache->time) * 1000000);
+                        
+                        file_put_contents(
+                            "{$this->workingDirectory}/{$potentialFilename}",
+                            $remoteIncludeCache->content
+                        );
+                        
+                        $this->code[$index] = '#include "' . $potentialFilename .'"';
+                        return true;
+                    }
+                }
+                catch(Exception $e)
+                {
+                    Log::emergency("Remote Include Cache Enabled, But Redis Failed");
                 }
             }
             
@@ -348,7 +356,14 @@ class Compiler
                 $remoteIncludeCache->time = $requestDuration;
                 $remoteIncludeCache->content = $response->body();
                 
+                try
+                {
                     Redis::setex("remote_include_{$hashedUrl}", env("REDI_TTL", 60), json_encode($remoteIncludeCache, JSON_PRETTY_PRINT));
+                }
+                catch(Exception $e)
+                {
+                    Log::emergency("Remote Inlucde Cache Enabled, But Redis Failed");
+                }
             }
 
             $this->code[$index] = '#include "' . $potentialFilename .'"';
@@ -392,7 +407,6 @@ class Compiler
             {
                 if($implementation["macro"] == "OLC_PGE_APPLICATION")
                 {
-                    Log::info("Made it here");
                     if($this->foundGeometryHeader)
                     {
                         $this->linkerInputFiles[] = "./lib/olcPixelGameEngine_withGeometry.o";
