@@ -48,11 +48,10 @@ export const runCppWrapper = async (htmlElement) => {
             // reset editor font zoom
             window.addEventListener("keydown", (event) => {
                 if (event.ctrlKey && event.key == "0") {
-                    // event.preventDefault();
                     vscode.commands.executeCommand("editor.action.fontZoomReset");
                 }
             });
-            
+
             // @ts-ignore
             window.addEventListener("unload", async(event) => {
                 await wrapper.dispose();

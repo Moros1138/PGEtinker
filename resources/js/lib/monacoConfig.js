@@ -30,7 +30,7 @@ export const createUserConfig = (workspaceRoot, code, codeUri) =>
     return {
         languageClientConfig: {
             languageId: 'cpp',
-            name: 'Clangd Language Server Example',
+            name: 'Clangd Language Server',
             options: {
                 $type: 'WebSocket',
                 host: window.location.host,
@@ -52,6 +52,18 @@ export const createUserConfig = (workspaceRoot, code, codeUri) =>
                     name: 'workspace',
                     uri: vscode.Uri.parse(workspaceRoot)
                 },
+                middleware: {
+                    handleDiagnostics: (uri, diagnostics, next) =>
+                    {
+                        // we only care about the main source file, let the rest of the middleware handle this one
+                        if(uri.path != "/workspace/pgetinker.cpp")
+                            return next(uri, diagnostics);
+                        
+                        window.dispatchEvent(new CustomEvent("update-problems-panel", { detail: diagnostics }));
+                        return next(uri, diagnostics);
+                    },
+                },
+
                 connectionOptions: {
                     maxRestartCount: 5,
                 }

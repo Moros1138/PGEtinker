@@ -53,8 +53,11 @@ body.light {
 
 html,
 body {
+    position: relative;
     width: 100%;
     height: 100%;
+    margin: 0;
+    padding: 0;
     overflow: hidden;
     font-family: 'Pixel Code', monospace;
     font-size: 12px;
@@ -73,7 +76,7 @@ a:hover {
 }
 
 #app {
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
@@ -216,6 +219,8 @@ nav .navbar-right-menu .menu-item {
     bottom: 0px;
     width: 100%;
     overflow: hidden;
+    margin: 0;
+    padding: 0;
     border-top: 1px solid var(--pgetinker-content-border-color);
     border-bottom: 1px solid var(--pgetinker-content-border-color);
 }
@@ -227,9 +232,14 @@ nav .navbar-right-menu .menu-item {
 .hidden { display: none; }
 
 @import "./console-panel.scss";
+@import "./compiler-output-panel.scss";
 @import "./editor-panel.scss";
-@import "./info-panel.scss";
 @import "./player-panel.scss";
+@import "./problems-panel.scss";
 @import "./dialog.scss";
 
 @import "./responsive.scss";
+
+.lm_content {
+    overflow: visible !important;
+}

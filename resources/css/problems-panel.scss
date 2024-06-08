@@ -1,0 +1,80 @@
+#problems-panel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: auto;
+}
+
+#problems-panel > div {
+    font-family: "Droid Sans Mono", "monospace", monospace;
+    width: 100%;
+    white-space: pre-wrap;       /* Since CSS 2.1 */
+    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+    white-space: -pre-wrap;      /* Opera 4-6 */
+    white-space: -o-pre-wrap;    /* Opera 7 */
+    word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
+
+#problems-panel table {
+    font-family: "Droid Sans Mono", "monospace", monospace;
+    border-spacing: 0;
+    width: 100%;
+}
+
+#problems-panel table thead {
+    position: sticky;
+    font-weight: bolder;
+    text-decoration: underline;
+    inset-block-start: 0;
+    background-color: var(--pgetinker-background-color);
+}
+
+#problems-panel table thead tr td:nth-child(1) {
+    width: 15vw;
+}
+
+#problems-panel table thead tr td:nth-child(2) {
+    width: 5vw;
+}
+
+#problems-panel table thead tr td:nth-child(3) {
+    width: 5vw;
+}
+
+#problems-panel table thead tr td:nth-child(4) {
+    width: 100%;
+}
+
+#problems-panel table tr.error {
+    background-color: rgba(255,0,0,0.2);
+}
+
+#problems-panel table tr.warning {
+    background-color: rgba(255,255,0,0.2);
+}
+
+#problems-panel table tr.info {
+    background-color: rgba(0,0,255,0.2);
+}
+
+#problems-panel table tr.hint {
+    background-color: rgba(0, 255, 255,0.2);
+}
+
+#problems-panel table tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+#problems-panel table tr {
+    text-align: left;
+}
+
+#problems-panel table tr th,
+#problems-panel table tr td {
+    padding: 0.3rem;
+    padding-left: 1rem;
+}

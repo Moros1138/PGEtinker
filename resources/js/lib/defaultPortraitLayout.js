@@ -1,23 +1,25 @@
-const defaultLayout = {
+const defaultPortraitLayout = {
     settings: {
         showPopoutIcon: false,
     },
     content: [{
         type: 'column',
         content:[{
-            type: 'row',
+            type: 'stack',
             content:[{
                 type: 'component',
                 componentName: 'editorComponent',
                 componentState: {},
                 isClosable: false,
                 title: 'C++ Editor',
+                id: 'editor',
             },{
                 type: 'component',
                 componentName: 'playerComponent',
                 componentState: {},
                 isClosable: false,
                 title: 'Emscripten Player',
+                id: 'player',
             }],
         },{
             type: 'stack',
@@ -25,11 +27,18 @@ const defaultLayout = {
             height: 25,
             content: [{
                 type: 'component',
-                componentName: 'infoComponent',
+                componentName: 'problemsComponent',
                 componentState: {},
                 isClosable: false,
-                title: 'Build Information',
-                id: 'info',
+                title: 'Problems',
+                id: 'problems',
+            },{
+                type: 'component',
+                componentName: 'compilerOutputComponent',
+                componentState: {},
+                isClosable: false,
+                title: 'Compiler Output',
+                id: 'compiler-output',
             },{
                 type: 'component',
                 componentName: 'consoleComponent',
@@ -42,4 +51,4 @@ const defaultLayout = {
     }],
 };
 
-export default defaultLayout;
+export default defaultPortraitLayout;

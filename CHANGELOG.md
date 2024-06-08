@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file. Each batch 
 
 It is a summary of changes that would be pertinent to the end user of the PGEtinker website. For a comprehensive history of changes made to the project, please refer to the repository's commit history.
 
+## 2024-06-08
+
+- Fixed mobile overize issue (big win for mobile)
+- Added diagnostics middleware to monaco language client
+- Changed Build Information panel to Compiler Output
+- Added Problems panel
+- Removed old default layout
+- Added default layout for portrait
+- Added default layout for landscape
+- Added storage abstraction
+
 ## 2024-06-04
 
 - Added Alert when a runtime error occurs

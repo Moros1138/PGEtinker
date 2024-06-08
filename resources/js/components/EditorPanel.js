@@ -1,6 +1,7 @@
 import { getUserConfiguration } from "../lib/monacoConfig";
 import { runCppWrapper } from "../lib/monacoWrapper";
 import pgetinkerCppCode from '../../example.cpp?raw';
+import { getStorageValue } from "../lib/storage";
 
 export default class EditorPanel
 {
@@ -59,9 +60,9 @@ export default class EditorPanel
         {
             code = document.querySelector('#code').value;
         }
-        else if(window.localStorage.getItem("pgetinkerCode"))
+        else if(getStorageValue("code"))
         {
-            code = JSON.parse(window.localStorage.getItem("pgetinkerCode"));
+            code = getStorageValue("code");
         }
         else
         {
@@ -128,32 +129,30 @@ export default class EditorPanel
     
     exceedsMaxSize()
     {
+        if(this.monacoWrapper == null)
+            return false;
+
         return (this.monacoWrapper.getEditor().getValue().length > this.maxFileSize);
     }   
+    
+    focus()
+    {
+        if(this.monacoWrapper == null)
+            return;
+
+        this.monacoWrapper.getEditor().focus();
+    }
 
     reveal(position)
     {
+        if(this.monacoWrapper == null)
+            return;
+
+        this.monacoWrapper.getEditor().setPosition(position);
+        this.focus();
         this.monacoWrapper.getEditor().revealPositionInCenter(position);
     }
     
-    extractAndSetMarkers(input)
-    {
-    }
-
-    clearMarkers()
-    {
-    }
-
-    setMarkers(markers)
-    {
-        // // set model markers
-        // monaco.editor.setModelMarkers(this.monacoModel, "owner", markers);
-        // // move to first marker
-        // this.monacoEditor.setPosition({lineNumber: markers[0].startLineNumber, column: markers[0].startColumn });
-        // // trigger activate nearest marker
-        // setTimeout(() => { this.monacoEditor.trigger("", "editor.action.marker.next"); }, 50);
-    }
-
     async setTheme(theme)
     {
         if(this.monacoWrapper == null)
@@ -167,6 +166,9 @@ export default class EditorPanel
 
     updateStatusBar()
     {
+        if(this.monacoWrapper == null)
+            return;
+
         let statusBar = document.querySelector("#editor-panel .status");
     
         let cursor = `Ln ${this.monacoWrapper.getEditor().getPosition().lineNumber}, Col ${this.monacoWrapper.getEditor().getPosition().column}`;
