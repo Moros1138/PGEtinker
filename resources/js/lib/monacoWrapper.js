@@ -52,36 +52,6 @@ export const runCppWrapper = async (htmlElement) => {
                 }
             });
 
-            window.addEventListener("pgetinker-start-language-server", async() =>
-            {
-                if(!wrapper.getLanguageClientWrapper().isStarted())
-                    await wrapper.getLanguageClientWrapper().start();
-            });
-            
-            window.addEventListener("pgetinker-stop-language-server", async() =>
-            {
-                if(wrapper.getLanguageClientWrapper().isStarted())
-                    await wrapper.getLanguageClientWrapper().disposeLanguageClient();
-            });
-
-            window.addEventListener("pgetinker-restart-language-server", async(event) =>
-            {
-                if(wrapper.getLanguageClientWrapper().isStarted() || event.detail.force)
-                    await wrapper.getLanguageClientWrapper().restartLanguageClient();
-            });
-
-            let keepAliveInterval;
-
-            keepAliveInterval = setInterval(() =>
-            {
-                // has the language client shutdown/disconnected?
-                if(!wrapper.getLanguageClientWrapper().isStarted())
-                {
-                    // force restart the language server, hopefully it'll reconnect
-                    window.dispatchEvent(new CustomEvent("pgetinker-restart-language-server", { detail: { force: true } }));
-                }
-            }, 10000);
-
             // @ts-ignore
             window.addEventListener("unload", async(event) => {
                 await wrapper.dispose();
