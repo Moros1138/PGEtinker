@@ -1,6 +1,7 @@
 import { getUserConfiguration } from "../lib/monacoConfig";
 import { runCppWrapper } from "../lib/monacoWrapper";
 import pgetinkerCppCode from '../../example.cpp?raw';
+import { getStorageValue } from "../lib/storage";
 
 export default class EditorPanel
 {
@@ -59,9 +60,9 @@ export default class EditorPanel
         {
             code = document.querySelector('#code').value;
         }
-        else if(window.localStorage.getItem("pgetinkerCode"))
+        else if(getStorageValue("code"))
         {
-            code = JSON.parse(window.localStorage.getItem("pgetinkerCode"));
+            code = getStorageValue("code");
         }
         else
         {
