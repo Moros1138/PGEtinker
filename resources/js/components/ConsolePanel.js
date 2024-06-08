@@ -20,40 +20,38 @@ export default class ConsolePanel
 
             if(event.data.message === "console-output")
             {
-                let consoleContainer = document.querySelector("#console-panel");
-                consoleContainer.innerHTML += `<div>${event.data.data}</div>`;
+                this.getElement().innerHTML += `<div>${event.data.data}</div>`;
                 
                 // auto scroll
                 if(this.consoleAutoScrollEnabled)
-                    consoleContainer.scrollTop = consoleContainer.scrollHeight;
+                    this.getElement().scrollTop = this.getElement().scrollHeight;
 
-                this.state.setActiveTab("Console");
+                this.state.setActiveTab("console");
             }
         });
     }
     
     clear()
     {
-        document.querySelector("#console-panel").innerHTML = "";
+        this.getElement().innerHTML = "";
     }
 
-    exists()
+    getElement()
     {
-        return this.consolePanelExist;
+        return document.querySelector('#console-panel');
     }
 
     onInit()
     {
-        let consoleContainer = document.querySelector("#console-panel");
         document.querySelector("#console-auto-scroll").addEventListener("click", () =>
         {
             this.consoleAutoScrollEnabled = true;
             document.querySelector("#console-auto-scroll").classList.toggle("hidden", this.consoleAutoScrollEnabled);
         });
 
-        consoleContainer.addEventListener("wheel", (event) =>
+        this.getElement().addEventListener("wheel", (event) =>
         {
-            let nearBottom = ((consoleContainer.scrollHeight - consoleContainer.clientHeight) <= (consoleContainer.scrollTop + 1));
+            let nearBottom = ((this.getElement().scrollHeight - this.getElement().clientHeight) <= (this.getElement().scrollTop + 1));
 
             if(nearBottom)
             {
@@ -61,7 +59,7 @@ export default class ConsolePanel
                 if(event.deltaY < 0)
                 {
                     this.consoleAutoScrollEnabled = false;
-                    consoleContainer.scrollTop = consoleContainer.scrollHeight - 20;
+                    this.getElement().scrollTop = this.getElement().scrollHeight - 20;
                     document.querySelector("#console-auto-scroll").classList.toggle("hidden", this.consoleAutoScrollEnabled);
                 }
             }
