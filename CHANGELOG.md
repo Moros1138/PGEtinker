@@ -9,11 +9,12 @@ It is a summary of changes that would be pertinent to the end user of the PGEtin
 - Fixed mobile overize issue (big win for mobile)
 - Added diagnostics middleware to monaco language client
 - Changed Build Information panel to Compiler Output
-- Added Problems panel
+- Added Problems panel [Issue #85](https://github.com/Moros1138/PGEtinker/issues/85)
 - Removed old default layout
 - Added default layout for portrait
 - Added default layout for landscape
 - Added storage abstraction
+- Fixed [Issue #88](https://github.com/Moros1138/PGEtinker/issues/88)
 
 ## 2024-06-04
 

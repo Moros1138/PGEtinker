@@ -137,22 +137,30 @@ class CodeController extends Controller
         
         if(env("COMPILER_CACHING", false))
         {
-            $cachedCode = Redis::get("compiler_{$hashedCode}");
-            
-            if(isset($cachedCode))
+            try
             {
-                Log::debug("Compile: cache hit", ["hashedCode" => $hashedCode]);
-                
-                $compiler = new Compiler();
-                $compiler->deserialize($cachedCode);
-
-                return [
-                    "statusCode" => $compiler->getStatus(),
-                    "hash" => $hashedCode,
-                    "html" => $compiler->getHtml(),
-                    "stdout" => $compiler->getOutput(),
-                    "stderr" => $compiler->getErrorOutput(),
-                ];
+                $cachedCode = Redis::get("compiler_{$hashedCode}");
+            
+                if(isset($cachedCode))
+                {
+                    Redis::expire("compiler_{$hashedCode}", env("REDIS_TTL", 60));
+                    Log::debug("Compile: cache hit", ["hashedCode" => $hashedCode]);
+                    
+                    $compiler = new Compiler();
+                    $compiler->deserialize($cachedCode);
+    
+                    return [
+                        "statusCode" => $compiler->getStatus(),
+                        "hash" => $hashedCode,
+                        "html" => $compiler->getHtml(),
+                        "stdout" => $compiler->getOutput(),
+                        "stderr" => $compiler->getErrorOutput(),
+                    ];
+                }
+            }
+            catch(Exception $e)
+            {
+                Log::emergency("Compiler Caching enabled and Redis failed.");
             }
             
             Log::debug("Compile: cache miss", ["hashedCode" => $hashedCode]);
@@ -182,7 +190,14 @@ class CodeController extends Controller
         {
             if(env("COMPILER_CACHING", false))
             {
-                Redis::set("compiler_{$hashedCode}", $compiler->serialize());
+                try
+                {
+                    Redis::setex("compiler_{$hashedCode}", env("REDIS_TTL", 60), $compiler->serialize());
+                }
+                catch(Exception $e)
+                {
+                    Log::emergency("Compiler Caching enabled but Redis failed");
+                }
             }
                 
             return [
@@ -196,7 +211,14 @@ class CodeController extends Controller
 
         if(env("COMPILER_CACHING", false))
         {
-            Redis::set("compiler_{$hashedCode}", $compiler->serialize());
+            try
+            {
+                Redis::setex("compiler_{$hashedCode}", env("REDIS_TTL", 60), $compiler->serialize());
+            }
+            catch(Exception $e)
+            {
+                Log::emergency("Compiler Caching enabled but Redis failed");
+            }
         }
     
         return [
