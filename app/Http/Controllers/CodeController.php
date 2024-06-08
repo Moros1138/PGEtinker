@@ -140,6 +140,7 @@ class CodeController extends Controller
             $cachedCode = Redis::get("compiler_{$hashedCode}");
             
             if(isset($cachedCode))
+                    Redis::expire("compiler_{$hashedCode}", env("REDIS_TTL", 60));
             {
                 Log::debug("Compile: cache hit", ["hashedCode" => $hashedCode]);
                 
@@ -182,7 +183,7 @@ class CodeController extends Controller
         {
             if(env("COMPILER_CACHING", false))
             {
-                Redis::set("compiler_{$hashedCode}", $compiler->serialize());
+                    Redis::setex("compiler_{$hashedCode}", env("REDIS_TTL", 60), $compiler->serialize());
             }
                 
             return [
@@ -196,7 +197,7 @@ class CodeController extends Controller
 
         if(env("COMPILER_CACHING", false))
         {
-            Redis::set("compiler_{$hashedCode}", $compiler->serialize());
+                Redis::setex("compiler_{$hashedCode}", env("REDIS_TTL", 60), $compiler->serialize());
         }
     
         return [
