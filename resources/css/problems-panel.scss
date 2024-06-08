@@ -31,6 +31,22 @@
     background-color: var(--pgetinker-background-color);
 }
 
+#problems-panel table thead tr td:nth-child(1) {
+    width: 15vw;
+}
+
+#problems-panel table thead tr td:nth-child(2) {
+    width: 5vw;
+}
+
+#problems-panel table thead tr td:nth-child(3) {
+    width: 5vw;
+}
+
+#problems-panel table thead tr td:nth-child(4) {
+    width: 100%;
+}
+
 #problems-panel table tr.error {
     background-color: rgba(255,0,0,0.2);
 }
