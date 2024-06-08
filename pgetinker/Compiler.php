@@ -261,6 +261,7 @@ class Compiler
                     
                     $this->code[$index] = '#include "' . $potentialFilename .'"';
                     return true;
+                        Redis::expire("remote_include_{$hashedUrl}", env("REDIS_TTL", 60));
                 }
             }
             
@@ -347,7 +348,7 @@ class Compiler
                 $remoteIncludeCache->time = $requestDuration;
                 $remoteIncludeCache->content = $response->body();
                 
-                Redis::set("remote_include_{$hashedUrl}", json_encode($remoteIncludeCache, JSON_PRETTY_PRINT));
+                    Redis::setex("remote_include_{$hashedUrl}", env("REDI_TTL", 60), json_encode($remoteIncludeCache, JSON_PRETTY_PRINT));
             }
 
             $this->code[$index] = '#include "' . $potentialFilename .'"';
