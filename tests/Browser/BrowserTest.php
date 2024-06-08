@@ -50,7 +50,8 @@ class BrowserTest extends DuskTestCase
         $this->browse(function(Browser $browser)
         {
             $browser->visit("/");
-            $browser->pause(1000);
+            $browser->waitUntilMissing("#pgetinker-loading");
+            
             $browser->assertSee("News and Updates");
         });
     }
@@ -60,12 +61,10 @@ class BrowserTest extends DuskTestCase
         $this->browse(function(Browser $browser)
         {
             $browser->visit("/");
-            
-            $browser->pause(1000);
+            $browser->waitUntilMissing("#pgetinker-loading");
 
-            $browser->click(".news");
-
-            $browser->pause(1000);
+            $browser->click(".news .content");
+            $browser->waitUntilMissing(".news");
             
             $browser->assertNotPresent(".news");
         });
@@ -106,7 +105,6 @@ class BrowserTest extends DuskTestCase
         $this->browse(function(Browser $browser)
         {
             $browser->visit("/");
-
             $browser->waitUntilMissing("#pgetinker-loading");
 
             $browser->click("#start-stop");
@@ -120,7 +118,6 @@ class BrowserTest extends DuskTestCase
         $this->browse(function(Browser $browser)
         {
             $browser->visit("/");
-            
             $browser->waitUntilMissing("#pgetinker-loading");
 
             $browser->mouseover("@sharing-menu");
