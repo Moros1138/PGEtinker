@@ -15,6 +15,7 @@ It is a summary of changes that would be pertinent to the end user of the PGEtin
 - Added default layout for landscape
 - Added storage abstraction
 - Fixed [Issue #88](https://github.com/Moros1138/PGEtinker/issues/88)
+- Added [Issue #87](https://github.com/Moros1138/PGEtinker/issues/87)
 
 ## 2024-06-04
 

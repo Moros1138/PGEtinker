@@ -78,3 +78,39 @@
     padding: 0.3rem;
     padding-left: 1rem;
 }
+
+#problems-tab {
+    position: relative;
+    display: inline-block;
+    padding-left: .5rem;
+}
+
+#problems-tab span {
+    position: relative;
+    margin-left: .3rem;
+    padding-left: .4rem;
+    padding-right: .4rem;
+
+    top: -2px;
+    border-radius: 50px;
+}
+
+#problems-tab span.error {
+    background-color: rgba(255,0,0,0.2);
+}
+
+#problems-tab span.warning {
+    background-color: rgba(255,255,0,0.2);
+}
+
+#problems-tab span.info {
+    background-color: rgba(0,0,255,0.2);;
+}
+
+#problems-tab span.hint {
+    background-color: rgba(0, 255, 255,0.2);
+}
+
+
+
+
