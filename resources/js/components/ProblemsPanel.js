@@ -76,6 +76,7 @@ export default class ProblemsPanel
             wrapper.append(body);
             
             this.getElement().append(wrapper);
+            this.state.setActiveTab('problems');
         });
     }
 
