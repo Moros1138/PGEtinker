@@ -123,7 +123,18 @@ class Compiler
         if($raw)
             return implode("\n", $this->output);
         
-        return str_replace("/opt/emsdk/upstream/emscripten/cache/sysroot", "/***", implode("\n", $this->output));
+        $filtered = [];
+        
+        foreach($this->output as $text)
+        {
+            // skip cache messages
+            if(strpos($text, "cache") === 0)
+                continue; 
+
+            $filtered[] = str_replace("/opt/emsdk/upstream/emscripten/cache/sysroot", "/***", $text);
+        }
+
+        return implode("\n", $filtered);
     }
     
     public function getErrorOutput($raw = false)
@@ -131,7 +142,18 @@ class Compiler
         if($raw)
             return implode("\n", $this->errors);
         
-        return str_replace("/opt/emsdk/upstream/emscripten/cache/sysroot", "/***", implode("\n", $this->errors));
+        $filtered = [];
+        
+        foreach($this->errors as $text)
+        {
+            // skip cache messages
+            if(strpos($text, "cache") === 0)
+                continue; 
+
+            $filtered[] = str_replace("/opt/emsdk/upstream/emscripten/cache/sysroot", "/***", $text);
+        }
+
+        return implode("\n", $filtered);
     }
 
     public function getHtml()
@@ -648,7 +670,7 @@ class Compiler
             Storage::disk("local")->deleteDirectory($this->workingDirectory);
 
             Log::info("Compile: finished successfully");
-
+            $this->output[] = "Compiled Successfully";
             return true;
         }
         
