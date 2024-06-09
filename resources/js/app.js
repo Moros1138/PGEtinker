@@ -97,7 +97,14 @@ class PGEtinker
             event.preventDefault();
 
             this.layout.destroy();
-            this.layoutConfig = defaultLayout;
+
+            this.layoutConfig = defaultLandscapeLayout;
+            
+            if(document.body.clientWidth <= 750)
+            {
+                console.log("chose portrait layout");
+                this.layoutConfig = defaultPortraitLayout;
+            }
             
             this.SetupLayout();
         });
