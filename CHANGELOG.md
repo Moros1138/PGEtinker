@@ -8,6 +8,7 @@ It is a summary of changes that would be pertinent to the end user of the PGEtin
 
 - Fixed [Issue #92](https://github.com/Moros1138/PGEtinker/issues/92)
 - Fixed default layout button handler
+- Removed emscripten cache messages from compiler output
 
 ## 2024-06-08
 
