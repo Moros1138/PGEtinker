@@ -336,7 +336,8 @@ class PGEtinker
     
     compileSuccessHandler(data)
     {
-        this.compilerOutputPanel.setContent(data.stderr);
+        console.log(data);
+        this.compilerOutputPanel.setContent(data.stdout + data.stderr);
         this.playerPanel.setHtml(data.html);
         this.compiling = false;
     }
