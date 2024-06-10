@@ -390,7 +390,7 @@ class PGEtinker
         this.layout.on("initialised", async() =>
         {
             this.layoutInitialized = true;
-            window.addEventListener("resize", (event) =>
+            window.addEventListener("resize", () =>
             {
                 this.layout.updateSize();
             });
