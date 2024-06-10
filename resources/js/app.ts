@@ -2,20 +2,33 @@ import './lib/bootstrap';
 import './lib/goldenLayout';
 import './lib/lucide';
 import version from "./lib/version";
-import { conformStorage, getStorageValue, setStorageValue } from './lib/storage';
+import { conformStorage, getStorageValue, setStorageValue, removeStorageKey } from './lib/storage';
+// @ts-ignore
 import agreeDialog from './lib/agreeDialog';
+// @ts-ignore
 import shareDialog from './lib/shareDialog';
+// @ts-ignore
 import newsDialog from './lib/newsDialog';
+// @ts-ignore
 import defaultLandscapeLayout from './lib/defaultLandscapeLayout';
+// @ts-ignore
 import defaultPortraitLayout from './lib/defaultPortraitLayout';
+// @ts-ignore
 import supportersDialog from './lib/supportersDialog';
 
+// @ts-ignore
 import ConsolePanel from './components/ConsolePanel';
+// @ts-ignore
 import CompilerOutputPanel from './components/CompilerOutputPanel';
+// @ts-ignore
 import EditorPanel from './components/EditorPanel';
+// @ts-ignore
 import PlayerPanel from './components/PlayerPanel';
+// @ts-ignore
 import ProblemsPanel from './components/ProblemsPanel';
-import { removeStorageKey } from './lib/storage';
+
+import axios from 'axios';
+declare function GoldenLayout(...args: any[]): void;
 
 class PGEtinker
 {
@@ -27,10 +40,10 @@ class PGEtinker
 
     layoutInitialized = false;
     compiling = false;
-
-    layoutConfig = null;
+    layout: any;
+    layoutConfig: any = null;
     
-    theme = "dark";
+    theme: string | null = "dark";
 
     constructor()
     {
@@ -64,7 +77,7 @@ class PGEtinker
             this.theme = "dark";
 
         // Default Code Button
-        document.querySelector("#default-code").addEventListener("click", (event) =>
+        document.querySelector("#default-code")!.addEventListener("click", (event) =>
         {
             event.preventDefault();
 
@@ -79,7 +92,7 @@ class PGEtinker
         });
 
         // Toggle Theme Button
-        document.querySelector("#toggle-theme").addEventListener("click", (event) =>
+        document.querySelector("#toggle-theme")!.addEventListener("click", (event) =>
         {
             event.preventDefault();
 
@@ -92,9 +105,10 @@ class PGEtinker
         });
 
         // Default Layout
-        document.querySelector("#default-layout").addEventListener("click", (event) => 
+        document.querySelector("#default-layout")!.addEventListener("click", async(event) => 
         {
             event.preventDefault();
+            await this.editorPanel.onDestroy();
 
             this.layout.destroy();
 
@@ -110,7 +124,7 @@ class PGEtinker
         });
 
         // Download Button
-        document.querySelector("#download").addEventListener("click", (event) => 
+        document.querySelector("#download")!.addEventListener("click", (event) => 
         {
             event.preventDefault();
             
@@ -132,7 +146,7 @@ class PGEtinker
         });
         
         // Share Button
-        document.querySelector("#share").addEventListener("click", (event) => 
+        document.querySelector("#share")!.addEventListener("click", (event) => 
         {
             event.preventDefault();
 
@@ -176,13 +190,13 @@ class PGEtinker
         });
 
         // Compile Button
-        document.querySelector("#start-stop").addEventListener("click", (event) => 
+        document.querySelector("#start-stop")!.addEventListener("click", (event) => 
         {
             event.preventDefault();
-            let startStopElem = document.querySelector("#start-stop");
-            let playIconElem = startStopElem.querySelector(".lucide-circle-play");
-            let stopIconElem = startStopElem.querySelector(".lucide-circle-stop");
-            let spanElem     = startStopElem.querySelector("span");
+            let startStopElem = document.querySelector("#start-stop")!;
+            let playIconElem = startStopElem.querySelector(".lucide-circle-play")!;
+            let stopIconElem = startStopElem.querySelector(".lucide-circle-stop")!;
+            let spanElem     = startStopElem.querySelector("span")!;
 
             if(spanElem.innerHTML == "Run")
             {
@@ -210,17 +224,15 @@ class PGEtinker
                 stopIconElem.classList.toggle("hidden", true);
                 spanElem.innerHTML = "Run";
             }
-            
-            startStopElem.blur();
         });
 
-        document.querySelector("#supporters").addEventListener("click", (event) =>
+        document.querySelector("#supporters")!.addEventListener("click", (event) =>
         {
             event.preventDefault();
             supportersDialog();
         });
 
-        document.querySelector("#news-and-updates").addEventListener("click", (event) =>
+        document.querySelector("#news-and-updates")!.addEventListener("click", (event) =>
         {
             event.preventDefault();
             newsDialog();
@@ -251,11 +263,11 @@ class PGEtinker
         }
     }
 
-    setActiveTab(id)
+    setActiveTab(id: string)
     {
         try
         {
-            let panel = this.layout.root.getItemsByFilter((item) =>
+            let panel = this.layout.root.getItemsByFilter((item: any) =>
             {
                 return (item.config.id == id);
             })[0];
@@ -292,12 +304,12 @@ class PGEtinker
     compile()
     {
         if(this.compiling)
-            return new Promise((_, reject) => reject());
+            return new Promise<void>((_, reject) => reject());
 
         if(!this.preCompile())
-            return new Promise((_, reject) => reject());
+            return new Promise<void>((_, reject) => reject());
         
-        return new Promise((resolve, reject) =>
+        return new Promise<void>((resolve, reject) =>
         {
             axios.post("/api/compile", {
                 code: this.editorPanel.getValue()
@@ -334,7 +346,7 @@ class PGEtinker
         
     }
     
-    compileSuccessHandler(data)
+    compileSuccessHandler(data: any)
     {
         console.log(data);
         this.compilerOutputPanel.setContent(data.stdout + data.stderr);
@@ -342,7 +354,7 @@ class PGEtinker
         this.compiling = false;
     }
     
-    compileFailHandler(stderr)
+    compileFailHandler(stderr: any)
     {
         this.setActiveTab("editor");
 
@@ -351,12 +363,14 @@ class PGEtinker
         this.compiling = false;
     }
     
+
     async SetupLayout()
     {
-        document.querySelector("#pgetinker-loading").classList.toggle("display-flex", true);
+        document.querySelector("#pgetinker-loading")!.classList.toggle("display-flex", true);
 
         await this.editorPanel.onPreInit();
         
+        // @ts-ignore
         this.layout = new GoldenLayout(this.layoutConfig, document.querySelector("#content"))
         
         this.consolePanel.register();
@@ -378,7 +392,6 @@ class PGEtinker
             this.layoutInitialized = true;
             window.addEventListener("resize", (event) =>
             {
-                console.log(document.body.clientWidth);
                 this.layout.updateSize();
             });
             
@@ -392,7 +405,7 @@ class PGEtinker
             
             setTimeout(() =>
             {
-                document.querySelector("#pgetinker-loading").classList.toggle("display-flex", false);
+                document.querySelector("#pgetinker-loading")!.classList.toggle("display-flex", false);
                 this.setActiveTab("editor");
             }, 500)
         });
@@ -426,15 +439,14 @@ class PGEtinker
             document.body.classList.toggle("light", light);
     
             // update golden layout theme
-            let goldenLayoutDarkThemeStyle = document.querySelector("#goldenlayout-dark-theme");
-            let goldenLayoutLightThemeStyle = document.querySelector("#goldenlayout-light-theme");
+            let goldenLayoutDarkThemeStyle = document.querySelector("#goldenlayout-dark-theme")! as HTMLLinkElement;
+            let goldenLayoutLightThemeStyle = document.querySelector("#goldenlayout-light-theme")! as HTMLLinkElement;
         
             goldenLayoutDarkThemeStyle.disabled = light;
             goldenLayoutLightThemeStyle.disabled = !light;
         
             // update player theme
             this.playerPanel.setTheme(this.theme);
-
         }, 200);
 
     }

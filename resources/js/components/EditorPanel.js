@@ -1,7 +1,8 @@
 import { getUserConfiguration } from "../lib/monacoConfig";
-import { runCppWrapper } from "../lib/monacoWrapper";
-import pgetinkerCppCode from '../../example.cpp?raw';
+import { configureMonacoWorkers, runCppWrapper } from "../lib/monacoWrapper";
 import { getStorageValue } from "../lib/storage";
+import pgetinkerCppCode from '../../example.cpp?raw';
+import * as vscode from "vscode";
 
 export default class EditorPanel
 {
@@ -13,8 +14,11 @@ export default class EditorPanel
 
     maxFileSize = 50000;
     
+    reconnectInterval = null;
+
     sharedFlag = false;
     staging = false;
+    
     constructor(state)
     {
         this.state = state;
@@ -24,6 +28,8 @@ export default class EditorPanel
         );
         
         this.staging = (window.location.pathname.indexOf("/staging/s/") === 0);
+        
+        configureMonacoWorkers();
     }
     
     getValue()
@@ -38,22 +44,24 @@ export default class EditorPanel
     
     async onPreInit()
     {
-        try
-        {
-            if(this.monacoWrapper !== null)
-            {
-                await this.monacoWrapper.dispose();
-            }
-        }
-        catch(e)
-        {
-            console.log(e);
-        }
+        this.monacoWrapper = await runCppWrapper();
+    }
+
+    async onDestroy()
+    {
+        clearInterval(this.reconnectInterval);
+        await this.monacoWrapper.dispose();
     }
 
     async onInit()
     {
-        this.monacoWrapper = await runCppWrapper(document.querySelector(".code-editor"));
+        if(!this.monacoWrapper)
+        {
+            setTimeout(() => this.onInit(), 500);
+            return;
+        }
+
+        await this.monacoWrapper.start(document.querySelector('.code-editor'));
             
         let code = "";
         if(this.sharedFlag)
@@ -68,6 +76,23 @@ export default class EditorPanel
         {
             code = pgetinkerCppCode;
         }
+
+        /**
+         * don't stop... networking...
+         * hold on to that linkaaaage
+         * 
+         * sockets.... streaming dataaaaa aahh ahhh
+         */
+        this.reconnectInterval = setInterval(() =>
+        {
+            if(this.monacoWrapper.getLanguageClientWrapper().isStarted())
+            {
+                console.log("language client already started");
+                return;
+            }
+            
+            this.monacoWrapper.getLanguageClientWrapper().start();
+        }, 5000);
 
         this.monacoWrapper.getEditor().setValue(code);
 
