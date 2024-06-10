@@ -28,7 +28,7 @@ export default defineConfig({
                 'resources/css/disagreed.scss',
                 'resources/js/disagreed.js',
                 'resources/css/app.scss',
-                'resources/js/app.js'
+                'resources/js/app.ts'
             ],
             refresh: true,
         }),

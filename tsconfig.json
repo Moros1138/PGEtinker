@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "noEmit": true,
+        "strict": true,
+        "module": "es2022",
+        "moduleResolution": "node",
+        "experimentalDecorators": true,
+        "skipLibCheck": true
+    },
+    "include": [
+        "resources/js/**/*"
+    ],
+    "exclude": [
+        "node_modules",
+        "vendor"
+    ]
+}
