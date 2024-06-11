@@ -7,7 +7,7 @@ import * as vscode from "vscode";
 export default class EditorPanel
 {
     state;
-    
+    autoConnect = true;    
     code = "";
 
     monacoWrapper = null;
@@ -60,8 +60,16 @@ export default class EditorPanel
             setTimeout(() => this.onInit(), 500);
             return;
         }
-
-        await this.monacoWrapper.start(document.querySelector('.code-editor'));
+        
+        try
+        {
+            await this.monacoWrapper.start(document.querySelector('.code-editor'));
+        }
+        catch(e)
+        {
+            // if we fail to connect/start the language client, let's skip the further reconenction attempts
+            this.autoConnect = false;
+        }
             
         let code = "";
         if(this.sharedFlag)
@@ -83,15 +91,18 @@ export default class EditorPanel
          * 
          * sockets.... streaming dataaaaa aahh ahhh
          */
-        this.reconnectInterval = setInterval(() =>
+        this.reconnectInterval = setInterval(async() =>
         {
-            if(this.monacoWrapper.getLanguageClientWrapper().isStarted())
-            {
-                console.log("language client already started");
+            // we failed to connect the first time, let's not keep trying
+            if(!this.autoConnect)
                 return;
-            }
+
+            // language client is already started, let's not try, this time
+            if(this.monacoWrapper.getLanguageClientWrapper().isStarted())
+                return;
             
             this.monacoWrapper.getLanguageClientWrapper().start();
+
         }, 5000);
 
         this.monacoWrapper.getEditor().setValue(code);
