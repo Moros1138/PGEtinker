@@ -18,7 +18,7 @@ It is a summary of changes that would be pertinent to the end user of the PGEtin
 
 ## 2024-06-08
 
-- Fixed mobile overize issue (big win for mobile)
+- Fixed mobile oversize issue (big win for mobile)
 - Added diagnostics middleware to monaco language client
 - Changed Build Information panel to Compiler Output
 - Added Problems panel [Issue #85](https://github.com/Moros1138/PGEtinker/issues/85)
