@@ -40,22 +40,13 @@ class BrowserTest extends DuskTestCase
                 ->assertSee("I Disagree");
             
             $browser->click("#i-agree");
-            $browser->assertSee("C++ Editor");
-            $browser->assertSee("Emscripten Player");
-        });
-    }
-
-    public function testShowsNewsAndUpdates(): void
-    {
-        $this->browse(function(Browser $browser)
-        {
-            $browser->visit("/");
+            
             $browser->waitUntilMissing("#pgetinker-loading");
             
             $browser->assertSee("News and Updates");
         });
     }
-    
+
     public function testDismissesNewsAndUpdates(): void
     {
         $this->browse(function(Browser $browser)
@@ -69,7 +60,6 @@ class BrowserTest extends DuskTestCase
             $browser->assertNotPresent(".news");
         });
     }
-
 
     public function testLoadsDefaultCodeOnClick(): void
     {

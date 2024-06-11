@@ -1,7 +1,7 @@
-const prefix = "pgetinker_";
-const store = window.localStorage;
+const prefix: string = "pgetinker_";
+const store: Storage = window.localStorage;
 
-export function conformStorage()
+export function conformStorage(): void
 {
     let agree = store.getItem("pgetinkerAgreedToTerms");
     store.removeItem("pgetinkerAgreedToTerms");
@@ -25,15 +25,14 @@ export function conformStorage()
     }
 }
 
-export function getStorageValue(key)
+export function getStorageValue(key: string): string | null
 {
-    if(typeof key !== "string")
-    {
-        console.error("setStorageValue key must be string");
-        return;
-    }
+    let value: string | null = store.getItem(prefix + key);
 
-    let value = store.getItem(prefix + key);
+    if(typeof value !== "string")
+    {
+        return null;
+    }
     
     try
     {
@@ -41,14 +40,13 @@ export function getStorageValue(key)
     }
     catch(e)
     {
-        if(typeof value === "string")
-            return value;
+        // it's just a string, return it
     }
 
-    return null;
+    return value;
 }
 
-export function setStorageValue(key, value)
+export function setStorageValue(key: string, value: string | any): void
 {
     if(typeof value === "string")
     {
@@ -66,13 +64,8 @@ export function setStorageValue(key, value)
     }
 }
 
-export function removeStorageKey(key)
+export function removeStorageKey(key: string): void
 {
-    if(typeof key === "string")
-    {
-        store.removeItem(prefix + key);
-    }
-    
-    return undefined;
+    store.removeItem(prefix + key);
 }
 

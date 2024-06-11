@@ -35,7 +35,7 @@
     <link rel="stylesheet" type="text/css" href="{{ Vite::asset('resources/css/goldenlayout-light-theme.scss')}}" id="goldenlayout-light-theme" disabled>
     
     <link rel="stylesheet" type="text/css" href="{{ Vite::asset('resources/css/app.scss')}}">
-    @vite('resources/js/app.js')
+    @vite('resources/js/app.ts')
 </head>
 <body>
     <div id="app">

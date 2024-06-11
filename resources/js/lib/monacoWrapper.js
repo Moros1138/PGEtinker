@@ -22,7 +22,8 @@ export const configureMonacoWorkers = () =>
     });
 };
 
-export const runCppWrapper = async (htmlElement) => {
+export const runCppWrapper = async() =>
+{
     const pgetinkerCppUri = vscode.Uri.file('/workspace/pgetinker.cpp');
 
     const fileSystemProvider = new RegisteredFileSystemProvider(false);
@@ -34,29 +35,10 @@ export const runCppWrapper = async (htmlElement) => {
     const wrapper = new MonacoEditorLanguageClientWrapper();
 
     try {
-        if (wrapper.isStarted()) {
-            console.warn('Editor was already started!');
-        } else {
-            
-            await wrapper.init(userConfig);
+        await wrapper.init(userConfig);
 
-            // open files, so the LS can pick it up
-            await vscode.workspace.openTextDocument(pgetinkerCppUri);
-            
-            await wrapper.start(htmlElement);
-            
-            // reset editor font zoom
-            window.addEventListener("keydown", (event) => {
-                if (event.ctrlKey && event.key == "0") {
-                    vscode.commands.executeCommand("editor.action.fontZoomReset");
-                }
-            });
-
-            // @ts-ignore
-            window.addEventListener("unload", async(event) => {
-                await wrapper.dispose();
-            });
-        }
+        // open files, so the LS can pick it up
+        await vscode.workspace.openTextDocument(pgetinkerCppUri);
     } catch (e) {
         console.error(e);
     }

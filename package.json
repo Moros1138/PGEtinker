@@ -3,7 +3,7 @@
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "build": "vite build"
+        "build": "tsc && vite build"
     },
     "devDependencies": {
         "@codingame/esbuild-import-meta-url-plugin": "~1.0.2",
@@ -25,8 +25,9 @@
         "lucide": "^0.372.0",
         "monaco-editor": "npm:@codingame/monaco-vscode-editor-api@~5.1.1",
         "monaco-editor-wrapper": "~5.1.1",
-        "monaco-languageclient": "~8.4.0",        
+        "monaco-languageclient": "~8.4.0",
         "sass": "^1.75.0",
+        "typescript": "^5.4.5",
         "vite": "^5.0",
         "vscode": "npm:@codingame/monaco-vscode-api"
     }
