@@ -113,6 +113,10 @@ export default class EditorPanel
             }
         });
         
+        this.monacoWrapper.getEditor().updateOptions({
+            glyphMargin: false,
+        });
+        
         /**
          * TODO: magic numbers are bad, mkay?
          * But I'm using them until they break!
