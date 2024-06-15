@@ -72,12 +72,6 @@
                 </a>
             </div>
             <div class="navbar-right-menu">
-                <div class="dropdown sponsor">
-                    Sponsor:&nbsp;
-                    <a href="{{ $navBarSponsorLink }}" target="_blank" title="{{ $navBarSponsorText }}">
-                        {{ $navBarSponsorText }}
-                    </a>
-                </div>
                 <a class="menu-item" id="supporters" href="#">
                     Supporters
                 </a>
