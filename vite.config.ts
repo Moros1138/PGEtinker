@@ -22,9 +22,9 @@ export default defineConfig({
     plugins: [
         laravel({
             input: [
-                'resources/css/goldenlayout-base.scss',
-                'resources/css/goldenlayout-dark-theme.scss',
-                'resources/css/goldenlayout-light-theme.scss',
+                'resources/css/app/goldenlayout-base.scss',
+                'resources/css/app/goldenlayout-dark-theme.scss',
+                'resources/css/app/goldenlayout-light-theme.scss',
                 'resources/css/disagreed.scss',
                 'resources/js/disagreed.js',
                 'resources/css/app.scss',
