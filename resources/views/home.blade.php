@@ -30,9 +30,10 @@
     <title>PGEtinker</title>
     
     <link rel="icon" type="text/svg" href="{{ env('APP_URL') }}/favicon.svg">
-    <link rel="stylesheet" type="text/css" href="{{ Vite::asset('resources/css/goldenlayout-base.scss')}}">
-    <link rel="stylesheet" type="text/css" href="{{ Vite::asset('resources/css/goldenlayout-dark-theme.scss')}}" id="goldenlayout-dark-theme">
-    <link rel="stylesheet" type="text/css" href="{{ Vite::asset('resources/css/goldenlayout-light-theme.scss')}}" id="goldenlayout-light-theme" disabled>
+
+    <link rel="stylesheet" type="text/css" href="{{ Vite::asset('resources/css/app/goldenlayout-base.scss')}}">
+    <link rel="stylesheet" type="text/css" href="{{ Vite::asset('resources/css/app/goldenlayout-dark-theme.scss')}}" id="goldenlayout-dark-theme">
+    <link rel="stylesheet" type="text/css" href="{{ Vite::asset('resources/css/app/goldenlayout-light-theme.scss')}}" id="goldenlayout-light-theme" disabled>
     
     <link rel="stylesheet" type="text/css" href="{{ Vite::asset('resources/css/app.scss')}}">
     @vite('resources/js/app.ts')
