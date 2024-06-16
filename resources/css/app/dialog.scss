@@ -52,7 +52,9 @@
 .dialog .window > .content img {
     display: block;
     width: auto;
-    height: 30rem;
+    max-width: 100%;
+    height: auto;
+    max-height: 30rem;
     margin: 2rem auto;
 }
 .ok {
