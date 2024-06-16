@@ -6,6 +6,11 @@
     bottom: 0;
     overflow: auto;
     padding: 1rem 1rem 2rem 1rem;
+
+    & div {
+        white-space: pre;
+        font-family: "Droid Sans Mono", "monospace", monospace;
+    }
 }
 
 #console-auto-scroll {
@@ -26,7 +31,3 @@
     background-color: var(--pgetinker-link-hover-color);
 }
 
-#console-panel div {
-    white-space: pre;
-    font-family: "Droid Sans Mono", "monospace", monospace;
-}
