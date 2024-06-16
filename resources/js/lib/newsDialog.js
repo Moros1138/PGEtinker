@@ -1,24 +1,12 @@
 import version from "./version";
 export default function newsDialog()
 {
-    function newsClickAnywhereHandler(event)
-    {
-        let newsDialog = document.querySelector(".dialog.news");
-        if(newsDialog == null)
-            return;
-        
-        if(event.target.tagName == 'A')
-            return;
-        
-        newsDialog.dispatchEvent(new Event("close-dialog"));
-    }
-
     return new Promise((resolve) =>
     {
-        let newsDialog = document.createElement("div");
+        let dialog = document.createElement("div");
     
-        newsDialog.classList.toggle("dialog", true);
-        newsDialog.classList.toggle("news", true);
+        dialog.classList.toggle("dialog", true);
+        dialog.classList.toggle("news", true);
         
         axios.get("/api/news").then((response) =>
         {
@@ -30,7 +18,7 @@ export default function newsDialog()
                 entries.push(`<div class="${entry.type}">${entry.message}</div>`);
             });
 
-            newsDialog.innerHTML = `
+            dialog.innerHTML = `
             <div class="window">
                 <div class="header">News and Updates</div>
                 <div class="content">
@@ -45,17 +33,18 @@ export default function newsDialog()
                     Version: ${version.substring(0, 7)}
                     </p>
                 </div>
+                <div class="footer">
+                    <button class="ok">Close</button>
+                </div>
             </div>`;
 
-            newsDialog.addEventListener("close-dialog", (event) =>
+            dialog.querySelector("button.ok").addEventListener("click", (event) =>
             {
-                setTimeout(() => window.removeEventListener("click", newsClickAnywhereHandler), 500);
-                newsDialog.remove();
+                dialog.remove();
                 resolve();
             });
             
-            setTimeout(() => window.addEventListener("click", newsClickAnywhereHandler), 500);
-            document.body.appendChild(newsDialog);
+            document.body.appendChild(dialog);
         });
         
     });
