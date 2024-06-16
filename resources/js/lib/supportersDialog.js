@@ -60,14 +60,16 @@ export default function supportersDialog()
         document.body.appendChild(supportersDialog);
     }
 
-    return new Promise(() =>
+    return new Promise((resolve) =>
     {
         axios.get("/api/supporters").then((response) =>
         {
             renderSupportersDialog(response.data.supporters);
+            resolve();
         }).catch((reason) =>
         {
             renderSupportersDialog(reason.response.data.supporters);
+            resolve();
         });
         
     });
