@@ -6,6 +6,7 @@
     <title>You disagreed | PGEtinker</title>
     <link rel="icon" type="text/svg" href="/favicon.svg">
     
+    <link rel="stylesheet" type="text/css" href="{{ Vite::asset('resources/css/normalize.scss')}}">
     <link rel="stylesheet" type="text/css" href="{{ Vite::asset('resources/css/disagreed.scss')}}">
     
     @vite("resources/js/disagreed.js")
