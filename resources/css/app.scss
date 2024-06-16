@@ -1,5 +1,5 @@
 @import "./pixel-code.scss";
-@import "./loading.scss";
+@import "./app/loading.scss";
 
 body {
     --pgetinker-link-color: #ff6500;
@@ -10,7 +10,7 @@ body {
     --pgetinker-text-shadow-color: #000;
 
     --pgetinker-menu-text-color: #ded;
-    --pgetinker-menu-background: #f1f1f1;
+    --pgetinker-menu-background: #3e3c44;
     --pgetinker-menu-hover-background:#a86326;
     --pgetinker-menu-hover-text-color: #ded;
 
@@ -34,9 +34,9 @@ body.light {
     --pgetinker-text-color:#000;
     --pgetinker-text-shadow-color: #fff;
 
+    --pgetinker-menu-text-color: #424242;
     --pgetinker-menu-background: #f1f1f1;
     --pgetinker-menu-hover-background:#f70;
-    --pgetinker-menu-text-color: #424242;
     --pgetinker-menu-hover-text-color: #ded;
 
     --pgetinker-submenu-background: #f1f1f1;
@@ -73,6 +73,10 @@ a:active {
 a:hover {
     color: var(--pgetinker-link-hover-color);
     text-decoration: underline;
+}
+
+a:focus {
+    outline: none;
 }
 
 #app {
@@ -231,14 +235,16 @@ nav .navbar-right-menu .menu-item {
 
 .hidden { display: none; }
 
-@import "./console-panel.scss";
-@import "./compiler-output-panel.scss";
-@import "./editor-panel.scss";
-@import "./player-panel.scss";
-@import "./problems-panel.scss";
-@import "./dialog.scss";
-
-@import "./responsive.scss";
+@import "./app/navbar.scss";
+@import "./app/components/CompilerOutputPanel.scss";
+@import "./app/components/ConsolePanel.scss";
+@import "./app/components/EditorPanel.scss";
+@import "./app/components/PlayerPanel.scss";
+@import "./app/components/ProblemsPanel.scss";
+@import "./app/dialog.scss";
+@import "./app/mobile-menu-dialog.scss";
+@import "./app/settings-dialog.scss";
+@import "./app/responsive.scss";
 
 .lm_content {
     overflow: visible !important;
