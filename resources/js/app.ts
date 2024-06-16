@@ -6,16 +6,19 @@ import { conformStorage, getStorageValue, setStorageValue, removeStorageKey } fr
 // @ts-ignore
 import agreeDialog from './lib/agreeDialog';
 // @ts-ignore
-import shareDialog from './lib/shareDialog';
+import mobileMenuDialog from './lib/mobileMenuDialog';
 // @ts-ignore
 import newsDialog from './lib/newsDialog';
+// @ts-ignore
+import settingsDialog from './lib/settingsDialog';
+// @ts-ignore
+import shareDialog from './lib/shareDialog';
+// @ts-ignore
+import supportersDialog from './lib/supportersDialog';
 // @ts-ignore
 import defaultLandscapeLayout from './lib/defaultLandscapeLayout';
 // @ts-ignore
 import defaultPortraitLayout from './lib/defaultPortraitLayout';
-// @ts-ignore
-import supportersDialog from './lib/supportersDialog';
-
 // @ts-ignore
 import ConsolePanel from './components/ConsolePanel';
 // @ts-ignore
