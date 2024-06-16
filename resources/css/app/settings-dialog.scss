@@ -1,0 +1,50 @@
+.settings-dialog {
+
+    .content {
+        font-family: "Droid Sans Mono", "monospace", monospace;
+
+        button {
+            width: 100%;
+            margin: .6rem 0;
+            padding: .4rem;
+        }
+
+        select {
+            width: 100%;
+            margin: .6rem 0;
+            padding: .4rem;
+        }
+    }
+    
+    .form-group {
+        padding: 1rem;
+        .form-label {
+            font-weight: bold;
+            font-size: 1.4rem;
+            margin-bottom: .6rem;
+        }
+
+        .form-description {
+            padding: .6rem 0;
+        }
+
+        input[type="checkbox"] {
+            display: inline-block;
+            width: 1.6rem;
+            height: 1.6rem;
+        }
+
+        label {
+            display: block;
+            font-size: 1.2rem;
+            line-height: 1.6rem;
+        }
+    }
+
+    .form-group:hover {
+        border: 1px solid rgba(0, 0, 255,0.7);
+        margin: -1px;
+    }
+
+
+}
