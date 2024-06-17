@@ -18,6 +18,7 @@ It is a summary of changes that would be pertinent to the end user of the PGEtin
 - Added Javid Mode to settings dialog
 - Added editor.inlayHints to settings dialog
 - Fixed browser tests, broke due to UI changes
+- Changed screenshot fail graphic (Thanks TechnicJelle)
 
 ## 2024-06-10
 
