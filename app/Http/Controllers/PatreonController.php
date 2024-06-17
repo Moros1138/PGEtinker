@@ -49,14 +49,20 @@ class PatreonController extends Controller
             ], 500);
         }
 
-        $supporters = Redis::get("supporters");
-        
-        if(isset($supporters))
+        try
         {
-            $supporters = json_decode($supporters);
-            return $supporters;
+            $supporters = Redis::get("supporters");
+            if(isset($supporters))
+            {
+                $supporters = json_decode($supporters);
+                return $supporters;
+            }
         }
-    
+        catch(Exception $e)
+        {
+            Log::emergency("Patreon supporters cache failed. Redis");
+        }
+        
         return $this->getPatreonNames();
     }
 
@@ -114,7 +120,15 @@ class PatreonController extends Controller
         }
         
         $supporters = ["supporters" => $supporters];
-        Redis::set("supporters", json_encode($supporters, JSON_PRETTY_PRINT));
+
+        try
+        {
+            Redis::set("supporters", json_encode($supporters, JSON_PRETTY_PRINT));
+        }
+        catch(Exception $e)
+        {
+            Log::emergency("failed to set supporters cache. Redis");
+        }
         
         return $supporters;
     }

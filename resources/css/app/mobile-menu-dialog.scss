@@ -1,0 +1,39 @@
+.dialog .menu,
+.dialog .submenu {
+    list-style-type: none;
+    padding: 0 !important;
+}
+
+.dialog .item,
+.dialog .subitem {
+    padding: .0rem 1rem;
+}
+
+.dialog .has-submenu > a:link,
+.dialog .has-submenu > a:active,
+.dialog .has-submenu > a:visited,
+.dialog .has-submenu > a:hover,
+.dialog .has-submenu > a {
+    border-bottom: 1px solid white;
+    border-top: 1px solid white;
+    color: var(--pgetinker-menu-text-color);
+    display: block;
+    font-size: 1.6rem;
+    margin: 1rem 0;
+    padding: .4rem 1rem;
+    text-align: center;
+    text-decoration: none;
+}
+
+.dialog .subitem > a {
+    background-color: var(--pgetinker-menu-background);
+    border: 1px solid var(--pgetinker-menu-text-color);
+    border-radius: .6rem;
+    color: var(--pgetinker-menu-text-color);
+    cursor: pointer;
+    display: block;
+    font-size: 1.4rem;
+    margin: 1rem 0;
+    padding: .6rem 1rem;
+    text-align: center;
+}

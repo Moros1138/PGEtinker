@@ -14,7 +14,8 @@ import {
     Share2,
     SquareChevronRight,
     SunMoon,
-    UndoDot, } from 'lucide';
+    UndoDot,
+    Youtube } from 'lucide';
 
 createIcons({
     icons: {
@@ -32,6 +33,7 @@ createIcons({
         Share2,
         SquareChevronRight,
         SunMoon,
-        UndoDot
+        UndoDot,
+        Youtube
     },
 });

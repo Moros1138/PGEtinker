@@ -8,17 +8,20 @@ import getEditorServiceOverride from '@codingame/monaco-vscode-editor-service-ov
 import getKeybindingsServiceOverride from '@codingame/monaco-vscode-keybindings-service-override'
 import monacoVscodeTextmateServiceOverride from '@codingame/monaco-vscode-textmate-service-override';
 import { useOpenEditorStub } from 'monaco-editor-wrapper/vscode/services';
+import { getStorageValue, setStorageValue } from './storage';
 
-export const getUserConfiguration = (theme) =>
+export const getUserConfiguration = () =>
 {
-    theme = (theme === undefined) ? "dark" : theme;
     
     return JSON.stringify({
-        "workbench.colorTheme": (theme == "dark") ? "Default Dark Modern" : "Default Light Modern",
+        "workbench.colorTheme": (getStorageValue("theme") == "dark") ? "Default Dark Modern" : "Default Light Modern",
         "editor.mouseWheelZoom": "on",
         "editor.wordBasedSuggestions": "off",
         "editor.quickSuggestionDelay": 500,
-        "editor.inlayHints.enabled": "off",
+        "editor.inlayHints.enabled": getStorageValue("editor.inlayHints.enabled"),
+        "editor.tabSize": 4,
+        "editor.indentSize": 4,
+        "editor.detectIndentation": false,
     });
 }
 
@@ -59,11 +62,27 @@ export const createUserConfig = (workspaceRoot, code, codeUri) =>
                         if(uri.path != "/workspace/pgetinker.cpp")
                             return next(uri, diagnostics);
                         
-                        window.dispatchEvent(new CustomEvent("update-problems-panel", { detail: diagnostics }));
-                        return next(uri, diagnostics);
+                        let filteredDiagnostics = [];
+
+                        diagnostics.forEach((diagnostic) =>
+                        {
+                            // Javid Mode?
+                            if(getStorageValue("diagnostics.javidMode"))
+                            {
+                                if(diagnostic.source === "clang-tidy")
+                                {
+                                    return;
+                                }
+                            }
+
+                            filteredDiagnostics.push(diagnostic);
+                        });
+
+
+                        window.dispatchEvent(new CustomEvent("update-problems-panel", { detail: filteredDiagnostics }));
+                        return next(uri, filteredDiagnostics);
                     },
                 },
-
                 connectionOptions: {
                     maxRestartCount: 5,
                 }

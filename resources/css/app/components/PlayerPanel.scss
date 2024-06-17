@@ -1,0 +1,62 @@
+#player-panel {
+    border: none;
+    display: block;
+    height: 100%;
+    width: 100%;
+
+    .compiling {
+        align-items: center;
+        display: none;
+        flex-flow: column;
+        height: 100%;
+        justify-content: center;
+        left: 0;
+        position: absolute;
+        top: 0;
+        width: 100%;
+    }
+
+    .compiling-failed {
+        align-items: center;
+        color: #f00;
+        display: none;
+        flex-flow: column;
+        height: 100%;
+        justify-content: center;
+        left: 0;
+        position: absolute;
+        top: 0;
+        width: 100%;
+
+        p {
+            margin-top: .5rem;
+        }
+
+        svg {
+            display: block;
+            height: 69px;
+            padding-bottom: 1rem;
+            width: 69px;
+        }
+    }
+
+    .iframe-container {
+        border: none;
+        display: block;
+        height: 100%;
+        width: 100%;
+    
+        iframe {
+            align-items: center;
+            border: none;
+            display: none;
+            flex-flow: column;
+            height: 100%;
+            justify-content: center;
+            left: 0;
+            position: absolute;
+            top: 0;
+            width: 100%;
+        }
+    }
+}

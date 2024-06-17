@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file. Each batch 
 
 It is a summary of changes that would be pertinent to the end user of the PGEtinker website. For a comprehensive history of changes made to the project, please refer to the repository's commit history.
 
+## 2024-06-17
+
+- Fixed [Issue #98](https://github.com/Moros1138/PGEtinker/issues/98)
+- Removed sponsor spot from navbar
+- Added normalize.css
+- Added link to Javid's youtube channel
+- Changed navbar menu, made ready for mobile
+- Added mobile menu
+- Added settings dialog
+- Changed dialog behavior, no more click anywhere!
+- Added toast notifications
+- Added Javid Mode to settings dialog
+- Added editor.inlayHints to settings dialog
+- Fixed browser tests, broke due to UI changes
+- Changed screenshot fail graphic (Thanks TechnicJelle)
+- Changed light theme, make dialogs easier on the eyes
+
 ## 2024-06-10
 
 - Added language client automatic reconnect

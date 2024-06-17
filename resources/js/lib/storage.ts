@@ -23,6 +23,16 @@ export function conformStorage(): void
     {
         setStorageValue("theme", theme);
     }
+
+    if(getStorageValue("diagnostics.javidMode") == null)
+    {
+        setStorageValue("diagnostics.javidMode", false);
+    }
+    
+    if(getStorageValue("editor.inlayHints.enabled") == null)
+    {
+        setStorageValue("editor.inlayHints.enabled", false);
+    }
 }
 
 export function getStorageValue(key: string): string | null

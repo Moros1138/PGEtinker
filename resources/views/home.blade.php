@@ -30,108 +30,129 @@
     <title>PGEtinker</title>
     
     <link rel="icon" type="text/svg" href="{{ env('APP_URL') }}/favicon.svg">
-    <link rel="stylesheet" type="text/css" href="{{ Vite::asset('resources/css/goldenlayout-base.scss')}}">
-    <link rel="stylesheet" type="text/css" href="{{ Vite::asset('resources/css/goldenlayout-dark-theme.scss')}}" id="goldenlayout-dark-theme">
-    <link rel="stylesheet" type="text/css" href="{{ Vite::asset('resources/css/goldenlayout-light-theme.scss')}}" id="goldenlayout-light-theme" disabled>
+
+    <link rel="stylesheet" type="text/css" href="{{ Vite::asset('resources/css/app/goldenlayout-base.scss')}}">
+    <link rel="stylesheet" type="text/css" href="{{ Vite::asset('resources/css/app/goldenlayout-dark-theme.scss')}}" id="goldenlayout-dark-theme">
+    <link rel="stylesheet" type="text/css" href="{{ Vite::asset('resources/css/app/goldenlayout-light-theme.scss')}}" id="goldenlayout-light-theme" disabled>
     
+    <link rel="stylesheet" type="text/css" href="{{ Vite::asset('resources/css/normalize.scss')}}">
     <link rel="stylesheet" type="text/css" href="{{ Vite::asset('resources/css/app.scss')}}">
     @vite('resources/js/app.ts')
 </head>
 <body>
     <div id="app">
-        <nav id="header">
-            <a class="brand" href="/">
-                PGEtinker
-            </a>
-            <div class="navbar-left-menu">
-                <div class="dropdown">
-                    <div dusk="settings-menu" id="settings-menu" class="menu-item">
-                        <i data-lucide="menu"></i>
-                        Settings
-                    </div>
-                    <div class="dropdown-content">
-                        <a href="#" id="default-code">
-                            <i data-lucide="newspaper"></i>
-                            Default Code
+
+        <div id="header">
+            <nav>
+                <ul class="menu left-menu">
+                    <li class="brand">
+                        <a href="/">
+                            PGEtinker
                         </a>
-                        <a href="#" id="toggle-theme">
-                            <i data-lucide="sun-moon"></i>    
-                            Toggle Theme
+                    </li>
+                    <li class="item" dusk="settings-menu" id="settings-menu">
+                        <a tabindex="0">
+                            <i data-lucide="menu"></i>
+                            <span>Settings</span>
                         </a>
-                        <a href="#" id="default-layout">
-                            <i data-lucide="undo-dot"></i>
-                            Restore Default Layout
+                    </li>
+                    <li class="item">
+                        <a id="start-stop">
+                            <i data-lucide="circle-play"></i><i data-lucide="circle-stop" class="hidden"></i>
+                            <span>Run</span>
                         </a>
-                    </div>
-                </div>
-                <a class="menu-item" href="#" id="start-stop">
-                    <i data-lucide="circle-play"></i>
-                    <i data-lucide="circle-stop" class="hidden"></i>
-                    <span>Run</span>
-                </a>
-            </div>
-            <div class="navbar-right-menu">
-                <div class="dropdown sponsor">
-                    Sponsor:&nbsp;
-                    <a href="{{ $navBarSponsorLink }}" target="_blank" title="{{ $navBarSponsorText }}">
-                        {{ $navBarSponsorText }}
-                    </a>
-                </div>
-                <a class="menu-item" id="supporters" href="#">
-                    Supporters
-                </a>
-                <div class="dropdown">
-                    <div class="menu-item" dusk="sharing-menu">Sharing</div>
-                    <div class="dropdown-content">
-                        <a href="#" id="share">
+                    </li>
+                    <li class="separator"></li>
+                </ul>
+                <ul class="menu right-menu">
+                    <li class="item">
+                        <a id="supporters">
+                            <!-- ICON? -->
+                            <span>Supporters</span>
+                        </a>
+                    </li>
+                    <li class="item has-submenu">
+                        <a dusk="sharing-menu" tabindex="0">
                             <i data-lucide="share2"></i>
-                            Share
+                            <span>Sharing</span>
                         </a>
-                        <a href="#" id="download">
-                            <i data-lucide="download"></i>
-                            Download HTML
-                        </a>
-                    </div>
-                </div>
-                <div class="dropdown">
-                    <div class="menu-item">Links</div>
-                    <div class="dropdown-content">
-                        <a href="#" id="news-and-updates">
-                            <i data-lucide="badge-plus"></i>    
-                            What's New
-                        </a>
-                        <a target="_blank" href="https://patreon.com/PGEtinker">
-                            <i data-lucide="circle-dollar-sign"></i>
-                            Support on Patreon
-                        </a>
-                        <a target="_blank" href="https://www.paypal.com/donate?hosted_button_id=JRELVL6T7NZBE">
-                            <i data-lucide="circle-dollar-sign"></i>
-                            Make a Donation on Paypal
-                        </a>
-                        <a target="_blank" href="https://github.com/Moros1138/PGEtinker">
-                            <i data-lucide="github"></i>
-                            PGEtinker on Github
-                        </a>
-                        <a target="_blank" href="https://github.com/Moros1138/PGEtinker/issues/new?assignees=Moros1138&labels=bug&projects=&template=bug_report.md&title=Bug in Version: {{ substr(env('VERSION', 'develop'), 0, 7) }}">
-                            <i data-lucide="bug"></i>
-                            Report an issue
-                        </a>
-                        <a target="_blank" href="https://github.com/Moros1138/PGEtinker/issues/new?assignees=Moros1138&labels=enhancement&projects=&template=feature_request.md&title=">
-                            <i data-lucide="pencil-ruler"></i>
-                            Request a new feature
-                        </a>
-                        <a target="_blank" href="https://github.com/OneLoneCoder">
-                            <i data-lucide="github"></i>
-                            OneLoneCoder on Github
-                        </a>
-                        <a target="_blank" href="https://emscripten.org/">
-                            <i data-lucide="external-link"></i>
-                            Emscripten
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </nav>
+                        <ul class="submenu">
+                            <li class="subitem">
+                                <a href="#" id="share">
+                                    <i data-lucide="share2"></i>
+                                    <span>Share</span>
+                                </a>
+                            </li>
+                            <li class="subitem">
+                                <a href="#" id="download">
+                                    <i data-lucide="download"></i>
+                                    <span>Download HTML</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="item has-submenu">
+                        <a tabindex="0">Links</a>
+                        <ul class="submenu">
+                            <li class="subitem">
+                                <a href="#" id="news-and-updates">
+                                    <i data-lucide="badge-plus"></i>    
+                                    <span>What's New</span>
+                                </a>
+                            </li>
+                            <li class="subitem">
+                                <a target="_blank" href="https://patreon.com/PGEtinker">
+                                    <i data-lucide="circle-dollar-sign"></i>
+                                    <span>Support on Patreon</span>
+                                </a>
+                            </li>
+                            <li class="subitem">
+                                <a target="_blank" href="https://www.paypal.com/donate?hosted_button_id=JRELVL6T7NZBE">
+                                    <i data-lucide="circle-dollar-sign"></i>
+                                    <span>Make a Donation on Paypal</span>
+                                </a>
+                            </li>
+                            <li class="subitem">
+                                <a target="_blank" href="https://github.com/Moros1138/PGEtinker">
+                                    <i data-lucide="github"></i>
+                                    <span>PGEtinker on Github</span>
+                                </a>
+                            </li>
+                            <li class="subitem">
+                                <a target="_blank" href="https://github.com/Moros1138/PGEtinker/issues/new?assignees=Moros1138&labels=bug&projects=&template=bug_report.md&title=Bug in Version: {{ substr(env('VERSION', 'develop'), 0, 7) }}">
+                                    <i data-lucide="bug"></i>
+                                    <span>Report an issue</span>
+                                </a>
+                            </li>
+                            <li class="subitem">
+                                <a target="_blank" href="https://github.com/Moros1138/PGEtinker/issues/new?assignees=Moros1138&labels=enhancement&projects=&template=feature_request.md&title=">
+                                    <i data-lucide="pencil-ruler"></i>
+                                    <span>Request a new feature</span>
+                                </a>
+                            </li>
+                            <li class="subitem">
+                                <a target="_blank" href="https://www.youtube.com/channel/UC-yuWVUplUJZvieEligKBkA">
+                                    <i data-lucide="youtube"></i>
+                                    <span>Javidx9 on Youtube</span>
+                                </a>
+                            </li>
+                            <li class="subitem">
+                                <a target="_blank" href="https://github.com/OneLoneCoder">
+                                    <i data-lucide="github"></i>
+                                    <span>OneLoneCoder on Github</span>
+                                </a>
+                            </li>
+                            <li class="subitem">
+                                <a target="_blank" href="https://emscripten.org/">
+                                    <i data-lucide="external-link"></i>
+                                    <span>Emscripten</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+        </div>
         <div id="content">
             <noscript>
                 <p>
@@ -161,6 +182,5 @@
     <textarea id="code" style="display: none;"><?php echo $code ?></textarea>
     
     @include("shared.analytics")
-
 </body>
 </html>

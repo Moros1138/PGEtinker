@@ -206,7 +206,7 @@ export default class EditorPanel
         this.monacoWrapper.getEditor().revealPositionInCenter(position);
     }
     
-    async setTheme(theme)
+    async updateConfiguration()
     {
         if(this.monacoWrapper == null)
             return;
@@ -214,7 +214,7 @@ export default class EditorPanel
         
         await this.monacoWrapper
             .getMonacoEditorApp()
-            .updateUserConfiguration(getUserConfiguration(theme));
+            .updateUserConfiguration(getUserConfiguration());
     }
 
     updateStatusBar()

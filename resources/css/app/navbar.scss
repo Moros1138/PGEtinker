@@ -1,0 +1,137 @@
+#header {
+    nav {
+        display: flex;
+        justify-content: space-between;
+
+        .menu {
+            display: flex;
+            flex-flow: row;
+            justify-content:flex-start;
+            align-items: center;
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+
+            &.right-menu {
+                justify-content: flex-end;
+            }
+            
+            .brand {
+                a:hover,
+                a:link,
+                a:active,
+                a:visited {
+                    display: inline-block;
+                    line-height: 48px;
+                    padding: 0 .8rem;
+                    text-decoration: none;
+                    font-size: 3rem;
+                    color: var(--pgetinker-link-color);
+                    text-shadow: .2rem .2rem .2rem #000;
+                }
+            }
+            
+            .item {
+                a,
+                a:active,
+                a:link,
+                a:visited {
+                    background-color: var(--pgetinker-background-color);
+                    border: none;
+                    color: var(--pgetinker-menu-text-color);
+                    cursor: pointer;
+                    display: block;
+                    font-size: 1.2rem;
+                    height: 48px;
+                    letter-spacing: 1px;
+                    line-height: 48px;
+                    padding: 0 .4rem;
+                    text-decoration: none;
+                    text-shadow: .2rem .2rem .5rem var(--pgetinker-text-shadow-color);
+                }
+                
+                a:hover {
+                    background-color: var(--pgetinker-menu-hover-background);                
+                }
+    
+                &.has-submenu {
+                    position: relative;
+                }
+
+                .submenu {
+                    background-color: var(--pgetinker-submenu-background);
+                    border-top: 1px solid var(--pgetinker-content-border-color);
+                    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+                    display: none;
+                    list-style-type: none;
+                    position: absolute;
+                    margin: 0;
+                    padding: 0;
+                    white-space: nowrap;
+                    z-index: 1;
+
+                    .subitem {
+                        a {
+                            display: block;
+                            color: var(--pgetinker-submenu-text-color);
+                            font-size: 1.2rem;
+                            text-decoration: none;
+                            text-shadow: .2rem .2rem .5rem var(--pgetinker-text-shadow-color);
+                            padding: .0rem 1rem;
+                        }
+                        a:hover {
+                            background-color: var(--pgetinker-submenu-hover-background);
+                        }
+                    }
+                }
+
+                &.has-submenu:hover .submenu {
+                    display: block;
+                }
+            }
+        
+            &.right-menu .has-submenu .submenu {
+                left: auto;
+                right: 0;
+            }
+
+            .separator {
+                display: none;
+                flex-grow: 1;
+            }
+        }
+    }
+    
+    .lucide {
+        vertical-align: middle;
+        filter: drop-shadow(.2rem .2rem .1rem var(--pgetinker-text-shadow-color));
+    }
+}
+
+@media screen and (max-width: 750px) {
+    #header {
+        nav {
+            .menu {
+                &.left-menu {
+                    width: 100%;
+                }
+                
+                #settings-menu {
+                    order: 1;
+                }
+                            
+                &.right-menu {
+                    display: none;
+                }
+                
+                .item span {
+                    display: none;
+                }
+                
+                .separator {
+                    display: block;
+                }
+            }
+        }
+    }
+}
