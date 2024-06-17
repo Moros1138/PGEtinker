@@ -19,6 +19,7 @@ It is a summary of changes that would be pertinent to the end user of the PGEtin
 - Added editor.inlayHints to settings dialog
 - Fixed browser tests, broke due to UI changes
 - Changed screenshot fail graphic (Thanks TechnicJelle)
+- Changed light theme, make dialogs easier on the eyes
 
 ## 2024-06-10
 
