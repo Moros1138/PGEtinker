@@ -257,10 +257,12 @@ class PGEtinker
             code: this.editorPanel.getValue()
         }).then((response) =>
         {
+            this.compileSuccessHandler(response.data);
+            
             shareDialog(response.data.shareURL, response.data.shareThumbURL)
                 .finally(() =>
                 {
-                    this.compileSuccessHandler(response.data);
+                    
                 });
         
         }).catch((error) =>
