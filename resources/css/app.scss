@@ -1,5 +1,6 @@
 @import "./pixel-code.scss";
 @import "./app/loading.scss";
+@import "toastify-js/src/toastify.css";
 
 body {
     --pgetinker-link-color: #ff6500;
@@ -129,13 +130,14 @@ a:focus {
     overflow: visible !important;
 }
 
+@import "./app/dialog.scss";
+@import "./app/mobile-menu-dialog.scss";
 @import "./app/navbar.scss";
+@import "./app/settings-dialog.scss";
+@import "./app/toasts.scss";
 @import "./app/components/CompilerOutputPanel.scss";
 @import "./app/components/ConsolePanel.scss";
 @import "./app/components/EditorPanel.scss";
 @import "./app/components/PlayerPanel.scss";
 @import "./app/components/ProblemsPanel.scss";
-@import "./app/dialog.scss";
-@import "./app/mobile-menu-dialog.scss";
-@import "./app/settings-dialog.scss";
 @import "./app/responsive.scss";

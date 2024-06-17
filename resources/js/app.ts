@@ -29,8 +29,9 @@ import EditorPanel from './components/EditorPanel';
 import PlayerPanel from './components/PlayerPanel';
 // @ts-ignore
 import ProblemsPanel from './components/ProblemsPanel';
-
 import axios from 'axios';
+import { createToast, ToastType } from './lib/createToast';
+
 declare function GoldenLayout(...args: any[]): void;
 
 class PGEtinker
@@ -79,117 +80,29 @@ class PGEtinker
         if(this.theme !== "dark" && this.theme !== "light")
             this.theme = "dark";
 
-        // Default Code Button
-        document.querySelector("#default-code")!.addEventListener("click", (event) =>
+        document.querySelector("#settings-menu")?.addEventListener("click", (event) =>
         {
             event.preventDefault();
-
-            axios.get("/api/default-code").then((response) =>
-            {
-                this.editorPanel.setValue(response.data.code);
-                this.editorPanel.reveal({
-                    column: 1,
-                    lineNumber: 1,
-                });
-            }).catch((reason) => console.log(reason));
-        });
-
-        // Toggle Theme Button
-        document.querySelector("#toggle-theme")!.addEventListener("click", (event) =>
-        {
-            event.preventDefault();
-
-            if(this.theme === "dark")
-                this.theme = "light";
-            else
-                this.theme = "dark";
-                
-            this.UpdateTheme();
-        });
-
-        // Default Layout
-        document.querySelector("#default-layout")!.addEventListener("click", async(event) => 
-        {
-            event.preventDefault();
-            await this.editorPanel.onDestroy();
-
-            this.layout.destroy();
-
-            this.layoutConfig = defaultLandscapeLayout;
-            
             if(document.body.clientWidth <= 750)
             {
-                console.log("chose portrait layout");
-                this.layoutConfig = defaultPortraitLayout;
-            }
-            
-            this.SetupLayout();
-        });
-
-        // Download Button
-        document.querySelector("#download")!.addEventListener("click", (event) => 
-        {
-            event.preventDefault();
-            
-            if(!this.playerPanel.getHtml().includes("Emscripten-Generated Code"))
-            {
-                alert("You have to build the code before you can download!")
+                mobileMenuDialog(this);
                 return;
             }
-            
-            const a = document.createElement('a');
-            
-            // create the data url
-            a.href = `data:text/html;base64,${btoa(this.playerPanel.getHtml())}`;
-            a.download = "pgetinker.html";
-
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+            settingsDialog(this);
+        });
+        
+        // Download Button
+        document.querySelector("#download")?.addEventListener("click", (event) => 
+        {
+            event.preventDefault();
+            this.download();            
         });
         
         // Share Button
         document.querySelector("#share")!.addEventListener("click", (event) => 
         {
             event.preventDefault();
-
-            if(this.compiling)
-                return;
-
-            if(!this.preCompile())
-                return;
-
-            axios.post("/api/share", {
-                code: this.editorPanel.getValue()
-            }).then((response) =>
-            {
-                shareDialog(response.data.shareURL, response.data.shareThumbURL)
-                    .finally(() =>
-                    {
-                        this.compileSuccessHandler(response.data);
-                    });
-            
-            }).catch((error) =>
-            {
-                if(error.response)
-                {
-                    if(error.response.status)
-                    {
-                        if(error.response.status == 503)
-                        {
-                            this.compileFailHandler("pgetinker.cpp:1:1: error: PGEtinker service has gone offline. try again later.\n");
-                            return;
-                        }
-                    }
-
-                    if(error.response.data.stderr)
-                    {
-                        this.compileFailHandler(error.response.data.stderr);
-                        return;
-                    }
-                }
-                this.compileFailHandler("pgetinker.cpp:1:1: error: compilation failed in a way that's not being handled. please make a bug report.\n");
-            });
+            this.share();
         });
 
         // Compile Button
@@ -285,6 +198,117 @@ class PGEtinker
             console.log(`Failed to setActiveTab("${id}")`);
         }
     }
+    
+    defaultCode()
+    {
+        axios.get("/api/default-code").then((response) =>
+        {
+            this.editorPanel.setValue(response.data.code);
+            this.editorPanel.reveal({
+                column: 1,
+                lineNumber: 1,
+            });
+
+            createToast("Loaded default code.", ToastType.Info);
+        }).catch((reason) => console.log(reason));        
+    }
+
+    download()
+    {
+        if(!this.playerPanel.getHtml().includes("Emscripten-Generated Code"))
+        {
+            createToast("You have to build the code before you can download!", ToastType.Danger, 10000);
+            return;
+        }
+        
+        const a = document.createElement('a');
+        
+        // create the data url
+        a.href = `data:text/html;base64,${btoa(this.playerPanel.getHtml())}`;
+        a.download = "pgetinker.html";
+
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        createToast("Downloading HTML.", ToastType.Info);
+    }
+    
+    share()
+    {
+        let startStopElem = document.querySelector("#start-stop")!;
+        let playIconElem = startStopElem.querySelector(".lucide-circle-play")!;
+        let stopIconElem = startStopElem.querySelector(".lucide-circle-stop")!;
+        let spanElem     = startStopElem.querySelector("span")!;
+
+        this.setActiveTab("player");
+                
+        this.consolePanel.setFirstRun();
+        playIconElem.classList.toggle("hidden", true);
+        stopIconElem.classList.toggle("hidden", false);
+        spanElem.innerHTML = "Stop";
+
+        if(this.compiling)
+            return;
+
+        if(!this.preCompile())
+            return;
+
+        axios.post("/api/share", {
+            code: this.editorPanel.getValue()
+        }).then((response) =>
+        {
+            shareDialog(response.data.shareURL, response.data.shareThumbURL)
+                .finally(() =>
+                {
+                    this.compileSuccessHandler(response.data);
+                });
+        
+        }).catch((error) =>
+        {
+            this.setActiveTab("editor");
+            playIconElem.classList.toggle("hidden", false);
+            stopIconElem.classList.toggle("hidden", true);
+            spanElem.innerHTML = "Run";
+    
+
+            if(error.response)
+            {
+                if(error.response.status)
+                {
+                    if(error.response.status == 503)
+                    {
+                        this.compileFailHandler("pgetinker.cpp:1:1: error: PGEtinker service has gone offline. try again later.\n");
+                        return;
+                    }
+                }
+
+                if(error.response.data.stderr)
+                {
+                    this.compileFailHandler(error.response.data.stderr);
+                    return;
+                }
+            }
+            
+            this.compileFailHandler("pgetinker.cpp:1:1: error: compilation failed in a way that's not being handled. please make a bug report.\n");
+        });        
+    }
+
+    async switchToDefaultLayout()
+    {
+        await this.editorPanel.onDestroy();
+
+        this.layout.destroy();
+
+        this.layoutConfig = defaultLandscapeLayout;
+        
+        if(document.body.clientWidth <= 750)
+        {
+            console.log("chose portrait layout");
+            this.layoutConfig = defaultPortraitLayout;
+        }
+        
+        this.SetupLayout();
+    }
 
     preCompile()
     {
@@ -301,6 +325,7 @@ class PGEtinker
         this.playerPanel.setCompiling();
         
         this.compiling = true;
+        createToast("Compiling.", ToastType.Info);
         return true;
     }
     
@@ -351,10 +376,10 @@ class PGEtinker
     
     compileSuccessHandler(data: any)
     {
-        console.log(data);
         this.compilerOutputPanel.setContent(data.stdout + data.stderr);
         this.playerPanel.setHtml(data.html);
         this.compiling = false;
+        createToast("Compile Success.", ToastType.Success);
     }
     
     compileFailHandler(stderr: any)
@@ -364,8 +389,8 @@ class PGEtinker
         this.compilerOutputPanel.setContent(stderr);
         this.playerPanel.setCompilingFailed();
         this.compiling = false;
+        createToast("Compile Failed.", ToastType.Danger);
     }
-    
 
     async SetupLayout()
     {
@@ -456,7 +481,3 @@ class PGEtinker
 }
 
 new PGEtinker();
-
-
-
-

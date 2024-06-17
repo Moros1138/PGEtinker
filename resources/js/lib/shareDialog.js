@@ -1,5 +1,9 @@
+import { createToast, ToastType } from './createToast';
+
 export default function shareDialog(shareUrl, shareThumbUrl)
 {
+    let copied = false;
+    
     return new Promise((resolve) =>
     {
         let dialog = document.createElement('div');
@@ -25,10 +29,18 @@ export default function shareDialog(shareUrl, shareThumbUrl)
         dialog.querySelector("button.copy-url").addEventListener("click", (event) =>
         {
             navigator.clipboard.writeText(shareUrl).catch((reason) => console.log(reason));
+            createToast("Copied URL to clipboard.", ToastType.Info);
+            copied = true;
         });
 
         dialog.querySelector("button.ok").addEventListener("click", (event) =>
         {
+            if(!copied)
+            {
+                createToast("Copied URL to clipboard.", ToastType.Info);
+                navigator.clipboard.writeText(shareUrl).catch((reason) => console.log(reason));
+            }
+
             dialog.remove();
             resolve();
         });
