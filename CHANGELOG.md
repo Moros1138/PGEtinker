@@ -20,6 +20,8 @@ It is a summary of changes that would be pertinent to the end user of the PGEtin
 - Fixed browser tests, broke due to UI changes
 - Changed screenshot fail graphic (Thanks TechnicJelle)
 - Changed light theme, make dialogs easier on the eyes
+- Fixed [Issue #101](https://github.com/Moros1138/PGEtinker/issues/101)
+- Fixed [Issue #100](https://github.com/Moros1138/PGEtinker/issues/100)
 
 ## 2024-06-10
 
