@@ -48,24 +48,24 @@
 
                 &.ok {
                     background: #0D6EFD;
-                    color: var(--pgetinker-dialog-text-color);
+                    color: #fff;
                     font-weight: bold;
                 }
 
                 &.ok:hover {
                     background: #0B5ED7;
-                    color: var(--pgetinker-dialog-text-color);
+                    color: #fff;
                 }
 
                 &.cancel {
                     background: #DC3545;
-                    color: var(--pgetinker-dialog-text-color);
+                    color: #fff;
                     font-weight: bold;
                 }
                 
                 &.cancel:hover {
                     background: #BB2D3B;
-                    color: var(--pgetinker-dialog-text-color);
+                    color: #fff;
                 }
             }
         }
@@ -134,7 +134,7 @@
 
             &.added:before {
                 content: "+ Added: ";
-                color: rgb(92, 250, 255);
+                color: rgb(34, 167, 172);
             }
             
             &.removed:before {
@@ -144,12 +144,12 @@
             
             &.fixed:before {
                 content: "✔ Fixed: ";
-                color: rgb(252, 252, 170);
+                color: rgb(184, 184, 50);
             }
             
             &.changed:before {
                 content: "✔ Changed: ";
-                color: rgb(170, 252, 177);
+                color: rgb(127, 192, 133);
             }
         }
     }
