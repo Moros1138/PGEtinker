@@ -29,6 +29,13 @@ export default class EditorPanel
         
         this.staging = (window.location.pathname.indexOf("/staging/s/") === 0);
         
+        // reset editor font zoom
+        window.addEventListener("keydown", (event) => {
+            if (event.ctrlKey && event.key == "0") {
+                vscode.commands.executeCommand("editor.action.fontZoomReset");
+            }
+        });
+        
         configureMonacoWorkers();
     }
     
