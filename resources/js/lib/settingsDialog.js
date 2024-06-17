@@ -160,14 +160,19 @@ export default function settingsDialog(state)
             state.theme
         ));
 
-        // dialog.querySelector(".content").append(toggle(
-        //     "The Label",
-        //     "The Description",
-        //     (event) =>
-        //     {
-        //         console.log(event.target.checked, "something happened 1");
-        //     }
-        // ));
+
+        dialog.querySelector(".content").append(toggle(
+            "Editor> Inlay Hints: Enabled",
+            "Enables the inlay hints in the editor.",
+            (event) =>
+            {
+                setStorageValue("editor.inlayHints.enabled", event.target.checked);
+                state.editorPanel.updateConfiguration();
+            },
+            getStorageValue("editor.inlayHints.enabled")
+        ));
+
+
         dialog.querySelector(".content").append(toggle(
             "Diagnostics> Javid Mode: Enabled",
             "Enabling Javid Mode prevents Clang Tidy warnings from appearing in the editor and the problems panel.",

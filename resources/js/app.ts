@@ -1,8 +1,8 @@
 import './lib/bootstrap';
+import { conformStorage, getStorageValue, setStorageValue, removeStorageKey } from './lib/storage';
 import './lib/goldenLayout';
 import './lib/lucide';
 import version from "./lib/version";
-import { conformStorage, getStorageValue, setStorageValue, removeStorageKey } from './lib/storage';
 // @ts-ignore
 import agreeDialog from './lib/agreeDialog';
 // @ts-ignore
@@ -464,7 +464,7 @@ class PGEtinker
         let light = (this.theme === "light");
 
         // update editor theme
-        await this.editorPanel.setTheme(this.theme);
+        await this.editorPanel.updateConfiguration();
         
         setTimeout(() =>
         {

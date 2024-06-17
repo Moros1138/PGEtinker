@@ -29,6 +29,10 @@ export function conformStorage(): void
         setStorageValue("diagnostics.javidMode", false);
     }
     
+    if(getStorageValue("editor.inlayHints.enabled") == null)
+    {
+        setStorageValue("editor.inlayHints.enabled", false);
+    }
 }
 
 export function getStorageValue(key: string): string | null

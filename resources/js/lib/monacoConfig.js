@@ -10,16 +10,18 @@ import monacoVscodeTextmateServiceOverride from '@codingame/monaco-vscode-textma
 import { useOpenEditorStub } from 'monaco-editor-wrapper/vscode/services';
 import { getStorageValue, setStorageValue } from './storage';
 
-export const getUserConfiguration = (theme) =>
+export const getUserConfiguration = () =>
 {
-    theme = (theme === undefined) ? "dark" : theme;
     
     return JSON.stringify({
-        "workbench.colorTheme": (theme == "dark") ? "Default Dark Modern" : "Default Light Modern",
+        "workbench.colorTheme": (getStorageValue("theme") == "dark") ? "Default Dark Modern" : "Default Light Modern",
         "editor.mouseWheelZoom": "on",
         "editor.wordBasedSuggestions": "off",
         "editor.quickSuggestionDelay": 500,
-        "editor.inlayHints.enabled": "off",
+        "editor.inlayHints.enabled": getStorageValue("editor.inlayHints.enabled"),
+        "editor.tabSize": 4,
+        "editor.indentSize": 4,
+        "editor.detectIndentation": false,
     });
 }
 
