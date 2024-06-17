@@ -1,4 +1,5 @@
 import { createToast, ToastType } from './createToast';
+import { getStorageValue, setStorageValue } from './storage';
 
 let fieldId = 0;
 
@@ -167,15 +168,20 @@ export default function settingsDialog(state)
         //         console.log(event.target.checked, "something happened 1");
         //     }
         // ));
+        dialog.querySelector(".content").append(toggle(
+            "Diagnostics> Javid Mode: Enabled",
+            "Enabling Javid Mode prevents Clang Tidy warnings from appearing in the editor and the problems panel.",
+            (event) =>
+            {
+                setStorageValue("diagnostics.javidMode", event.target.checked);
+                if(event.target.checked)
+                {
+                    window.dispatchEvent(new CustomEvent("update-problems-panel", { detail: [] }));
+                }
+            },
+            getStorageValue("diagnostics.javidMode")
+        ));
     
-        // dialog.querySelector(".content").append(toggle(
-        //     "Lorem ipsum dolor sit amet",
-        //     "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet congue nulla, sed lacinia nisi. Etiam luctus euismod est eget interdum. Suspendisse fermentum lacus mauris, vitae sodales nunc tempor.",
-        //     (event) =>
-        //     {
-        //         console.log(event.target.checked, "something happened 2");
-        //     }
-        // ));
 
         // dialog.querySelector(".content").append(toggle(
         //     "The Label",

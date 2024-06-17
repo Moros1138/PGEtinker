@@ -23,6 +23,12 @@ export function conformStorage(): void
     {
         setStorageValue("theme", theme);
     }
+
+    if(getStorageValue("diagnostics.javidMode") == null)
+    {
+        setStorageValue("diagnostics.javidMode", false);
+    }
+    
 }
 
 export function getStorageValue(key: string): string | null
