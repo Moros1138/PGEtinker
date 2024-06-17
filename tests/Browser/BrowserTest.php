@@ -54,10 +54,10 @@ class BrowserTest extends DuskTestCase
             $browser->visit("/");
             $browser->waitUntilMissing("#pgetinker-loading");
 
-            $browser->click(".news .content");
-            $browser->waitUntilMissing(".news");
+            $browser->click(".footer .ok");
+            $browser->waitUntilMissing(".dialog");
             
-            $browser->assertNotPresent(".news");
+            $browser->assertNotPresent(".dialog");
         });
     }
 
@@ -68,23 +68,35 @@ class BrowserTest extends DuskTestCase
             $browser->visit("/");
             $browser->waitUntilMissing("#pgetinker-loading");
             
-            $browser->mouseover("@settings-menu");
-            $browser->click("#default-code");
-            $browser->pause(100);
+            $browser->click("@settings-menu");
+            
+            $browser->click('button[name="button-1"]');
+            $browser->waitFor(".toastify");
+            $browser->waitUntilMissing(".toastify");
+            $browser->click(".footer .ok");
+            $browser->waitUntilMissing(".dialog");
+            
+            $browser->assertNotPresent(".dialog");
             $browser->assertSee("class Example : public olc::PixelGameEngine");
         });
     }
     
-    public function testTogglesThemeOnClick(): void
+    public function testSelectsLightTheme(): void
     {
         $this->browse(function(Browser $browser)
         {
             $browser->visit("/");
             $browser->waitUntilMissing("#pgetinker-loading");
 
-            $browser->mouseover("@settings-menu");
-            $browser->click("#toggle-theme");
+            $browser->click("@settings-menu");
             
+            $browser->click('select[name="select-3"]');
+            $browser->click('option[value="light"]');
+            $browser->waitFor(".toastify");
+            $browser->waitUntilMissing(".toastify");
+            $browser->click(".footer .ok");
+            $browser->waitUntilMissing(".dialog");
+
             $browser->waitUntil("document.body.classList.contains('light')");
             $browser->assertAttributeContains("", "class", "light");
         });
