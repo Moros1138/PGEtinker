@@ -209,7 +209,7 @@ class PGEtinker
                 lineNumber: 1,
             });
 
-            createToast("Loaded default code.", ToastType.Info);
+            
         }).catch((reason) => console.log(reason));        
     }
 

@@ -1,3 +1,4 @@
+import { createToast, ToastType } from './createToast';
 
 let fieldId = 0;
 
@@ -127,14 +128,16 @@ export default function settingsDialog(state)
             (event) =>
             {
                 state.defaultCode();
+                createToast("Loaded default code.", ToastType.Info);
             }
         ));
         
         dialog.querySelector(".content").append(button(
             "Restore Default Layout",
-            (event) =>
+            async(event) =>
             {
-                state.switchToDefaultLayout();
+                await state.switchToDefaultLayout();
+                createToast("Restored default layout.", ToastType.Info);
             }
         ));
 
@@ -149,47 +152,48 @@ export default function settingsDialog(state)
                 if(event.target.value === "light")
                     state.theme = "light";
                     
+                createToast(`Changing theme: ${state.theme}`, ToastType.Info);
                 state.UpdateTheme();
             },
             ["dark", "light"],
             state.theme
         ));
 
-        dialog.querySelector(".content").append(toggle(
-            "The Label",
-            "The Description",
-            (event) =>
-            {
-                console.log(event.target.checked, "something happened 1");
-            }
-        ));
+        // dialog.querySelector(".content").append(toggle(
+        //     "The Label",
+        //     "The Description",
+        //     (event) =>
+        //     {
+        //         console.log(event.target.checked, "something happened 1");
+        //     }
+        // ));
     
-        dialog.querySelector(".content").append(toggle(
-            "Lorem ipsum dolor sit amet",
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet congue nulla, sed lacinia nisi. Etiam luctus euismod est eget interdum. Suspendisse fermentum lacus mauris, vitae sodales nunc tempor.",
-            (event) =>
-            {
-                console.log(event.target.checked, "something happened 2");
-            }
-        ));
+        // dialog.querySelector(".content").append(toggle(
+        //     "Lorem ipsum dolor sit amet",
+        //     "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet congue nulla, sed lacinia nisi. Etiam luctus euismod est eget interdum. Suspendisse fermentum lacus mauris, vitae sodales nunc tempor.",
+        //     (event) =>
+        //     {
+        //         console.log(event.target.checked, "something happened 2");
+        //     }
+        // ));
 
-        dialog.querySelector(".content").append(toggle(
-            "The Label",
-            "The Description",
-            (event) =>
-            {
-                console.log(event.target.checked, "something happened 3");
-            }
-        ));
+        // dialog.querySelector(".content").append(toggle(
+        //     "The Label",
+        //     "The Description",
+        //     (event) =>
+        //     {
+        //         console.log(event.target.checked, "something happened 3");
+        //     }
+        // ));
 
-        dialog.querySelector(".content").append(toggle(
-            "The Label",
-            "The Description",
-            (event) =>
-            {
-                console.log(event.target.checked, "something happened 4");
-            }
-        ));
+        // dialog.querySelector(".content").append(toggle(
+        //     "The Label",
+        //     "The Description",
+        //     (event) =>
+        //     {
+        //         console.log(event.target.checked, "something happened 4");
+        //     }
+        // ));
         
         dialog.querySelector(".ok").addEventListener("click", (event) =>
         {
