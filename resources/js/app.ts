@@ -325,7 +325,6 @@ class PGEtinker
         this.playerPanel.setCompiling();
         
         this.compiling = true;
-        createToast("Compiling.", ToastType.Info);
         return true;
     }
     
@@ -379,7 +378,10 @@ class PGEtinker
         this.compilerOutputPanel.setContent(data.stdout + data.stderr);
         this.playerPanel.setHtml(data.html);
         this.compiling = false;
-        createToast("Compile Success.", ToastType.Success);
+        if(document.body.clientWidth <= 750)
+        {
+            createToast("Compile Success.", ToastType.Success);
+        }
     }
     
     compileFailHandler(stderr: any)
@@ -389,7 +391,10 @@ class PGEtinker
         this.compilerOutputPanel.setContent(stderr);
         this.playerPanel.setCompilingFailed();
         this.compiling = false;
-        createToast("Compile Failed.", ToastType.Danger);
+        if(document.body.clientWidth <= 750)
+        {
+            createToast("Compile Failed.", ToastType.Danger);
+        }
     }
 
     async SetupLayout()
