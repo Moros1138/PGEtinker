@@ -61,6 +61,7 @@
                     background: #0D6EFD;
                     color: #fff;
                     font-weight: bold;
+                    order: -1;
                 }
 
                 &.ok:hover {
@@ -77,6 +78,18 @@
                 &.cancel:hover {
                     background: #BB2D3B;
                     color: #fff;
+                }
+            }
+
+            @media screen and (max-width: 750px) {
+                display: flex;
+                flex-direction: column;
+                button {
+                    display: block;
+                    border-radius: 0.4rem;
+                    padding: 1rem 0;
+                    width: 100%;
+                    margin: 0;
                 }
             }
         }
