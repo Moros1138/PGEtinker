@@ -33,6 +33,17 @@
         
         & > .content {
             padding: 1rem;
+
+            @media screen and (max-width: 750px) {
+                h1,
+                h2,
+                h3,
+                h4,
+                h5,
+                h6 {
+                    font-size: 1.5rem;
+                }
+            }
         }
 
         & > .footer {
@@ -50,6 +61,7 @@
                     background: #0D6EFD;
                     color: #fff;
                     font-weight: bold;
+                    order: -1;
                 }
 
                 &.ok:hover {
@@ -66,6 +78,38 @@
                 &.cancel:hover {
                     background: #BB2D3B;
                     color: #fff;
+                }
+            }
+
+            @media screen and (max-width: 750px) {
+                display: flex;
+                flex-direction: column;
+                button {
+                    display: block;
+                    border-radius: 0.4rem;
+                    padding: 1rem 0;
+                    width: 100%;
+                    margin: 0;
+                }
+            }
+        }
+    }
+
+    @media screen and (max-width: 750px) {
+        .window {
+            & > .header {
+                border-bottom: 1px solid var(--pgetinker-dialog-border-color);
+                padding: 0.4rem 1rem;
+                font-weight: bold;
+                font-size: 1.5rem;                
+            }
+
+            & > .footer {
+                button {
+                    display: block;
+                    margin: .6rem 0;
+                    width: 100%;
+                    padding: 1rem;
                 }
             }
         }
@@ -123,6 +167,45 @@
                 padding: 0.4rem 1rem;
             }
         }
+
+        @media screen and (max-width: 750px) {
+            .input-group {
+                display: block;
+                width: 100%;
+                margin: 0;
+
+                label {
+                    display: block;
+                    border-radius: 0.4rem 0.4rem 0rem 0rem;
+                    background: #4d4d4d;
+                    padding: 1rem 0;
+                    text-align: center;
+                    color: #ffffff;
+                    width: 100%;
+                    margin: 0;
+                    border: none;
+                    border-bottom: 2px solid #000;
+                }
+                
+                input[type=text] {
+                    display: block;
+                    padding: 1rem 0;
+                    width: 100%;
+                    border: none;
+                    margin: 0;
+                }
+
+                button {
+                    display: block;
+                    border-radius: 0 0 0.4rem 0.4rem;
+                    padding: 1rem 0;
+                    border: none;
+                    border-top: 2px solid #000;
+                    width: 100%;
+                    margin: 0;
+                }                
+            }
+        }
     }    
 }
 
@@ -162,13 +245,12 @@
             text-align: center;
             margin-top: 2rem;
             margin-bottom: 1rem;
-            font-size: 2.5rem;
+            font-size: 1.4rem;
         }
 
         h3 {
             text-align: center;
-            font-size: 2rem;
-            // text-decoration: underline;
+            font-size: 1.5rem;
             padding-bottom: 1rem;
             border-bottom: 4px solid var(--pgetinker-dialog-text-color);
         }
@@ -181,7 +263,7 @@
             
             .name {
                 padding: .5rem 2rem;
-                font-size: 2.5rem;
+                font-size: 1.6rem;
             }        
         }
     }
