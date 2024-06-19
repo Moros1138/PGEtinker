@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file. Each batch 
 
 It is a summary of changes that would be pertinent to the end user of the PGEtinker website. For a comprehensive history of changes made to the project, please refer to the repository's commit history.
 
+## 2024-06-19
+- Fixed [Issue #105](https://github.com/Moros1138/PGEtinker/issues/105)
+- Fixed other dialog styles for the portrait layout
+
 ## 2024-06-17
 
 - Fixed [Issue #98](https://github.com/Moros1138/PGEtinker/issues/98)
