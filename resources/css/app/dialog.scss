@@ -94,6 +94,26 @@
             }
         }
     }
+
+    @media screen and (max-width: 750px) {
+        .window {
+            & > .header {
+                border-bottom: 1px solid var(--pgetinker-dialog-border-color);
+                padding: 0.4rem 1rem;
+                font-weight: bold;
+                font-size: 1.5rem;                
+            }
+
+            & > .footer {
+                button {
+                    display: block;
+                    margin: .6rem 0;
+                    width: 100%;
+                    padding: 1rem;
+                }
+            }
+        }
+    }
 }
 
 .first-time {
