@@ -167,6 +167,45 @@
                 padding: 0.4rem 1rem;
             }
         }
+
+        @media screen and (max-width: 750px) {
+            .input-group {
+                display: block;
+                width: 100%;
+                margin: 0;
+
+                label {
+                    display: block;
+                    border-radius: 0.4rem 0.4rem 0rem 0rem;
+                    background: #4d4d4d;
+                    padding: 1rem 0;
+                    text-align: center;
+                    color: #ffffff;
+                    width: 100%;
+                    margin: 0;
+                    border: none;
+                    border-bottom: 2px solid #000;
+                }
+                
+                input[type=text] {
+                    display: block;
+                    padding: 1rem 0;
+                    width: 100%;
+                    border: none;
+                    margin: 0;
+                }
+
+                button {
+                    display: block;
+                    border-radius: 0 0 0.4rem 0.4rem;
+                    padding: 1rem 0;
+                    border: none;
+                    border-top: 2px solid #000;
+                    width: 100%;
+                    margin: 0;
+                }                
+            }
+        }
     }    
 }
 
