@@ -17,11 +17,18 @@ export function conformStorage(): void
         setStorageValue("code", JSON.parse(code));
     }
 
-    let theme = store.getItem("pgetinkerTheme");
-    store.removeItem("pgetinkerTheme");
-    if(theme)
+    if(getStorageValue("theme") == null)
     {
-        setStorageValue("theme", theme);
+        let theme = store.getItem("pgetinkerTheme");
+        store.removeItem("pgetinkerTheme");
+        if(theme)
+        {
+            setStorageValue("theme", theme);
+        }
+        else
+        {
+            setStorageValue("theme", "dark");
+        }
     }
 
     if(getStorageValue("diagnostics.javidMode") == null)

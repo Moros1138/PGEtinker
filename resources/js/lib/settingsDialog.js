@@ -154,10 +154,12 @@ export default function settingsDialog(state)
                     state.theme = "light";
                     
                 createToast(`Changing theme: ${state.theme}`, ToastType.Info);
+                setStorageValue("theme", state.theme);
+
                 state.UpdateTheme();
             },
             ["dark", "light"],
-            state.theme
+            getStorageValue("theme")
         ));
 
 
