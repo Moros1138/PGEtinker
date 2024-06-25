@@ -3,6 +3,7 @@ import {
     BadgePlus,
     Bug,
     CircleDollarSign,
+    CircleHelp,
     CirclePlay,
     CircleStop,
     Download,
@@ -15,18 +16,22 @@ import {
     SquareChevronRight,
     SunMoon,
     UndoDot,
-    Youtube } from 'lucide';
+    Youtube,
+    Link, 
+} from 'lucide';
 
 createIcons({
     icons: {
         BadgePlus,
         Bug,
+        CircleDollarSign,
+        CircleHelp,
         CirclePlay,
         CircleStop,
-        CircleDollarSign,
         Download,
         ExternalLink,
         Github,
+        Link,
         Menu,
         Newspaper,
         PencilRuler,
