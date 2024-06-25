@@ -92,7 +92,10 @@
                         </ul>
                     </li>
                     <li class="item has-submenu">
-                        <a tabindex="0">Links</a>
+                        <a tabindex="0">
+                            <i data-lucide="link"></i>
+                            <span>Links</span>
+                        </a>
                         <ul class="submenu">
                             <li class="subitem">
                                 <a href="#" id="news-and-updates">
