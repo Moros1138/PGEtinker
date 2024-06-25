@@ -7,10 +7,10 @@ It is a summary of changes that would be pertinent to the end user of the PGEtin
 ## 2024-06-25
 
 - Fixed light theme persistence
-- Add link icon to links menu item
-- Add help to menu
-- Add patreon icon to supporters menu item
-- Add styles to account for space used by help menu item
+- Added link icon to links menu item
+- Added help to menu
+- Added patreon icon to supporters menu item
+- Added styles to account for space used by help menu item
 
 ## 2024-06-19
 
