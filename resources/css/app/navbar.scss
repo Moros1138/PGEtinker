@@ -108,7 +108,21 @@
     }
 }
 
-@media screen and (max-width: 750px) {
+@media screen and (min-width: 761px) and (max-width: 900px) {
+    #header {
+        nav {
+            .menu {
+                &.left-menu {
+                    .item > a span {
+                        display: none;
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 760px) {
     #header {
         nav {
             .menu {
