@@ -67,7 +67,7 @@
                 <ul class="menu right-menu">
                     <li class="item">
                         <a id="supporters">
-                            <!-- ICON? -->
+                            <svg class="lucide" fill="currentColor" stroke="none" width="24" height="24" xmlns="http://www.w3.org/2000/svg"viewBox="0 0 1080 1080"><rect width="192.44098" height="963.00232" x="45.960854" y="58.49884" /><circle cx="694.31726" cy="424.37286" r="357.3031" /></svg>
                             <span>Supporters</span>
                         </a>
                     </li>
