@@ -24,6 +24,11 @@ export default function mobileMenuDialog(state)
                                     <a id="settings-menu" tabindex="0">Settings</a>
                                 </li>
                                 <li class="subitem">
+                                    <a target="_blank" href="/wiki/">
+                                        <span>Help</span>
+                                    </a>
+                                </li>
+                                <li class="subitem">
                                     <a id="news-and-updates">
                                         <span>What's New</span>
                                     </a>
