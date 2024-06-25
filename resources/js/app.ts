@@ -76,10 +76,6 @@ class PGEtinker
             }
         }
         
-        this.theme = window.localStorage.getItem("pgetinkerTheme");
-        if(this.theme !== "dark" && this.theme !== "light")
-            this.theme = "dark";
-
         document.querySelector("#settings-menu")?.addEventListener("click", (event) =>
         {
             event.preventDefault();
@@ -460,10 +456,8 @@ class PGEtinker
     
     async UpdateTheme()
     {
-        // save theme into localStorage
-        setStorageValue("theme", this.theme);
-
-        let light = (this.theme === "light");
+        const theme = getStorageValue("theme");
+        let light = (theme === "light");
 
         // update editor theme
         await this.editorPanel.updateConfiguration();
@@ -481,7 +475,7 @@ class PGEtinker
             goldenLayoutLightThemeStyle.disabled = !light;
         
             // update player theme
-            this.playerPanel.setTheme(this.theme);
+            this.playerPanel.setTheme(theme);
         }, 200);
 
     }
