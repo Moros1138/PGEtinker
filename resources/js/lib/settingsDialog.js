@@ -75,7 +75,7 @@ function toggle(label, description, valueCallback, initialValue)
     toggle.addEventListener("change", (event) =>
     {
         event.preventDefault();
-        valueCallback(event);        
+        valueCallback(event);
     });
 
     return toggle;
