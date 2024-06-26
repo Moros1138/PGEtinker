@@ -123,6 +123,7 @@ export default class EditorPanel
         if(this.autoConnect)
         {
             this.reconnectInterval = setInterval(reconnectHandler, 5000);
+            reconnectHandler();
         }
 
         this.monacoWrapper.getEditor().setValue(code);

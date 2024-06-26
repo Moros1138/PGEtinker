@@ -1,10 +1,8 @@
 import './lib/bootstrap';
-import { conformStorage, getStorageValue, setStorageValue, removeStorageKey } from './lib/storage';
+import { getStorageValue, setStorageValue } from './lib/storage';
 import './lib/goldenLayout';
-import './lib/lucide';
+
 import version from "./lib/version";
-// @ts-ignore
-import agreeDialog from './lib/agreeDialog';
 // @ts-ignore
 import mobileMenuDialog from './lib/mobileMenuDialog';
 // @ts-ignore
@@ -34,7 +32,7 @@ import { createToast, ToastType } from './lib/createToast';
 
 declare function GoldenLayout(...args: any[]): void;
 
-class PGEtinker
+export default class PGEtinker
 {
     consolePanel;
     editorPanel;
@@ -51,7 +49,6 @@ class PGEtinker
 
     constructor()
     {
-        conformStorage();
 
         this.consolePanel        = new ConsolePanel(this);
         this.compilerOutputPanel = new CompilerOutputPanel(this);
@@ -150,29 +147,9 @@ class PGEtinker
             newsDialog();
         });
 
-        if(!getStorageValue("agreed-to-terms"))
-        {
-            agreeDialog()
-                .then(() =>
-                {
-                    setStorageValue("agreed-to-terms", true);
-                    this.SetupLayout();
-                })
-                .catch(() =>
-                {
-                    removeStorageKey("code");
-                    removeStorageKey("theme");
-                    removeStorageKey("layout");
-                    removeStorageKey("version");
-                    window.location.pathname = "/disagree";
-                });
-        }
-        else
-        {
-            this.SetupLayout();
-            this.setActiveTab("editor");
-            this.setActiveTab("problems");
-        }
+        this.SetupLayout();
+        this.setActiveTab("editor");
+        this.setActiveTab("problems");
     }
 
     setActiveTab(id: string)
@@ -397,7 +374,7 @@ class PGEtinker
 
     async SetupLayout()
     {
-        document.querySelector("#pgetinker-loading")!.classList.toggle("display-flex", true);
+        document.querySelector("#pgetinker-loading")!.classList.toggle("hidden", false);
 
         await this.editorPanel.onPreInit();
         
@@ -417,7 +394,6 @@ class PGEtinker
                 setStorageValue("layout", this.layout.toConfig());
             }
         });
-        
         this.layout.on("initialised", async() =>
         {
             this.layoutInitialized = true;
@@ -436,7 +412,6 @@ class PGEtinker
             
             setTimeout(() =>
             {
-                document.querySelector("#pgetinker-loading")!.classList.toggle("display-flex", false);
                 this.setActiveTab("editor");
             }, 500)
         });
@@ -462,23 +437,40 @@ class PGEtinker
         // update editor theme
         await this.editorPanel.updateConfiguration();
         
-        setTimeout(() =>
+        // 
+        const isVsCodeTheme = () =>
         {
-            document.body.classList.toggle("dark", !light);
-            document.body.classList.toggle("light", light);
-    
-            // update golden layout theme
-            let goldenLayoutDarkThemeStyle = document.querySelector("#goldenlayout-dark-theme")! as HTMLLinkElement;
-            let goldenLayoutLightThemeStyle = document.querySelector("#goldenlayout-light-theme")! as HTMLLinkElement;
+            return document.body.classList.contains(`vscode-theme-defaults-themes-${theme}_modern-json`);
+        }
         
-            goldenLayoutDarkThemeStyle.disabled = light;
-            goldenLayoutLightThemeStyle.disabled = !light;
-        
-            // update player theme
-            this.playerPanel.setTheme(theme);
-        }, 200);
+        let updateInterval : NodeJS.Timeout;
 
+        const updatehandler = () =>
+        {
+            if(isVsCodeTheme())
+            {
+                clearInterval(updateInterval);
+
+                document.body.classList.toggle("dark", !light);
+                document.body.classList.toggle("light", light);
+        
+                // update golden layout theme
+                let goldenLayoutDarkThemeStyle = document.querySelector("#goldenlayout-dark-theme")! as HTMLLinkElement;
+                let goldenLayoutLightThemeStyle = document.querySelector("#goldenlayout-light-theme")! as HTMLLinkElement;
+            
+                goldenLayoutDarkThemeStyle.disabled = light;
+                goldenLayoutLightThemeStyle.disabled = !light;
+            
+                // update player theme
+                this.playerPanel.setTheme(theme);
+                
+                document.querySelector("#pgetinker-loading")!.classList.toggle("hidden", true);
+                return;
+            }
+
+        }
+
+        updateInterval = setInterval(updatehandler, 50);
     }
 }
 
-new PGEtinker();
