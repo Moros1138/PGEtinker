@@ -37,7 +37,7 @@
     
     <link rel="stylesheet" type="text/css" href="{{ Vite::asset('resources/css/normalize.scss')}}">
     <link rel="stylesheet" type="text/css" href="{{ Vite::asset('resources/css/app.scss')}}">
-    @vite('resources/js/app.ts')
+    @vite('resources/js/app-preload.ts')
 </head>
 <body>
     <div id="app">

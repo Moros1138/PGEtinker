@@ -29,7 +29,7 @@ export default defineConfig({
                 'resources/css/disagreed.scss',
                 'resources/js/disagreed.js',
                 'resources/css/app.scss',
-                'resources/js/app.ts'
+                'resources/js/app-preload.ts'
             ],
             refresh: true,
         }),
