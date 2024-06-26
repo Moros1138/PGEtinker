@@ -1,5 +1,5 @@
 import './lib/bootstrap';
-import { conformStorage, getStorageValue, setStorageValue, removeStorageKey } from './lib/storage';
+import { getStorageValue, setStorageValue } from './lib/storage';
 import './lib/goldenLayout';
 
 import version from "./lib/version";
