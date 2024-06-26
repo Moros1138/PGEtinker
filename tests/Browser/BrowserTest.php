@@ -41,7 +41,8 @@ class BrowserTest extends DuskTestCase
             
             $browser->click("#i-agree");
             
-            $browser->waitUntilMissing("#pgetinker-loading");
+            $browser->waitUntilMissing("#pgetinker-loading", 10);
+            $browser->assertMissing("#pgetinker-loading");
             
             $browser->assertSee("News and Updates");
         });
@@ -52,7 +53,8 @@ class BrowserTest extends DuskTestCase
         $this->browse(function(Browser $browser)
         {
             $browser->visit("/");
-            $browser->waitUntilMissing("#pgetinker-loading");
+            $browser->waitUntilMissing("#pgetinker-loading", 10);
+            $browser->assertMissing("#pgetinker-loading");
 
             $browser->click(".footer .ok");
             $browser->waitUntilMissing(".dialog");
@@ -66,7 +68,8 @@ class BrowserTest extends DuskTestCase
         $this->browse(function(Browser $browser)
         {
             $browser->visit("/");
-            $browser->waitUntilMissing("#pgetinker-loading");
+            $browser->waitUntilMissing("#pgetinker-loading", 10);
+            $browser->assertMissing("#pgetinker-loading");
             
             $browser->click("@settings-menu");
             
@@ -86,7 +89,8 @@ class BrowserTest extends DuskTestCase
         $this->browse(function(Browser $browser)
         {
             $browser->visit("/");
-            $browser->waitUntilMissing("#pgetinker-loading");
+            $browser->waitUntilMissing("#pgetinker-loading", 10);
+            $browser->assertMissing("#pgetinker-loading");
 
             $browser->click("@settings-menu");
             
@@ -107,7 +111,8 @@ class BrowserTest extends DuskTestCase
         $this->browse(function(Browser $browser)
         {
             $browser->visit("/");
-            $browser->waitUntilMissing("#pgetinker-loading");
+            $browser->waitUntilMissing("#pgetinker-loading", 10);
+            $browser->assertMissing("#pgetinker-loading");
 
             $browser->click("#start-stop");
             $browser->waitFor("#player-panel .iframe-container iframe", 10);
@@ -120,7 +125,8 @@ class BrowserTest extends DuskTestCase
         $this->browse(function(Browser $browser)
         {
             $browser->visit("/");
-            $browser->waitUntilMissing("#pgetinker-loading");
+            $browser->waitUntilMissing("#pgetinker-loading", 10);
+            $browser->assertMissing("#pgetinker-loading");
 
             $browser->mouseover("@sharing-menu");
             $browser->click("#share");
@@ -128,6 +134,10 @@ class BrowserTest extends DuskTestCase
 
             $shareUrl = $browser->value("#share-url");
             $browser->visit($shareUrl);
+
+            $browser->waitUntilMissing("#pgetinker-loading", 10);
+            $browser->assertMissing("#pgetinker-loading");
+
             $browser->assertSee("C++ Editor");
         });
     }
