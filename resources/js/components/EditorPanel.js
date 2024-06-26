@@ -1,6 +1,6 @@
 import { getUserConfiguration } from "../lib/monacoConfig";
 import { configureMonacoWorkers, runCppWrapper } from "../lib/monacoWrapper";
-import { getStorageValue } from "../lib/storage";
+import { getStorageValue, setStorageValue } from "../lib/storage";
 import pgetinkerCppCode from '../../example1.cpp?raw';
 import * as vscode from "vscode";
 
@@ -132,7 +132,7 @@ export default class EditorPanel
     
         this.monacoWrapper.getEditor().onDidChangeModelContent(() =>
         {
-            window.localStorage.setItem("pgetinkerCode", JSON.stringify(this.monacoWrapper.getEditor().getValue()));
+            setStorageValue("code", this.monacoWrapper.getEditor().getValue());
             
             if(this.sharedFlag)
             {
