@@ -15,7 +15,7 @@ public:
     Example()
     {
         // Name your application
-        sAppName = "Example";
+        sAppName = "Example 1";
     }
     
 public:

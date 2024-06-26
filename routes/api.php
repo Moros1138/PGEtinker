@@ -20,13 +20,6 @@ Route::get("model/{version}", function(Request $request, string $version)
     ], 404);
 });
 
-Route::get("/default-code", function(Request $request)
-{
-    return [
-        "code" => file_get_contents(base_path() . '/resources/example.cpp')
-    ];
-});
-
 Route::get("/news", function(Request $request)
 {
     $changeLog = new stdClass();

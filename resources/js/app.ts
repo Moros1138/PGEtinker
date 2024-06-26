@@ -172,20 +172,6 @@ export default class PGEtinker
         }
     }
     
-    defaultCode()
-    {
-        axios.get("/api/default-code").then((response) =>
-        {
-            this.editorPanel.setValue(response.data.code);
-            this.editorPanel.reveal({
-                column: 1,
-                lineNumber: 1,
-            });
-
-            
-        }).catch((reason) => console.log(reason));        
-    }
-
     download()
     {
         if(!this.playerPanel.getHtml().includes("Emscripten-Generated Code"))
