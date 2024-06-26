@@ -29,22 +29,22 @@ function select(label, description, valueCallback, options, initialValue)
     for(let i = 0; i < options.length; i++)
     {
         let option = document.createElement("option");
-        option.value = options[i];
-        option.innerHTML = options[i];
+        option.value = options[i].value;
+        option.innerHTML = options[i].label;
         
-        if(options[i] == initialValue)
+        if(options[i].value == initialValue)
         {
             option.selected = true;
         }
 
         select.querySelector("select").append(option);
     }
-
+    
     select.addEventListener("change", (event) =>
     {
         valueCallback(event);
     });
-
+   
     return select;
 }
 
@@ -158,7 +158,16 @@ export default function settingsDialog(state)
 
                 state.UpdateTheme();
             },
-            ["dark", "light"],
+            [
+                {
+                    label: "Dark Theme",
+                    value: "dark",
+                },
+                {
+                    label: "Light Theme",
+                    value: "light",
+                }
+            ],
             getStorageValue("theme")
         ));
 
