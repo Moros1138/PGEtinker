@@ -5,6 +5,8 @@ import exampleCode1 from '../../example1.cpp?raw';
 import exampleCode2 from '../../example2.cpp?raw';
 import exampleCode3 from '../../example3.cpp?raw';
 import exampleCode4 from '../../example4.cpp?raw';
+import exampleCode5 from '../../example5.cpp?raw';
+import exampleCode6 from '../../example6.cpp?raw';
 
 let fieldId = 0;
 
@@ -165,6 +167,12 @@ export default function settingsDialog(state)
                     if(event.target.value === "example4")
                         code = exampleCode4;
 
+                    if(event.target.value === "example5")
+                        code = exampleCode5;
+
+                    if(event.target.value === "example6")
+                        code = exampleCode6;
+
                     if(code)
                     {
                         state.editorPanel.setValue(code);
@@ -193,6 +201,14 @@ export default function settingsDialog(state)
                 {
                     label: "Example 4",
                     value: "example4",
+                },
+                {
+                    label: "Example 5",
+                    value: "example5",
+                },
+                {
+                    label: "Example 6",
+                    value: "example6",
                 },
             ],
         ));
