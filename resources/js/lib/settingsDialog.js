@@ -125,6 +125,8 @@ export default function settingsDialog(state)
     
     return new Promise((resolve) =>
     {
+        fieldId = 0;
+        
         let dialog = document.createElement('div');
                 
         dialog.classList.toggle("dialog", "true");
