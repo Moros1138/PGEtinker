@@ -1,6 +1,11 @@
 import { createToast, ToastType } from './createToast';
 import { getStorageValue, setStorageValue } from './storage';
 
+import exampleCode1 from '../../example1.cpp?raw';
+import exampleCode2 from '../../example2.cpp?raw';
+import exampleCode3 from '../../example3.cpp?raw';
+import exampleCode4 from '../../example4.cpp?raw';
+
 let fieldId = 0;
 
 /**
@@ -136,15 +141,60 @@ export default function settingsDialog(state)
             </div>`;
         
         
-        dialog.querySelector(".content").append(button(
-            "Load Default Code",
+        dialog.querySelector(".content").append(select(
+            "Load Example Code",
+            "Choose from the available examples!",
             (event) =>
             {
-                state.defaultCode();
-                createToast("Loaded default code.", ToastType.Info);
-            }
+                event.preventDefault();
+                if(event.target.value !== "")
+                {
+                    let code = null;
+
+                    if(event.target.value === "example1")
+                        code = exampleCode1;
+
+                    if(event.target.value === "example2")
+                        code = exampleCode2;
+
+                    if(event.target.value === "example3")
+                        code = exampleCode3;
+
+                    if(event.target.value === "example4")
+                        code = exampleCode4;
+
+                    if(code)
+                    {
+                        state.editorPanel.setValue(code);
+                        state.editorPanel.reveal({ column: 1, lineNumber: 1 });
+                        createToast(`Set Code to ${event.target.selectedOptions[0].innerHTML}`, ToastType.Info);
+                    }
+                }
+            },
+            [
+                {
+                    label: "--Choose Example--",
+                    value: "",
+                },
+                {
+                    label: "Example 1",
+                    value: "example1",
+                },
+                {
+                    label: "Example 2",
+                    value: "example2",
+                },
+                {
+                    label: "Example 3",
+                    value: "example3",
+                },
+                {
+                    label: "Example 4",
+                    value: "example4",
+                },
+            ],
         ));
-        
+    
         dialog.querySelector(".content").append(button(
             "Restore Default Layout",
             "If you're unhappy with the layout and want to just start over!",
