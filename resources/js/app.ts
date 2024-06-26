@@ -437,22 +437,40 @@ export default class PGEtinker
         // update editor theme
         await this.editorPanel.updateConfiguration();
         
-        setTimeout(() =>
+        // 
+        const isVsCodeTheme = () =>
         {
-            document.body.classList.toggle("dark", !light);
-            document.body.classList.toggle("light", light);
-    
-            // update golden layout theme
-            let goldenLayoutDarkThemeStyle = document.querySelector("#goldenlayout-dark-theme")! as HTMLLinkElement;
-            let goldenLayoutLightThemeStyle = document.querySelector("#goldenlayout-light-theme")! as HTMLLinkElement;
+            return document.body.classList.contains(`vscode-theme-defaults-themes-${theme}_modern-json`);
+        }
         
-            goldenLayoutDarkThemeStyle.disabled = light;
-            goldenLayoutLightThemeStyle.disabled = !light;
-        
-            // update player theme
-            this.playerPanel.setTheme(theme);
-        }, 200);
+        let updateInterval : NodeJS.Timeout;
 
+        const updatehandler = () =>
+        {
+            if(isVsCodeTheme())
+            {
+                clearInterval(updateInterval);
+
+                document.body.classList.toggle("dark", !light);
+                document.body.classList.toggle("light", light);
+        
+                // update golden layout theme
+                let goldenLayoutDarkThemeStyle = document.querySelector("#goldenlayout-dark-theme")! as HTMLLinkElement;
+                let goldenLayoutLightThemeStyle = document.querySelector("#goldenlayout-light-theme")! as HTMLLinkElement;
+            
+                goldenLayoutDarkThemeStyle.disabled = light;
+                goldenLayoutLightThemeStyle.disabled = !light;
+            
+                // update player theme
+                this.playerPanel.setTheme(theme);
+                
+                document.querySelector("#pgetinker-loading")!.classList.toggle("hidden", true);
+                return;
+            }
+
+        }
+
+        updateInterval = setInterval(updatehandler, 50);
     }
 }
 
