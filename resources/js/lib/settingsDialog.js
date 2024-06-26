@@ -84,12 +84,22 @@ function toggle(label, description, valueCallback, initialValue)
 /**
  * 
  * @param {string} label 
+ * @param {string} description
  * @param {(event) => void} callback 
  * @returns 
  */
-function button(label, callback)
+function button(label, description, callback)
 {
     fieldId++;
+    
+    let group = document.createElement("div");
+    group.classList.toggle("form-group", true);
+
+    group.innerHTML = `
+        <div class="form-label">${label}</div>
+        <div class="form-description">${description}</div>
+    `;
+
     let button = document.createElement("button");
     button.setAttribute("name", `button-${fieldId}`);
 
@@ -100,7 +110,9 @@ function button(label, callback)
         callback(event);
     });
 
-    return button;
+    group.append(button);
+
+    return group;
 }
 
 export default function settingsDialog(state)
