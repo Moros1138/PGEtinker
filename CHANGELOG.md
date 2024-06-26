@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file. Each batch 
 
 It is a summary of changes that would be pertinent to the end user of the PGEtinker website. For a comprehensive history of changes made to the project, please refer to the repository's commit history.
 
+## Unpublished
+
+- Changed default code to example1
+- Removed unused api endpoint for default code
+- Removed unused funciton to retrieve default code
+- Added Examples 1 through 6 codes
+- Changed default code button to examples drop down
+- Fixed fieldId should always refresh with each instance of the settings dialog
+- Added button to a form group to make the width uniform on the settings dialog
+- Changed select now has label and value rather than just label
+
 ## 2024-06-25
 
 - Fixed light theme persistence
