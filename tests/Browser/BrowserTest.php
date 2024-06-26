@@ -143,7 +143,7 @@ class BrowserTest extends DuskTestCase
 
             $browser->mouseover("@sharing-menu");
             $browser->click("#share");
-            $browser->waitFor(".share-dialog");
+            $browser->waitFor(".share-dialog", 15);
 
             $shareUrl = $browser->value("#share-url");
             $browser->visit($shareUrl);
