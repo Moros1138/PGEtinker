@@ -124,7 +124,7 @@ a:focus {
     display: flex !important;
 }
 
-.hidden { display: none; }
+.hidden { display: none !important; }
 
 .lm_content {
     overflow: visible !important;
