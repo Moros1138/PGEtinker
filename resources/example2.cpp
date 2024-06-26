@@ -3,10 +3,16 @@
 
 #if defined(__EMSCRIPTEN__)
 #include <emscripten.h>
-#define FILE_RESOLVE(url, file) emscripten_wget(url, file); emscripten_sleep(0)
-#else
-#define FILE_RESOLVE(url, file)
 #endif
+
+void FILE_RESOLVE(const char* url, const char* file)
+{
+    #if defined(__EMSCRIPTEN__)
+    emscripten_wget(url, file);
+    emscripten_sleep(0);
+    #endif
+}
+
 
 // Override base class with your custom functionality
 class Example : public olc::PixelGameEngine
