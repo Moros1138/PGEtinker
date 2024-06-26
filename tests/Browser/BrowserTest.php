@@ -72,15 +72,22 @@ class BrowserTest extends DuskTestCase
             $browser->assertMissing("#pgetinker-loading");
             
             $browser->click("@settings-menu");
+            $browser->waitFor(".settings-dialog");
             
-            $browser->click('button[name="button-1"]');
+            $browser->assertPresent('select[name="select-1"]');
+            $browser->click('select[name="select-1"]');
+
+            $browser->waitFor('option[value="example1"]');
+            $browser->click('option[value="example1"]');
+
             $browser->waitFor(".toastify");
             $browser->waitUntilMissing(".toastify");
+
             $browser->click(".footer .ok");
             $browser->waitUntilMissing(".dialog");
-            
+
             $browser->assertNotPresent(".dialog");
-            $browser->assertSee("class Example : public olc::PixelGameEngine");
+            $browser->assertSee('Example 1');
         });
     }
     
@@ -93,11 +100,17 @@ class BrowserTest extends DuskTestCase
             $browser->assertMissing("#pgetinker-loading");
 
             $browser->click("@settings-menu");
-            
+            $browser->waitFor(".settings-dialog");
+
+            $browser->assertPresent('select[name="select-3"]');
             $browser->click('select[name="select-3"]');
+            
+            $browser->waitFor('option[value="light"]');
             $browser->click('option[value="light"]');
+
             $browser->waitFor(".toastify");
             $browser->waitUntilMissing(".toastify");
+
             $browser->click(".footer .ok");
             $browser->waitUntilMissing(".dialog");
 
