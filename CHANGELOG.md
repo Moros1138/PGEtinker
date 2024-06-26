@@ -11,6 +11,7 @@ It is a summary of changes that would be pertinent to the end user of the PGEtin
 - Added help to menu
 - Added patreon icon to supporters menu item
 - Added styles to account for space used by help menu item
+- Added preloader that actually lives up to it's name!
 
 ## 2024-06-19
 
