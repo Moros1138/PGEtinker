@@ -1,7 +1,7 @@
+import examples from "../lib/exampleCodes";
 import { getUserConfiguration } from "../lib/monacoConfig";
 import { configureMonacoWorkers, runCppWrapper } from "../lib/monacoWrapper";
 import { getStorageValue, setStorageValue } from "../lib/storage";
-import pgetinkerCppCode from '../../example1.cpp?raw';
 import * as vscode from "vscode";
 
 export default class EditorPanel
@@ -89,7 +89,7 @@ export default class EditorPanel
         }
         else
         {
-            code = pgetinkerCppCode;
+            code = examples.code1.code;
         }
 
         /**
