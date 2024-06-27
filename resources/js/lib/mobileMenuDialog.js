@@ -112,11 +112,10 @@ export default function mobileMenuDialog(state)
         dialog.querySelector("#settings-menu").addEventListener("click", (event) =>
         {
             event.preventDefault();
-            settingsDialog(state).then(() =>
-            {
-                dialog.remove();
-                resolve()
-            });
+            dialog.remove();
+            resolve()
+
+            settingsDialog(state);
         });
 
         dialog.querySelector("#news-and-updates").addEventListener("click", (event) =>
