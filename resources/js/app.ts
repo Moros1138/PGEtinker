@@ -84,6 +84,18 @@ export default class PGEtinker
             settingsDialog(this);
         });
         
+        document.querySelectorAll("#examples-menu a").forEach((item) =>
+        {
+            item.addEventListener("click", () =>
+            {
+                let selectedExample = item.getAttribute("data-example");
+                if(selectedExample)
+                {
+                    this.editorPanel.setToExample(selectedExample);
+                }
+            });
+        });
+    
         // Download Button
         document.querySelector("#download")?.addEventListener("click", (event) => 
         {
