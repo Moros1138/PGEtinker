@@ -2,6 +2,7 @@ import settingsDialog from "./settingsDialog";
 import newsDialog from "./newsDialog";
 import supportersDialog from "./supportersDialog";
 import version from "./version";
+import examplesMenuDialog from "./examplesMenuDialog";
 
 export default function mobileMenuDialog(state)
 {
@@ -22,6 +23,9 @@ export default function mobileMenuDialog(state)
                             <ul class="submenu">
                                 <li class="subitem">
                                     <a id="settings-menu" tabindex="0">Settings</a>
+                                </li>
+                                <li class="subitem">
+                                    <a id="examples-menu">Load an Example</a>
                                 </li>
                                 <li class="subitem">
                                     <a target="_blank" href="/wiki/">
@@ -117,6 +121,15 @@ export default function mobileMenuDialog(state)
 
             settingsDialog(state);
         });
+
+        dialog.querySelector("#examples-menu").addEventListener("click", (event) =>
+        {
+            event.preventDefault();
+            dialog.remove();
+            resolve();
+            examplesMenuDialog(state);
+        });
+    
 
         dialog.querySelector("#news-and-updates").addEventListener("click", (event) =>
         {
