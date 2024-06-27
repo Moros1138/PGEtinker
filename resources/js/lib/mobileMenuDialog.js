@@ -121,11 +121,10 @@ export default function mobileMenuDialog(state)
         dialog.querySelector("#news-and-updates").addEventListener("click", (event) =>
         {
             event.preventDefault();
-            newsDialog().then(() =>
-            {
-                dialog.remove();
-                resolve()
-            });
+            dialog.remove();
+            resolve();
+
+            newsDialog();
         });
     
         dialog.querySelector("#supporters").addEventListener("click", (event) =>
