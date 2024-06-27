@@ -147,9 +147,10 @@ export default function mobileMenuDialog(state)
         dialog.querySelector("#share").addEventListener("click", (event) =>
         {
             event.preventDefault();
-            state.share();
             dialog.remove();
             resolve();
+
+            state.share();
         });
     
         dialog.querySelector(".ok").addEventListener("click", (event) =>
