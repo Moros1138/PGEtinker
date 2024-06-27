@@ -3,6 +3,7 @@ import { getUserConfiguration } from "../lib/monacoConfig";
 import { configureMonacoWorkers, runCppWrapper } from "../lib/monacoWrapper";
 import { getStorageValue, setStorageValue } from "../lib/storage";
 import * as vscode from "vscode";
+import { createToast, ToastType } from '../lib/createToast';
 
 export default class EditorPanel
 {
@@ -49,6 +50,21 @@ export default class EditorPanel
         this.monacoWrapper.getEditor().setValue(value);
     }
     
+    setToExample(key)
+    {
+        const keys = Object.keys(examples);
+        for(let i = 0; i < keys.length; i++)
+        {
+            if(keys[i] === key)
+            {
+                this.state.editorPanel.setValue(examples[key].code);
+                this.state.editorPanel.reveal({ column: 1, lineNumber: 1 });
+                createToast(`Set Code to ${examples[key].label}`, ToastType.Info);
+                return;
+            }
+        }
+    }
+
     async onPreInit()
     {
         this.monacoWrapper = await runCppWrapper();
