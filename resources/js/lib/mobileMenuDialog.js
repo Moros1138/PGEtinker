@@ -130,11 +130,10 @@ export default function mobileMenuDialog(state)
         dialog.querySelector("#supporters").addEventListener("click", (event) =>
         {
             event.preventDefault();
-            supportersDialog().then(() =>
-            {
-                dialog.remove();
-                resolve();
-            });
+            dialog.remove();
+            resolve();
+            
+            supportersDialog();
         });
             
         dialog.querySelector("#download").addEventListener("click", (event) =>
