@@ -13,7 +13,6 @@ void FILE_RESOLVE(const char* url, const char* file)
     #endif
 }
 
-
 // Override base class with your custom functionality
 class Example : public olc::PixelGameEngine
 {
