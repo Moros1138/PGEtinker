@@ -155,6 +155,7 @@ export default function mobileMenuDialog(state)
     
         dialog.querySelector(".ok").addEventListener("click", (event) =>
         {
+            event.preventDefault();
             dialog.remove();
             resolve();
         });
