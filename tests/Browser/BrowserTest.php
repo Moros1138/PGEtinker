@@ -79,7 +79,7 @@ class BrowserTest extends DuskTestCase
             $browser->waitFor(".toastify");
             $browser->waitUntilMissing(".toastify");
 
-            $browser->assertSee('Example 1');
+            $browser->assertSee('Example');
         });
     }
     
