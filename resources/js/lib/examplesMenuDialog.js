@@ -3,6 +3,9 @@ export default function examplesMenuDialog(state)
 {
     return new Promise((resolve) =>
     {
+        // exmaples menu template
+        const examplesMenu = document.querySelector('#examples').content.cloneNode(true);
+
         let dialog = document.createElement('div');
                 
         dialog.classList.toggle("dialog", "true");
@@ -13,19 +16,6 @@ export default function examplesMenuDialog(state)
                 <div class="header">Choose an Example</div>
                 <div class="content">
                     <ul class="menu">
-                        <li class="item has-submenu" id="examples-menu">
-                            <a tabindex="0">Examples</a>
-                            <ul class="submenu">
-                                <li class="subitem">
-                                    <a tabindex="0" data-example="code1">Example 1</a>
-                                </li>
-                                <li class="subitem"><a data-example="code2">Example 2</a></li>
-                                <li class="subitem"><a data-example="code3">Example 3</a></li>
-                                <li class="subitem"><a data-example="code4">Example 4</a></li>
-                                <li class="subitem"><a data-example="code5">Example 5</a></li>
-                                <li class="subitem"><a data-example="code6">Example 6</a></li>
-                            </ul>
-                        </li>
                     </ul>
                 </div>
                 <div class="footer">
@@ -33,15 +23,18 @@ export default function examplesMenuDialog(state)
                 </div>                
             </div>`;
         
+        dialog.querySelector('.menu').append(examplesMenu);
 
         dialog.querySelectorAll("#examples-menu a").forEach((item) =>
         {
             item.addEventListener("click", () =>
             {
-                let selectedExample = item.getAttribute("data-example");
-                if(selectedExample)
+                let selectedId = item.getAttribute("data-code-id");
+                let selectedName = item.innerText;
+                
+                if(selectedId)
                 {
-                    state.editorPanel.setToExample(selectedExample);
+                    state.editorPanel.setToExample(selectedId, selectedName);
                     dialog.remove();
                     resolve();
                 }
