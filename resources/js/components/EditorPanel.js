@@ -50,16 +50,22 @@ export default class EditorPanel
         this.monacoWrapper.getEditor().setValue(value);
     }
     
-    setToExample(key)
+    setToExample(codeId, codeName)
     {
-        const keys = Object.keys(examples);
-        for(let i = 0; i < keys.length; i++)
+        const codeIds = Object.keys(examples);
+        for(let i = 0; i < codeIds.length; i++)
         {
-            if(keys[i] === key)
+            if(codeIds[i] === codeId)
             {
-                this.state.editorPanel.setValue(examples[key].code);
+                this.state.editorPanel.setValue(examples[codeId]);
                 this.state.editorPanel.reveal({ column: 1, lineNumber: 1 });
-                createToast(`Set Code to ${examples[key].label}`, ToastType.Info);
+                
+                if(this.state.playerPanel.running)
+                {
+                    document.querySelector("#start-stop").dispatchEvent(new Event("click"));                    
+                }
+                
+                createToast(`Set Code to ${codeName}`, ToastType.Info);
                 return;
             }
         }
