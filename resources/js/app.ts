@@ -88,10 +88,12 @@ export default class PGEtinker
         {
             item.addEventListener("click", () =>
             {
-                let selectedExample = item.getAttribute("data-example");
-                if(selectedExample)
+                let selectedId = item.getAttribute("data-code-id");
+                let selectedName = (item as HTMLAnchorElement).innerText;
+                
+                if(selectedId)
                 {
-                    this.editorPanel.setToExample(selectedExample);
+                    this.editorPanel.setToExample(selectedId, selectedName);
                 }
             });
         });
