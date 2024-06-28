@@ -111,7 +111,7 @@ export default class EditorPanel
         }
         else
         {
-            code = examples.code1.code;
+            code = examples.code1;
         }
 
         /**
