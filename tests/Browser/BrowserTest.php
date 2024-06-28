@@ -74,7 +74,7 @@ class BrowserTest extends DuskTestCase
             $browser->click("@examples-menu");
             
             $browser->waitFor("@examples-menu .submenu");
-            $browser->click('a[data-example="code1"]');
+            $browser->click('a[data-code-id="code1"]');
 
             $browser->waitFor(".toastify");
             $browser->waitUntilMissing(".toastify");
