@@ -56,44 +56,7 @@
                             <span>Settings</span>
                         </a>
                     </li>
-                    <li class="item has-submenu" id="examples-menu" dusk="examples-menu">
-                        <a tabindex="0">
-                            <i data-lucide="lightbulb"></i>
-                            <span>Examples</span>
-                        </a>
-                        <ul class="submenu">
-                            <li class="subitem">
-                                <a data-example="code1">
-                                    Example 1
-                                </a>
-                            </li>
-                            <li class="subitem">
-                                <a data-example="code2">
-                                    Example 2
-                                </a>
-                            </li>
-                            <li class="subitem">
-                                <a data-example="code3">
-                                    Example 3
-                                </a>
-                            </li>
-                            <li class="subitem">
-                                <a data-example="code4">
-                                    Example 4
-                                </a>
-                            </li>
-                            <li class="subitem">
-                                <a data-example="code5">
-                                    Example 5
-                                </a>
-                            </li>
-                            <li class="subitem">
-                                <a data-example="code6">
-                                    Example 6
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
+                    @include("shared.examples")
                     <li class="item">
                         <a id="start-stop">
                             <i data-lucide="circle-play"></i><i data-lucide="circle-stop" class="hidden"></i>
@@ -227,6 +190,10 @@
         </div>
     </div>
     <textarea id="code" style="display: none;"><?php echo $code ?></textarea>
+    
+    <template id="examples">
+        @include("shared.examples")
+    </template>
     
     @include("shared.analytics")
 </body>
