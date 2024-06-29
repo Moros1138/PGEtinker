@@ -4,13 +4,16 @@ All notable changes to this project will be documented in this file. Each batch 
 
 It is a summary of changes that would be pertinent to the end user of the PGEtinker website. For a comprehensive history of changes made to the project, please refer to the repository's commit history.
 
-## Unpublished
+## 2024-06-29
 
-- Changed default code to example1
+- Added example code menu to navbar
+- Added example code menu to mobile navigation
+- Added PGEtinker Classic Demo to the example code menu
+- Added Bare olcPixelGameEngine to the example code menu
+- Changed default code to PGEtinker Classic Demo example code
+- Removed default code button from settings dialog
 - Removed unused api endpoint for default code
-- Removed unused funciton to retrieve default code
-- Added Examples 1 through 6 codes
-- Changed default code button to examples drop down
+- Removed unused function to retrieve default code
 - Fixed fieldId should always refresh with each instance of the settings dialog
 - Added button to a form group to make the width uniform on the settings dialog
 - Changed select now has label and value rather than just label
