@@ -14,7 +14,7 @@
                 Bare olcPixelGameEngine
             </a>
         </li>
-        <li class="subitem">
+        <!-- <li class="subitem">
             <a data-code-id="code3">
                 Example 3
             </a>
@@ -33,7 +33,7 @@
             <a data-code-id="code6">
                 Example 6
             </a>
-        </li>
+        </li> -->
     </ul>
 </li>
 
