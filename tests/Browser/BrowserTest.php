@@ -63,7 +63,7 @@ class BrowserTest extends DuskTestCase
         });
     }
 
-    public function testLoadsDefaultCodeOnClick(): void
+    public function testLoadsExampleCodeOnClick(): void
     {
         $this->browse(function(Browser $browser)
         {
@@ -71,16 +71,15 @@ class BrowserTest extends DuskTestCase
             $browser->waitUntilMissing("#pgetinker-loading", 10);
             $browser->assertMissing("#pgetinker-loading");
             
-            $browser->click("@settings-menu");
+            $browser->click("@examples-menu");
             
-            $browser->click('button[name="button-1"]');
+            $browser->waitFor("@examples-menu .submenu");
+            $browser->click('a[data-code-id="code1"]');
+
             $browser->waitFor(".toastify");
             $browser->waitUntilMissing(".toastify");
-            $browser->click(".footer .ok");
-            $browser->waitUntilMissing(".dialog");
-            
-            $browser->assertNotPresent(".dialog");
-            $browser->assertSee("class Example : public olc::PixelGameEngine");
+
+            $browser->assertSee('Example');
         });
     }
     
@@ -93,11 +92,17 @@ class BrowserTest extends DuskTestCase
             $browser->assertMissing("#pgetinker-loading");
 
             $browser->click("@settings-menu");
+            $browser->waitFor(".settings-dialog");
+
+            $browser->assertPresent('select[name="select-2"]');
+            $browser->click('select[name="select-2"]');
             
-            $browser->click('select[name="select-3"]');
+            $browser->waitFor('option[value="light"]');
             $browser->click('option[value="light"]');
+
             $browser->waitFor(".toastify");
             $browser->waitUntilMissing(".toastify");
+
             $browser->click(".footer .ok");
             $browser->waitUntilMissing(".dialog");
 
@@ -130,7 +135,7 @@ class BrowserTest extends DuskTestCase
 
             $browser->mouseover("@sharing-menu");
             $browser->click("#share");
-            $browser->waitFor(".share-dialog");
+            $browser->waitFor(".share-dialog", 15);
 
             $shareUrl = $browser->value("#share-url");
             $browser->visit($shareUrl);

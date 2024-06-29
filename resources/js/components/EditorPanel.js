@@ -1,8 +1,9 @@
+import examples from "../lib/exampleCodes";
 import { getUserConfiguration } from "../lib/monacoConfig";
 import { configureMonacoWorkers, runCppWrapper } from "../lib/monacoWrapper";
-import { getStorageValue } from "../lib/storage";
-import pgetinkerCppCode from '../../example.cpp?raw';
+import { getStorageValue, setStorageValue } from "../lib/storage";
 import * as vscode from "vscode";
+import { createToast, ToastType } from '../lib/createToast';
 
 export default class EditorPanel
 {
@@ -49,6 +50,27 @@ export default class EditorPanel
         this.monacoWrapper.getEditor().setValue(value);
     }
     
+    setToExample(codeId, codeName)
+    {
+        const codeIds = Object.keys(examples);
+        for(let i = 0; i < codeIds.length; i++)
+        {
+            if(codeIds[i] === codeId)
+            {
+                this.state.editorPanel.setValue(examples[codeId]);
+                this.state.editorPanel.reveal({ column: 1, lineNumber: 1 });
+                
+                if(this.state.playerPanel.running)
+                {
+                    document.querySelector("#start-stop").dispatchEvent(new Event("click"));                    
+                }
+                
+                createToast(`Set Code to ${codeName}`, ToastType.Info);
+                return;
+            }
+        }
+    }
+
     async onPreInit()
     {
         this.monacoWrapper = await runCppWrapper();
@@ -89,7 +111,7 @@ export default class EditorPanel
         }
         else
         {
-            code = pgetinkerCppCode;
+            code = examples.code1;
         }
 
         /**
@@ -132,7 +154,7 @@ export default class EditorPanel
     
         this.monacoWrapper.getEditor().onDidChangeModelContent(() =>
         {
-            window.localStorage.setItem("pgetinkerCode", JSON.stringify(this.monacoWrapper.getEditor().getValue()));
+            setStorageValue("code", this.monacoWrapper.getEditor().getValue());
             
             if(this.sharedFlag)
             {

@@ -65,7 +65,7 @@
                     display: none;
                     list-style-type: none;
                     position: absolute;
-                    margin: 0;
+                    margin: 1px 0 0 0;
                     padding: 0;
                     white-space: nowrap;
                     z-index: 1;
@@ -108,11 +108,12 @@
     }
 }
 
-@media screen and (min-width: 761px) and (max-width: 900px) {
+@media screen and (min-width: 761px) and (max-width: 1024px) {
     #header {
         nav {
             .menu {
-                &.left-menu {
+                &.left-menu,
+                &.right-menu {
                     .item > a span {
                         display: none;
                     }
@@ -128,6 +129,10 @@
             .menu {
                 &.left-menu {
                     width: 100%;
+                }
+                
+                #examples-menu {
+                    display: none;
                 }
                 
                 #settings-menu {

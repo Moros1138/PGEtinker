@@ -17,7 +17,8 @@ import {
     SunMoon,
     UndoDot,
     Youtube,
-    Link, 
+    Link,
+    Lightbulb,
 } from 'lucide';
 
 createIcons({
@@ -31,6 +32,7 @@ createIcons({
         Download,
         ExternalLink,
         Github,
+        Lightbulb,
         Link,
         Menu,
         Newspaper,

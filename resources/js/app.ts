@@ -84,6 +84,20 @@ export default class PGEtinker
             settingsDialog(this);
         });
         
+        document.querySelectorAll("#examples-menu a").forEach((item) =>
+        {
+            item.addEventListener("click", () =>
+            {
+                let selectedId = item.getAttribute("data-code-id");
+                let selectedName = (item as HTMLAnchorElement).innerText;
+                
+                if(selectedId)
+                {
+                    this.editorPanel.setToExample(selectedId, selectedName);
+                }
+            });
+        });
+    
         // Download Button
         document.querySelector("#download")?.addEventListener("click", (event) => 
         {
@@ -172,20 +186,6 @@ export default class PGEtinker
         }
     }
     
-    defaultCode()
-    {
-        axios.get("/api/default-code").then((response) =>
-        {
-            this.editorPanel.setValue(response.data.code);
-            this.editorPanel.reveal({
-                column: 1,
-                lineNumber: 1,
-            });
-
-            
-        }).catch((reason) => console.log(reason));        
-    }
-
     download()
     {
         if(!this.playerPanel.getHtml().includes("Emscripten-Generated Code"))

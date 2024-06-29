@@ -2,6 +2,7 @@ import settingsDialog from "./settingsDialog";
 import newsDialog from "./newsDialog";
 import supportersDialog from "./supportersDialog";
 import version from "./version";
+import examplesMenuDialog from "./examplesMenuDialog";
 
 export default function mobileMenuDialog(state)
 {
@@ -22,6 +23,9 @@ export default function mobileMenuDialog(state)
                             <ul class="submenu">
                                 <li class="subitem">
                                     <a id="settings-menu" tabindex="0">Settings</a>
+                                </li>
+                                <li class="subitem">
+                                    <a id="examples-menu">Load an Example</a>
                                 </li>
                                 <li class="subitem">
                                     <a target="_blank" href="/wiki/">
@@ -112,31 +116,37 @@ export default function mobileMenuDialog(state)
         dialog.querySelector("#settings-menu").addEventListener("click", (event) =>
         {
             event.preventDefault();
-            settingsDialog(state).then(() =>
-            {
-                dialog.remove();
-                resolve()
-            });
+            dialog.remove();
+            resolve()
+
+            settingsDialog(state);
         });
+
+        dialog.querySelector("#examples-menu").addEventListener("click", (event) =>
+        {
+            event.preventDefault();
+            dialog.remove();
+            resolve();
+            examplesMenuDialog(state);
+        });
+    
 
         dialog.querySelector("#news-and-updates").addEventListener("click", (event) =>
         {
             event.preventDefault();
-            newsDialog().then(() =>
-            {
-                dialog.remove();
-                resolve()
-            });
+            dialog.remove();
+            resolve();
+
+            newsDialog();
         });
     
         dialog.querySelector("#supporters").addEventListener("click", (event) =>
         {
             event.preventDefault();
-            supportersDialog().then(() =>
-            {
-                dialog.remove();
-                resolve();
-            });
+            dialog.remove();
+            resolve();
+            
+            supportersDialog();
         });
             
         dialog.querySelector("#download").addEventListener("click", (event) =>
@@ -150,13 +160,15 @@ export default function mobileMenuDialog(state)
         dialog.querySelector("#share").addEventListener("click", (event) =>
         {
             event.preventDefault();
-            state.share();
             dialog.remove();
             resolve();
+
+            state.share();
         });
     
         dialog.querySelector(".ok").addEventListener("click", (event) =>
         {
+            event.preventDefault();
             dialog.remove();
             resolve();
         });
@@ -164,51 +176,3 @@ export default function mobileMenuDialog(state)
         document.body.appendChild(dialog);
     });
 }
-
-
-        // Default Code Button
-        // document.querySelector("#default-code")!.addEventListener("click", (event) =>
-        // {
-        //     event.preventDefault();
-
-        //     axios.get("/api/default-code").then((response) =>
-        //     {
-        //         this.editorPanel.setValue(response.data.code);
-        //         this.editorPanel.reveal({
-        //             column: 1,
-        //             lineNumber: 1,
-        //         });
-        //     }).catch((reason) => console.log(reason));
-        // });
-
-        // Toggle Theme Button
-        // document.querySelector("#toggle-theme")!.addEventListener("click", (event) =>
-        // {
-        //     event.preventDefault();
-
-        //     if(this.theme === "dark")
-        //         this.theme = "light";
-        //     else
-        //         this.theme = "dark";
-                
-        //     this.UpdateTheme();
-        // });
-
-        // Default Layout
-        // document.querySelector("#default-layout")!.addEventListener("click", async(event) => 
-        // {
-        //     event.preventDefault();
-        //     await this.editorPanel.onDestroy();
-
-        //     this.layout.destroy();
-
-        //     this.layoutConfig = defaultLandscapeLayout;
-            
-        //     if(document.body.clientWidth <= 750)
-        //     {
-        //         console.log("chose portrait layout");
-        //         this.layoutConfig = defaultPortraitLayout;
-        //     }
-            
-        //     this.SetupLayout();
-        // });

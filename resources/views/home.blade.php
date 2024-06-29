@@ -56,6 +56,7 @@
                             <span>Settings</span>
                         </a>
                     </li>
+                    @include("shared.examples")
                     <li class="item">
                         <a id="start-stop">
                             <i data-lucide="circle-play"></i><i data-lucide="circle-stop" class="hidden"></i>
@@ -189,6 +190,10 @@
         </div>
     </div>
     <textarea id="code" style="display: none;"><?php echo $code ?></textarea>
+    
+    <template id="examples">
+        @include("shared.examples")
+    </template>
     
     @include("shared.analytics")
 </body>

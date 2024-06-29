@@ -29,22 +29,22 @@ function select(label, description, valueCallback, options, initialValue)
     for(let i = 0; i < options.length; i++)
     {
         let option = document.createElement("option");
-        option.value = options[i];
-        option.innerHTML = options[i];
+        option.value = options[i].value;
+        option.innerHTML = options[i].label;
         
-        if(options[i] == initialValue)
+        if(options[i].value == initialValue)
         {
             option.selected = true;
         }
 
         select.querySelector("select").append(option);
     }
-
+    
     select.addEventListener("change", (event) =>
     {
         valueCallback(event);
     });
-
+   
     return select;
 }
 
@@ -75,7 +75,7 @@ function toggle(label, description, valueCallback, initialValue)
     toggle.addEventListener("change", (event) =>
     {
         event.preventDefault();
-        valueCallback(event);        
+        valueCallback(event);
     });
 
     return toggle;
@@ -84,12 +84,22 @@ function toggle(label, description, valueCallback, initialValue)
 /**
  * 
  * @param {string} label 
+ * @param {string} description
  * @param {(event) => void} callback 
  * @returns 
  */
-function button(label, callback)
+function button(label, description, callback)
 {
     fieldId++;
+    
+    let group = document.createElement("div");
+    group.classList.toggle("form-group", true);
+
+    group.innerHTML = `
+        <div class="form-label">${label}</div>
+        <div class="form-description">${description}</div>
+    `;
+
     let button = document.createElement("button");
     button.setAttribute("name", `button-${fieldId}`);
 
@@ -100,7 +110,9 @@ function button(label, callback)
         callback(event);
     });
 
-    return button;
+    group.append(button);
+
+    return group;
 }
 
 export default function settingsDialog(state)
@@ -108,6 +120,8 @@ export default function settingsDialog(state)
     
     return new Promise((resolve) =>
     {
+        fieldId = 0;
+        
         let dialog = document.createElement('div');
                 
         dialog.classList.toggle("dialog", "true");
@@ -123,18 +137,9 @@ export default function settingsDialog(state)
                 </div>                
             </div>`;
         
-        
-        dialog.querySelector(".content").append(button(
-            "Load Default Code",
-            (event) =>
-            {
-                state.defaultCode();
-                createToast("Loaded default code.", ToastType.Info);
-            }
-        ));
-        
         dialog.querySelector(".content").append(button(
             "Restore Default Layout",
+            "If you're unhappy with the layout and want to just start over!",
             async(event) =>
             {
                 await state.switchToDefaultLayout();
@@ -158,7 +163,16 @@ export default function settingsDialog(state)
 
                 state.UpdateTheme();
             },
-            ["dark", "light"],
+            [
+                {
+                    label: "Dark Theme",
+                    value: "dark",
+                },
+                {
+                    label: "Light Theme",
+                    value: "light",
+                }
+            ],
             getStorageValue("theme")
         ));
 

@@ -72,7 +72,7 @@ fi
 # build miniaudio
 if [ ! -e ./lib/miniaudio.o ] ; then
     echo Building miniaudio.o
-    em++ -c -std=c++20 $INCLUDES ./include/miniaudio.c -o ./lib/miniaudio.o
+    em++ -c -std=c++20 $INCLUDES ./include/miniaudio.cpp -o ./lib/miniaudio.o
 fi
 
 # build olcPGEX_MiniAudio
