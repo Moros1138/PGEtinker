@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file. Each batch 
 
 It is a summary of changes that would be pertinent to the end user of the PGEtinker website. For a comprehensive history of changes made to the project, please refer to the repository's commit history.
 
+## 2024-06-30
+
+- Fixed [Issue #111](https://github.com/Moros1138/PGEtinker/issues/111)
+
 ## 2024-06-29
 
 - Added example code menu to navbar
