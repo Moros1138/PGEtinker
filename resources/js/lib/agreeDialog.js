@@ -26,7 +26,7 @@ export default function agreeDialog()
                     <li>
                         Store information in your browser to be used within
                         the confines of the PGEtinker online application.
-                        It's for stuff like persiting your layout, your
+                        It's for stuff like persisting your layout, your
                         theme, and other options so when you come back
                         it's the way you left it.
                     </li>
