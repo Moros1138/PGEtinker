@@ -35,7 +35,7 @@ if(!getStorageValue("agreed-to-terms"))
             removeStorageKey("theme");
             removeStorageKey("layout");
             removeStorageKey("version");
-            window.location.pathname = "/disagree";
+            window.location.assign("/disagree");
         });
 }
 else
