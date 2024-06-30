@@ -7,6 +7,8 @@ It is a summary of changes that would be pertinent to the end user of the PGEtin
 ## 2024-06-30
 
 - Fixed [Issue #111](https://github.com/Moros1138/PGEtinker/issues/111)
+- Fixed [Issue #112](https://github.com/Moros1138/PGEtinker/issues/112)
+- Added logo graphic
 
 ## 2024-06-29
 
