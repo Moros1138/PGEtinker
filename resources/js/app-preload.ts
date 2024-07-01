@@ -21,24 +21,42 @@ const preloader = () =>
         });
 };
 
-if(!getStorageValue("agreed-to-terms"))
+const tryToAgree = async() =>
 {
-    agreeDialog()
-        .then(() =>
+    if(!getStorageValue("agreed-to-terms"))
+    {
+        try
         {
+            await agreeDialog();
             setStorageValue("agreed-to-terms", true);
             preloader();
-        })
-        .catch(() =>
+        }
+        catch(e)
         {
             removeStorageKey("code");
             removeStorageKey("theme");
             removeStorageKey("layout");
             removeStorageKey("version");
-            window.location.assign("/disagree");
-        });
+            
+            window.addEventListener("pageshow", (event) =>
+            {
+                let historyTraversal = event.persisted ||( typeof window.performance != "undefined" && window.performance.navigation.type === 2);
+                if(historyTraversal)
+                {
+                    // Handle page restore.
+                    window.location.reload();
+                }
+            });
+
+            const link = document.createElement('a');
+            link.setAttribute('href', "/disagree")
+            link.click();
+        }
+    }
+    else
+    {
+        preloader();
+    }
 }
-else
-{
-    preloader();
-}
+
+tryToAgree();
