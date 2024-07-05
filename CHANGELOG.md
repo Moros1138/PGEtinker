@@ -6,7 +6,7 @@ It is a summary of changes that would be pertinent to the end user of the PGEtin
 ## 20204-07-05
 
 - Fixed bug involving shared code persistence
-- Changed threshold for responsive navbar
+- Changed threshold for responsive navbar 
 
 ## 2024-06-30
 
