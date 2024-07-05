@@ -158,6 +158,8 @@ export default class EditorPanel
             
             if(this.sharedFlag)
             {
+                this.sharedFlag = false;
+
                 if(this.staging)
                 {
                     window.history.replaceState({}, "", "/staging/");
