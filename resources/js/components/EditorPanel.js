@@ -159,6 +159,7 @@ export default class EditorPanel
             if(this.sharedFlag)
             {
                 this.sharedFlag = false;
+                document.querySelector("#code").innerHTML = "";
 
                 if(this.staging)
                 {
