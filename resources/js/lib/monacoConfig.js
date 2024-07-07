@@ -12,7 +12,6 @@ import { getStorageValue, setStorageValue } from './storage';
 
 export const getUserConfiguration = () =>
 {
-    
     return JSON.stringify({
         "workbench.colorTheme": (getStorageValue("theme") == "dark") ? "Default Dark Modern" : "Default Light Modern",
         "editor.mouseWheelZoom": "on",
@@ -29,7 +28,7 @@ export const createUserConfig = (workspaceRoot, code, codeUri) =>
 {
     let secured = (window.location.protocol.indexOf("https") === 0);
     let staging = (window.location.pathname.indexOf("/staging/") == 0); 
-    
+
     return {
         languageClientConfig: {
             languageId: 'cpp',
@@ -39,9 +38,6 @@ export const createUserConfig = (workspaceRoot, code, codeUri) =>
                 host: window.location.host,
                 port: secured ? 443 : 80,
                 path: staging ? "staging/clangd" : "clangd",
-                extraParams: {
-                    authorization: 'UserAuth'
-                },
                 secured: secured,
                 startOptions: {
                     onCall: (languageClient) => {},

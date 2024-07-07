@@ -5,8 +5,8 @@ use App\Http\Controllers\PatreonController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::post("/share",   [CodeController::class, "Share" ]);
-Route::post("/compile", [CodeController::class, "Compile" ]);
+Route::post("/share",   [CodeController::class, "Share" ])->middleware("auth.session");
+Route::post("/compile", [CodeController::class, "Compile" ])->middleware("auth.session");
 Route::get("/health-check", [CodeController::class, "HealthCheck" ]);
 
 Route::get("/news", function(Request $request)
@@ -60,7 +60,7 @@ Route::get("/news", function(Request $request)
     }
     
     return $changeLog;
-});
+})->middleware("auth.session");
 
-Route::get("/supporters", [PatreonController::class, "get_supporters" ]);
+Route::get("/supporters", [PatreonController::class, "get_supporters" ])->middleware("auth.session");
 Route::post("/update-supporters", [PatreonController::class, "update" ]);

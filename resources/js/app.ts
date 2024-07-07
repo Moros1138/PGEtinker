@@ -225,7 +225,7 @@ export default class PGEtinker
 
         if(!this.preCompile())
             return;
-
+        
         axios.post("/api/share", {
             code: this.editorPanel.getValue()
         }).then((response) =>
@@ -265,7 +265,7 @@ export default class PGEtinker
             }
             
             this.compileFailHandler("pgetinker.cpp:1:1: error: compilation failed in a way that's not being handled. please make a bug report.\n");
-        });        
+        });
     }
 
     async switchToDefaultLayout()
@@ -345,7 +345,6 @@ export default class PGEtinker
                 reject();
             });
         });
-        
     }
     
     compileSuccessHandler(data: any)
