@@ -3,10 +3,13 @@
 All notable changes to this project will be documented in this file. Each batch of changes is marked by the date it was published to the repository for deployment to the PGEtinker site.
 
 It is a summary of changes that would be pertinent to the end user of the PGEtinker website. For a comprehensive history of changes made to the project, please refer to the repository's commit history.
-## 20204-07-05
+
+## 20204-07-07
 
 - Fixed bug involving shared code persistence
 - Changed threshold for responsive navbar 
+- Added session guard to compile and share API
+- Added session guard on language client
 
 ## 2024-06-30
 
