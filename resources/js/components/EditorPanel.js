@@ -132,6 +132,7 @@ export default class EditorPanel
             
             try
             {
+                await axios.get('/sanctum/csrf-cookie');
                 await this.monacoWrapper.getLanguageClientWrapper().start();
             }
             catch(e)

@@ -4,7 +4,12 @@ All notable changes to this project will be documented in this file. Each batch 
 
 It is a summary of changes that would be pertinent to the end user of the PGEtinker website. For a comprehensive history of changes made to the project, please refer to the repository's commit history.
 
-## 20204-07-07
+## 2024-07-12
+
+- Fixed [Issue #120](https://github.com/Moros1138/PGEtinker/issues/120)
+
+
+## 2024-07-07
 
 - Fixed bug involving shared code persistence
 - Changed threshold for responsive navbar 

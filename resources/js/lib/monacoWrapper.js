@@ -34,12 +34,16 @@ export const runCppWrapper = async() =>
     const userConfig = createUserConfig('/workspace', "", '/workspace/pgetinker.cpp');
     const wrapper = new MonacoEditorLanguageClientWrapper();
 
-    try {
+    try
+    {
+        await axios.get('/sanctum/csrf-cookie');
         await wrapper.init(userConfig);
 
         // open files, so the LS can pick it up
         await vscode.workspace.openTextDocument(pgetinkerCppUri);
-    } catch (e) {
+    }
+    catch (e)
+    {
         console.error(e);
     }
     

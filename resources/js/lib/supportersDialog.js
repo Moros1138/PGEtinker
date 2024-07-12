@@ -55,12 +55,15 @@ export default function supportersDialog()
 
     return new Promise((resolve) =>
     {
-        axios.get("/api/supporters").then((response) =>
+        axios.get('/sanctum/csrf-cookie').then(_ =>
         {
-            renderSupportersDialog(response.data.supporters).then(() => resolve());
-        }).catch((reason) =>
-        {
-            renderSupportersDialog(reason.response.data.supporters).then(() => resolve());
+            axios.get("/api/supporters").then((response) =>
+            {
+                renderSupportersDialog(response.data.supporters).then(() => resolve());
+            }).catch((reason) =>
+            {
+                renderSupportersDialog(reason.response.data.supporters).then(() => resolve());
+            });
         });
     });
 }
