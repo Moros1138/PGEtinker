@@ -226,45 +226,50 @@ export default class PGEtinker
         if(!this.preCompile())
             return;
         
-        axios.post("/api/share", {
-            code: this.editorPanel.getValue()
-        }).then((response) =>
-        {
-            this.compileSuccessHandler(response.data);
-            
-            shareDialog(response.data.shareURL, response.data.shareThumbURL)
-                .finally(() =>
-                {
-                    
-                });
-        
-        }).catch((error) =>
-        {
-            this.setActiveTab("editor");
-            playIconElem.classList.toggle("hidden", false);
-            stopIconElem.classList.toggle("hidden", true);
-            spanElem.innerHTML = "Run";
-    
-
-            if(error.response)
+        axios.get('/sanctum/csrf-cookie').then(_ => {
+            axios.post("/api/share", {
+                code: this.editorPanel.getValue()
+            }).then((response) =>
             {
-                if(error.response.status)
-                {
-                    if(error.response.status == 503)
+                this.compileSuccessHandler(response.data);
+                
+                shareDialog(response.data.shareURL, response.data.shareThumbURL)
+                    .finally(() =>
                     {
-                        this.compileFailHandler("pgetinker.cpp:1:1: error: PGEtinker service has gone offline. try again later.\n");
+                        
+                    });
+            
+            }).catch((error) =>
+            {
+                this.setActiveTab("editor");
+                playIconElem.classList.toggle("hidden", false);
+                stopIconElem.classList.toggle("hidden", true);
+                spanElem.innerHTML = "Run";
+        
+    
+                if(error.response)
+                {
+                    if(error.response.status)
+                    {
+                        if(error.response.status == 503)
+                        {
+                            this.compileFailHandler("pgetinker.cpp:1:1: error: PGEtinker service has gone offline. try again later.\n");
+                            return;
+                        }
+                    }
+    
+                    if(error.response.data.stderr)
+                    {
+                        this.compileFailHandler(error.response.data.stderr);
                         return;
                     }
                 }
-
-                if(error.response.data.stderr)
-                {
-                    this.compileFailHandler(error.response.data.stderr);
-                    return;
-                }
-            }
-            
-            this.compileFailHandler("pgetinker.cpp:1:1: error: compilation failed in a way that's not being handled. please make a bug report.\n");
+                
+                this.compileFailHandler("pgetinker.cpp:1:1: error: compilation failed in a way that's not being handled. please make a bug report.\n");
+            });
+        }).catch(() =>
+        {
+            this.compileFailHandler("pgetinker.cpp:1:1: error: calling the compiler api failed.\n");
         });
     }
 
@@ -313,37 +318,44 @@ export default class PGEtinker
         
         return new Promise<void>((resolve, reject) =>
         {
-            axios.post("/api/compile", {
-                code: this.editorPanel.getValue()
-            }).then((response) =>
-            {
-                this.compileSuccessHandler(response.data);
-                resolve();
-            }).catch((error) =>
-            {
-                
-                if(error.response)
+            axios.get('/sanctum/csrf-cookie').then(_ => {
+                axios.post("/api/compile", {
+                    code: this.editorPanel.getValue()
+                }).then((response) =>
                 {
-                    if(error.response.status)
+                    this.compileSuccessHandler(response.data);
+                    resolve();
+                }).catch((error) =>
+                {
+                    
+                    if(error.response)
                     {
-                        if(error.response.status == 503)
+                        if(error.response.status)
                         {
-                            this.compileFailHandler("pgetinker.cpp:1:1: error: PGEtinker service has gone offline. try again later.\n");
+                            if(error.response.status == 503)
+                            {
+                                this.compileFailHandler("pgetinker.cpp:1:1: error: PGEtinker service has gone offline. try again later.\n");
+                                reject();
+                                return;
+                            }
+                        }
+                        
+                        if(error.response.data.stderr)
+                        {
+                            this.compileFailHandler(error.response.data.stderr);
                             reject();
                             return;
                         }
                     }
-                    
-                    if(error.response.data.stderr)
-                    {
-                        this.compileFailHandler(error.response.data.stderr);
-                        reject();
-                        return;
-                    }
-                }
-                this.compileFailHandler("pgetinker.cpp:1:1: error: compilation failed in a way that's not being handled. please make a bug report.\n");
+                    this.compileFailHandler("pgetinker.cpp:1:1: error: compilation failed in a way that's not being handled. please make a bug report.\n");
+                    reject();
+                });
+            }).catch(() =>
+            {
+                this.compileFailHandler("pgetinker.cpp:1:1: error: calling the compiler api failed.\n");
                 reject();
             });
+
         });
     }
     
